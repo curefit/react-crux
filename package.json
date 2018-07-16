@@ -1,0 +1,9 @@
+{
+  "name": "react-crux",
+  "version": "0.0.1",
+  "description": "Simple react based library to create components for basic and complex CRUD operations",
+  "main": "index.js",
+  "repository": "https://github.com/curefit/react-crux",
+  "author": "Ankit Gupta <ankit.gupta@curefit.com>",
+  "license": "MIT"
+}
