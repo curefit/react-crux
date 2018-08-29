@@ -8,11 +8,10 @@ import {
 import * as _ from "lodash"
 import { Typeahead } from "react-bootstrap-typeahead"
 const Dropzone = require("react-dropzone")
-const DatePicker = require("react-datepicker")
+import DatePicker from "react-datepicker"
 import * as upload from "superagent"
 import * as moment from "moment"
 import autobind from "autobind-decorator"
-import UrlPathBuilder from "../../../ether/util/UrlPathBuilder"
 
 export type ModalType = "CREATE" | "EDIT" | "FILTER"
 interface InlineComponentProps {
@@ -28,6 +27,10 @@ interface InlineComponentProps {
     height?: string
     contentType?: string
     item?: any
+    parentModel: any,
+    shouldRender?: boolean,
+    urlPrefix?: string,
+    urlSuffix?: string
 }
 
 interface ImageUploadProps extends InlineComponentProps {
@@ -35,12 +38,13 @@ interface ImageUploadProps extends InlineComponentProps {
     height: string
 }
 
-class BaseModelContainerCreator {
+class CruxComponentCreator {
     static create<M, P>(constants: any): any {
         const anchors: any = {}
 
         function getAdditionalModelsSingle(field: any): string[] {
             if (field.modelName) return [field.modelName]
+            if (field.additionalModelsOverride) return field.additionalModelsOverride
             if (field.foreign && field.foreign.modelName) return [field.foreign.modelName]
             if (field.type === "nested") return getAdditionalModels(field)
             if (field.type === "iterable" && field.iterabletype) return getAdditionalModelsSingle(field.iterabletype)
@@ -225,7 +229,7 @@ class BaseModelContainerCreator {
 
             render(): any {
                 if (this.props.field.type === "custom") {
-                    const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels)
+                    const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels, this.props.parentModel)
                     return <CustomComponent/>
                 } else {
                     const value = this.props.model[this.props.field.field]
@@ -599,7 +603,9 @@ class BaseModelContainerCreator {
                         <NestedEditComponent field={constants} modalType={this.props.modalType}
                                              additionalModels={this.props.additionalModels} fetch={this.props.fetch}
                                              modelChanged={this.modelChanged} currentModel={this.state.item}
-                                             showTitle={false}/>
+                                             showTitle={false}
+                                             parentModel={{}}
+                        />
                     </Modal.Body>
                     <Modal.Footer>
                         {this.props.modalType === "EDIT" &&
@@ -708,6 +714,7 @@ class BaseModelContainerCreator {
             }
 
             render() {
+                // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
                 if (!this.props.field.iterabletype) {
                     console.error("Did you forget to add a iterabletype to the field ? Possible culprit:", this.props.field)
                 }
@@ -726,6 +733,10 @@ class BaseModelContainerCreator {
                         style={this.state.collapsed ? {display: "none"} : (!_.isEmpty(this.state.model) ? ({padding: 0}) : {padding: 0})}>
                         {
                             _.map(this.state.model, ((datum: any, index: any) => {
+                                const parentModel = {
+                                    data: this.state.model,
+                                    parentModel: this.props.parentModel
+                                }
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
                                     return <div key={index}
                                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
@@ -738,7 +749,9 @@ class BaseModelContainerCreator {
                                                                                                 field={this.props.field.iterabletype}
                                                                                                 additionalModels={this.props.additionalModels}
                                                                                                 modelChanged={this.fieldChanged(index)}
-                                                                                                showTitle={false}/>
+                                                                                                showTitle={false}
+                                                                                                parentModel={parentModel}
+                                        />
                                         </div>
                                         <span style={{marginLeft: "10px", color: "grey"}}
                                               className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -761,7 +774,9 @@ class BaseModelContainerCreator {
                                                                                                      field={this.props.field.iterabletype}
                                                                                                      additionalModels={this.props.additionalModels}
                                                                                                      modelChanged={this.fieldChanged(index)}
-                                                                                                     showTitle={false}/>
+                                                                                                     showTitle={false}
+                                                                                                     parentModel={parentModel}
+                                        />
                                         </div>
                                         <span style={{marginLeft: "10px", color: "grey"}}
                                               className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -781,7 +796,9 @@ class BaseModelContainerCreator {
                                                                                                     field={this.props.field.iterabletype}
                                                                                                     additionalModels={this.props.additionalModels}
                                                                                                     modelChanged={this.fieldChanged(index)}
-                                                                                                    showTitle={false}/>
+                                                                                                    showTitle={false}
+                                                                                                    parentModel={parentModel}
+                                        />
                                         </div>
                                         <span style={{marginLeft: "10px", color: "grey"}}
                                               className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -802,7 +819,8 @@ class BaseModelContainerCreator {
                                                                                                    field={this.props.field.iterabletype}
                                                                                                    additionalModels={this.props.additionalModels}
                                                                                                    modelChanged={this.fieldChanged(index)}
-                                                                                                   showTitle={false}/>
+                                                                                                   showTitle={false}
+                                                                                                   parentModel={parentModel}/>
                                         </div>
                                         <span style={{marginLeft: "10px", color: "grey"}}
                                               className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -824,7 +842,8 @@ class BaseModelContainerCreator {
                                                                                                     modelChanged={this.fieldChanged(index).bind(this, undefined)}
                                                                                                     showTitle={false}
                                                                                                     indent={false}
-                                                                                                    modalType={this.props.modalType}/>
+                                                                                                    modalType={this.props.modalType}
+                                                                                                    parentModel={parentModel}/>
                                         </div>
                                         <div style={{marginLeft: "10px", color: "grey"}}
                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -840,7 +859,8 @@ class BaseModelContainerCreator {
                                                              additionalModels={this.props.additionalModels}
                                                              modelChanged={this.fieldChanged(index).bind(this, undefined)}
                                                              showTitle={true} indent={true}
-                                                             modalType={this.props.modalType}/>
+                                                             modalType={this.props.modalType}
+                                                             parentModel={parentModel}/>
                                         <div style={{marginLeft: "10px", color: "grey"}}
                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                              onClick={this.remove.bind(this, index)}/>
@@ -852,7 +872,8 @@ class BaseModelContainerCreator {
                                         <CheckboxComponent key={index} currentModel={this.state.model[index]}
                                                            field={this.props.field.iterabletype}
                                                            additionalModels={this.props.additionalModels}
-                                                           modelChanged={this.fieldChanged(index)} showTitle={false}/>
+                                                           modelChanged={this.fieldChanged(index)} showTitle={false}
+                                                           parentModel={parentModel}/>
                                         <div style={{marginLeft: "10px", color: "grey"}}
                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                              onClick={this.remove.bind(this, index)}/>
@@ -925,14 +946,46 @@ class BaseModelContainerCreator {
 
         @autobind
         class SelectComponent extends React.Component<InlineComponentProps, any> {
+            // constructor(props: any) {
+            //     super(props)
+            //     this.state = {
+            //         isTransformed: false
+            //     }
+            // }
+            //
+            // componentWillUpdate(nextProps: any, nextState: any) {
+            //
+            //     if (this.state.isTransformed) {
+            //         // console.log("nextProps", nextProps, "currentProps", this.props)
+            //     }
+            // }
+
             render() {
                 if (!this.props.field.title) {
                     console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
                 }
+                let optionsData = []
+                if (this.props.field.foreign.transform) {
+                    if (typeof this.props.field.foreign.transform === "function") {
+                        optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+                    } else {
+                        console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+                    }
+
+                } else {
+                    optionsData = _.isEmpty(this.props.field.foreign.orderby)
+                        ? this.props.additionalModels[this.props.field.foreign.modelName]
+                        : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+                }
                 let foreignTitle = "Choose " + this.props.field.title
                 if (this.props.field.foreign) {
                     if (!_.isEmpty(this.props.currentModel)) {
-                        const foreignDoc = this.props.additionalModels[this.props.field.foreign.modelName].find((doc: any) => doc[this.props.field.foreign.key] === this.props.currentModel)
+                        const foreignDoc = _.find(optionsData, (doc: any)  => {
+                            if (this.props.field.valueType === "object") {
+                                return doc.id === this.props.currentModel.id
+                            }
+                            return doc[this.props.field.foreign.key] === this.props.currentModel
+                        })
                         if (_.isEmpty(foreignDoc)) {
                             foreignTitle = this.props.currentModel + " Bad Value"
                         } else {
@@ -942,9 +995,6 @@ class BaseModelContainerCreator {
                 } else {
                     console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
                 }
-                const options = _.isEmpty(this.props.field.foreign.orderby)
-                    ? this.props.additionalModels[this.props.field.foreign.modelName]
-                    : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
                 return <div>
                     {
                         this.props.showTitle && !_.isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
@@ -955,15 +1005,18 @@ class BaseModelContainerCreator {
                     <DropdownButton bsSize="small" style={{width: "auto"}} id={this.props.field.field + "_dropdown"}
                                     title={foreignTitle}>
                         {
-                            _.map(options, ((doc: any, index: any) =>
+                            _.map(optionsData, ((doc: any, index: any) =>
                                 <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)}
                                           key={index}
-                                          eventKey={doc[this.props.field.foreign.key]}>{doc[this.props.field.foreign.title]}</MenuItem>))
+                                          eventKey={this.props.field.valueType === "object" ? doc : doc[this.props.field.foreign.key]}>{doc[this.props.field.foreign.title]}</MenuItem>))
                         }
                     </DropdownButton></div>
             }
 
             select = (field: any, eventKey: any) => {
+                // this.setState({
+                //     isTransformed : true
+                // })
                 this.props.modelChanged(field, eventKey)
             }
         }
@@ -1049,6 +1102,7 @@ class BaseModelContainerCreator {
             }
 
             render(): any {
+                // console.log("nested", this.props.field.title, " Parent " ,this.props.parentModel)
                 if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
                     console.error("Nested component got empty field prop. Check the parent component. Props:", this.props)
                     return <div/>
@@ -1066,6 +1120,30 @@ class BaseModelContainerCreator {
                 } else if (this.props.modalType === "FILTER") {
                     fields = _.filter(this.props.field.fields, (field: any) => field.filterParameter === true)
                 }
+                // Filter out the filed not matching specified conditional field
+                fields = _.filter(fields, (field: any) => {
+                    if (field.conditionalField) {
+                        return this.props.currentModel && this.props.currentModel[field.conditionalField] === field.conditionalValue
+                    }
+                    return true
+                })
+
+                fields =  _.filter(fields, (field: any) => {
+                    if (field.shouldRender) {
+                        if (typeof field.shouldRender === "function") {
+                            if (field.shouldRender.length !== 4 ) {
+                                console.error("No. of arguments don't match in the shouldRender function. Function should have 4 args. Possible culprit: ", field.field)
+                                return false
+                            }
+                            return field.shouldRender(field.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+                        } else {
+                            console.error("Did you forget to add \"function\" in the shouldRender field. Function should return boolean.")
+                            return false
+                        }
+                    }
+                    return true
+                })
+
                 const wysiwygFields = _.filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
                 return <div style={this.props.indent ? {border: "1px solid #EEE", padding: "10px"} : {padding: 0}}>
                     {this.props.showTitle && !(this.props.field.style && this.props.field.style.hideLabel) &&
@@ -1076,6 +1154,7 @@ class BaseModelContainerCreator {
                         <div style={{display: "inline-block"}}>
                             {
                                 _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
+                                    const currentModelWithParent = {data: this.props.currentModel, parentModel: this.props.parentModel}
                                     return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                         display: "inline-block",
                                         marginRight: "10px",
@@ -1089,7 +1168,9 @@ class BaseModelContainerCreator {
                                                                  additionalModels={this.props.additionalModels}
                                                                  modelChanged={this.select}
                                                                  currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                 showTitle={true}/>
+                                                                 showTitle={true}
+                                                                 parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "imageUpload" &&
@@ -1100,7 +1181,9 @@ class BaseModelContainerCreator {
                                                                       additionalModels={this.props.additionalModels}
                                                                       modelChanged={this.select}
                                                                       currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                                                      showTitle={true}/>
+                                                                      showTitle={true}
+                                                                      parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "datepicker" &&
@@ -1108,7 +1191,9 @@ class BaseModelContainerCreator {
                                                                      additionalModels={this.props.additionalModels}
                                                                      modelChanged={this.select}
                                                                      currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                                                     showTitle={true}/>
+                                                                     showTitle={true}
+                                                                     parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "typeahead" &&
@@ -1116,7 +1201,9 @@ class BaseModelContainerCreator {
                                                                     additionalModels={this.props.additionalModels}
                                                                     fetch={this.props.fetch} modelChanged={this.select}
                                                                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                    showTitle={true}/>
+                                                                    showTitle={true}
+                                                                    parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "nested" &&
@@ -1126,7 +1213,9 @@ class BaseModelContainerCreator {
                                                                      modelChanged={this.select.bind(this, field)}
                                                                      indent={false}
                                                                      currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                     showTitle={true}/>
+                                                                     showTitle={true}
+                                                                     parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "iterable" &&
@@ -1135,7 +1224,9 @@ class BaseModelContainerCreator {
                                                                        fetch={this.props.fetch}
                                                                        modelChanged={this.select.bind(this, field)}
                                                                        indent={true}
-                                                                       currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}/>
+                                                                       currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
+                                                                       parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "checkbox" &&
@@ -1143,7 +1234,9 @@ class BaseModelContainerCreator {
                                                                    additionalModels={this.props.additionalModels}
                                                                    modelChanged={this.select}
                                                                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
-                                                                   showTitle={true}/>
+                                                                   showTitle={true}
+                                                                   parentModel={currentModelWithParent}
+                                                />
                                             }
                                             {
                                                 field.type === "bigtext" &&
@@ -1191,7 +1284,7 @@ class BaseModelContainerCreator {
                             }}>
                                 {
                                     _.map(wysiwygFields, (field: any, index: number) => {
-                                        const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels)
+                                        const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel)
                                         return <div key={index}>
                                             <label style={{
                                                 fontSize: "10px",
@@ -1259,16 +1352,6 @@ class BaseModelContainerCreator {
             }
 
             render() {
-                let imageUrl
-                if (this.props.currentModel) {
-                    imageUrl = "https://s3.ap-south-1.amazonaws.com/curefit-content/" + this.props.currentModel
-                    if (this.props.field && this.props.field.contentType === "video") {
-                        imageUrl = "https://s3.ap-south-1.amazonaws.com/" + UrlPathBuilder.getVideoPath(this.props.currentModel, "mp4")
-                    } else if (this.props.field && this.props.field.contentType === "audio") {
-                        imageUrl = "https://s3.ap-south-1.amazonaws.com/" + UrlPathBuilder.getAudioPath(this.props.currentModel, "mp3")
-                    }
-                }
-
                 return (
                     <div>
                         <Dropzone style={{width: "140px", textAlign: "center", color: "#E2356F"}}
@@ -1278,8 +1361,8 @@ class BaseModelContainerCreator {
                             <div style={{textAlign: "left", color: "#E2356F"}}>Upload {this.props.field.title}</div>
                             {this.state.inProgress &&
                             <img src="./images/loadingGif.gif" style={{width: "112px", textAlign: "center"}}/>}
-                            {imageUrl &&
-                            <div><a target="_blank" style={{color: "#4292f4"}} href={imageUrl}> {this.props.contentType}
+                            {this.props.currentModel &&
+                            <div><a target="_blank" style={{color: "#4292f4"}} href={this.props.field.urlPrefix + this.props.currentModel + this.props.field.urlSuffix}> {this.props.contentType}
                                 Link </a></div>}
                         </Dropzone>
                     </div>
@@ -1291,8 +1374,12 @@ class BaseModelContainerCreator {
         class DatePickerComponent extends React.Component<InlineComponentProps, any> {
             constructor(props: any) {
                 super(props)
-                this.state = this.props.field.showTimeSelect ? {dateTime: moment()} : {dateTime: moment(moment().format("ll"))}
+                // this.state = this.props.field.showTimeSelect ? {dateTime: moment()} : {dateTime: moment(moment().format("ll"))}
+                this.state = {}
             }
+            // componentDidMount() {
+            //
+            // }
 
             componentWillReceiveProps(nextProps: any) {
                 if (nextProps.currentModel) {
@@ -1329,4 +1416,4 @@ class BaseModelContainerCreator {
     }
 }
 
-export default BaseModelContainerCreator
+export { CruxComponentCreator }

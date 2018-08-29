@@ -76,5 +76,39 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({
             names: ['vendor'],
         }),
-    ]
+    ],
+    externals: {
+        react: {
+            root: 'React',
+            commonjs2: 'react',
+            commonjs: 'react',
+            amd: 'react',
+        },
+        'react-dom': {
+            root: 'ReactDOM',
+            commonjs2: 'react-dom',
+            commonjs: 'react-dom',
+            amd: 'react-dom',
+        },
+        'react-bootstrap-typeahead': {
+            commonjs2: 'react-bootstrap-typeahead',
+            commonjs: 'react-bootstrap-typeahead',
+            amd: 'react-bootstrap-typeahead'
+        },
+        'redux': {
+            commonjs2: 'redux',
+            commonjs: 'redux',
+            amd: 'redux'
+        },
+        'redux-thunk': {
+            commonjs2: 'redux-thunk',
+            commonjs: 'redux-thunk',
+            amd: 'redux-thunk'
+        },
+        'react-redux': {
+            commonjs2: 'react-redux',
+            commonjs: 'react-redux',
+            amd: 'react-redux'
+        },
+    }
 };

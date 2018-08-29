@@ -2,7 +2,7 @@
   "name": "@curefit/react-crux",
   "version": "0.0.1",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/curefit/react-crux.git"
@@ -13,11 +13,11 @@
     "autobind-decorator": "^2.1.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
-    "react": "^16.4.1",
-    "react-bootstrap": "^0.32.1",
-    "react-bootstrap-typeahead": "^3.2.0",
+    "react": "^16.4.2",
+    "react-bootstrap": "^0.32.3",
+    "react-bootstrap-typeahead": "^3.2.2",
+    "react-datepicker": "^1.6.0",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0",
     "superagent": "^3.8.3"
   },
   "bugs": {
@@ -27,8 +27,22 @@
   "directories": {
     "example": "examples"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/lodash": "^4.14.116",
+    "@types/node": "^10.9.3",
+    "@types/react": "^16.4.12",
+    "@types/react-bootstrap": "^0.32.13",
+    "@types/react-bootstrap-typeahead": "^3.2.1",
+    "@types/react-datepicker": "^1.1.7",
+    "@types/react-redux": "^6.0.6",
+    "@types/superagent": "^3.8.4",
+    "barrelsby": "^1.0.2",
+    "typescript": "^3.0.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-barrels": "barrelsby --delete -e node_modules/*",
+    "build": "tsc",
+    "postversion": "git push origin master && git push origin master --tags && npm publish"
   }
 }

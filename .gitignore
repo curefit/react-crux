@@ -4,3 +4,5 @@ public
 .DS_Store
 logs
 dist
+.vscode
+yarn-error.log
