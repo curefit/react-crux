@@ -1,6 +1,6 @@
 
 import * as _ from "lodash"
-import { DefaultModels } from "./defaultModels"
+import { DefaultModels } from "./DefaultModels"
 
 export function AllReducer(
     initialState = DefaultModels.getValues(),

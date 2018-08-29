@@ -1,6 +1,6 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { fetchModel, createOrModify, deleteModel, filterModel } from "./actions"
+import { fetchModel, createOrModify, deleteModel, filterModel } from "./Actions"
 import {
     Table, Row, Col, Button, Modal, FormControl, FormGroup, ControlLabel, DropdownButton, MenuItem,
     Alert, Checkbox
