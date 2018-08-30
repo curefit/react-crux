@@ -77,7 +77,7 @@ class CruxComponentCreator {
 
         function mapStateToProps(state: any): any {
             const additionalModels = getAdditionalModels(constants)
-            const stateRoot = !constants.stateRoot ? "all" : (constants.stateRoot === "none" ? undefined : constants.stateRoot)
+            const stateRoot = !constants.stateRoot ? "crux" : (constants.stateRoot === "none" ? undefined : constants.stateRoot)
             const additionalModelValues = _.map(additionalModels, (model: any) => {
                 return {"modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model]}
             })
