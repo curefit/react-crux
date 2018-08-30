@@ -1,3 +1,10 @@
+export class AuthError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'AuthError';
+    }
+}
+
 class FetchUtil {
     static get(headers?: any): any {
         const concatHeaders = Object.assign({}, {
@@ -60,12 +67,19 @@ class FetchUtil {
             } else {
                 console.error("Status: " + response.status + " StatusText: " + response.statusText)
                 console.log(response.body)
+                if (response.status == 401) {
+                    console.error("Call failed with 401, throwing auth error")
+                    throw new AuthError(response.status)
+                }
                 return response.json().then((err: any) => {
                     console.error("Error message: " + JSON.stringify(err))
                     throw new Error(JSON.stringify(err))
                 })
             }
         } catch (err) {
+            if (err.name === "AuthError") {
+                throw err
+            }
             console.error("Status: " + response.status + " StatusText: " + response.statusText)
             console.error("Error message: " + JSON.stringify(err))
             throw new Error(response.statusText)
