@@ -2,7 +2,7 @@
 import * as _ from "lodash"
 import { DefaultModels } from "./DefaultModels"
 
-export function AllReducer(
+export function CruxReducer(
     initialState = DefaultModels.getValues(),
     action: any
 ): any {
