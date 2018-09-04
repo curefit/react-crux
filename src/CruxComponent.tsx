@@ -1076,7 +1076,7 @@ class CruxComponentCreator {
                         </div>
                     }
                     <Typeahead labelKey={this.props.field.foreign.title} onChange={this.handleChange} options={options}
-                               selected={[selected]}/>
+                               selected={selected ? [selected] : undefined}/>
                 </div>
             }
 
