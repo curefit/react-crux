@@ -961,7 +961,8 @@ class CruxComponentCreator {
             // }
 
             render() {
-                if (!this.props.field.title) {
+                const hideLabel = this.props.field.style && this.props.field.style.hideLabel
+                if (!this.props.field.title && !hideLabel) {
                     console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
                 }
                 let optionsData = []
@@ -977,8 +978,14 @@ class CruxComponentCreator {
                         ? this.props.additionalModels[this.props.field.foreign.modelName]
                         : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
                 }
-                let foreignTitle = "Choose " + this.props.field.title
+                let foreignTitle = !hideLabel ? "Choose " + this.props.field.title : "Choose"
                 if (this.props.field.foreign) {
+                    if (!this.props.field.foreign.key) {
+                        console.error("Did you forget to add a \"key\" field in foreign . Possible culprit: ", this.props.field)
+                    }
+                    if (!this.props.field.foreign.title) {
+                        console.error("Did you forget to add a \"title\" field in foreign . Possible culprit: ", this.props.field)
+                    }
                     if (!_.isEmpty(this.props.currentModel)) {
                         const foreignDoc = _.find(optionsData, (doc: any)  => {
                             if (this.props.field.valueType === "object") {
@@ -997,11 +1004,12 @@ class CruxComponentCreator {
                 }
                 return <div>
                     {
-                        this.props.showTitle && !_.isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
+                        this.props.showTitle && !_.isEmpty(this.props.field.title) && !hideLabel &&
                         <div><label style={{
                             fontSize: "10px",
                             marginRight: "10px"
-                        }}>{this.props.field.title.toUpperCase()}</label><br/></div>}
+                        }}>{this.props.field.title.toUpperCase()}</label><br/></div>
+                    }
                     <DropdownButton bsSize="small" style={{width: "auto"}} id={this.props.field.field + "_dropdown"}
                                     title={foreignTitle}>
                         {
