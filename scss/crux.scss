@@ -1,0 +1,32 @@
+.large-modal {
+  width: 90%
+}
+
+mark {
+  background-color: inherit;
+  padding: 0!important
+}
+
+.active mark {
+  background-color: inherit;
+  color: inherit
+}
+
+.rbt-input {
+  height: 36px!important;
+  padding: 0;
+  cursor: text;
+}
+
+.rbt-input-main {
+  width: 115px !important;
+}
+
+.custom-checkbox {
+  position:relative;
+  top: -6px
+}
+
+.rbt-input-main {
+  padding-left: 10px !important;
+}
