@@ -1,4 +1,4 @@
-# CRUX
+# react-crux
 
 Crux is a simple to use client side library to create UI for CRUD operations on server side entities. Its best suited to create admin dashboards which typically have complex relationships between entities.
 
