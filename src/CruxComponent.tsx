@@ -495,7 +495,11 @@ class CruxComponentCreator {
         @autobind
         class ModalComponent extends React.Component<ModalComponentProps, any> {
             getRepField = () => {
-                return constants.fields.find((field: any) => field.representative)
+                const repField = constants.fields.find((field: any) => field.representative)
+                if (!repField) {
+                    console.error("Did you forget to add the representative tag. Possible Culprit: ", field)
+                }
+                return repField
             }
 
             getInitialState() {
