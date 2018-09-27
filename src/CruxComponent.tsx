@@ -497,7 +497,7 @@ class CruxComponentCreator {
             getRepField = () => {
                 const repField = constants.fields.find((field: any) => field.representative)
                 if (!repField) {
-                    console.error("Did you forget to add the representative tag. Possible Culprit: ", field)
+                    console.error("Did you forget to add the representative tag at the top level.")
                 }
                 return repField
             }
