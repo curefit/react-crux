@@ -1,4 +1,4 @@
-# CRUX (WIP. Do not download)
+# react-crux
 
 Crux is a simple to use client side library to create UI for CRUD operations on server side entities. Its best suited to create admin dashboards which typically have complex relationships between entities.
 
@@ -7,8 +7,7 @@ It is not a replacement for React or Redux or Bootstrap but rather a higher leve
 If you use CRUX, you would not have to write HTML/JSX/TSX code.
 
 ### Quick Setup
-- yarn add react-crux
-- yarn add -D @types/react-crux
+- yarn add @curefit/react-crux
 - Write the config and pass it to the factory method to create the component (config guide explained later)
 ```
 const constants = {
@@ -52,3 +51,4 @@ export {ServiceAccessComponent}
 - react (insert version here)
 - react-redux (insert version here)
 - react-bootstrap (insert version here)
+
