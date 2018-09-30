@@ -43,7 +43,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-barrels": "barrelsby --delete -e node_modules/*",
+    "generate-barrels": "rm -rf dist && barrelsby --delete -e node_modules/*",
     "build": "tsc",
     "prepublish": "tsc",
     "postversion": "git push origin master && git push origin master --tags && npm publish"
