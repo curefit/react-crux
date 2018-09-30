@@ -1,5 +1,8 @@
 src/
 node_modules/
 tsconfig.json
-.idea/
-index.ts
+.idea
+.DS_Store
+logs
+.vscode
+yarn-error.log
