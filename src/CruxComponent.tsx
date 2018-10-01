@@ -79,12 +79,12 @@ class CruxComponentCreator {
             const additionalModels = getAdditionalModels(constants)
             const stateRoot = !constants.stateRoot ? "crux" : (constants.stateRoot === "none" ? undefined : constants.stateRoot)
             const additionalModelValues = _.map(additionalModels, (model: any) => {
-                return {"modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model]}
+                return { "modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model] }
             })
             return Object.assign({}, {
                 [constants.modelName]: stateRoot ? state[stateRoot][constants.modelName] : state[constants.modelName],
                 additionalModels: _.reduce(additionalModelValues, (sum: any, obj: any) => {
-                    return Object.assign({}, sum, {[obj.modelName]: obj.value})
+                    return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {})
             })
         }
@@ -135,19 +135,19 @@ class CruxComponentCreator {
 
                                 if (field.iterabletype.type === "iterable") {
                                     return <ListIterableComponent model={datum} field={field}
-                                                                  additionalModels={this.props.additionalModels}
-                                                                  modelChanged={this.modelChanged.bind(this, index)}/>
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.modelChanged.bind(this, index)} />
                                 }
 
                                 if (field.iterabletype.type === "nested") {
                                     const filtered = _.filter(field.iterabletype.fields, (f: any) => f.display && _.has(datum, f.field))
                                     return _.map(filtered, (f: any, index: number) => {
                                         return <div key={index}>
-                                            <div style={{display: "inline-block"}}>{f.title + " : "}</div>
-                                            <div style={{display: "inline-block"}}><ListNestedComponent model={datum}
-                                                                                                        additionalModels={this.props.additionalModels}
-                                                                                                        field={f}
-                                                                                                        modelChanged={this.modelChanged.bind(this, index)}/>
+                                            <div style={{ display: "inline-block" }}>{f.title + " : "}</div>
+                                            <div style={{ display: "inline-block" }}><ListNestedComponent model={datum}
+                                                additionalModels={this.props.additionalModels}
+                                                field={f}
+                                                modelChanged={this.modelChanged.bind(this, index)} />
                                             </div>
                                         </div>
                                     })
@@ -155,18 +155,18 @@ class CruxComponentCreator {
 
                                 if (field.iterabletype.type === "select") {
                                     return <div key={index}><ListForeignComponent model={datum}
-                                                                                  field={field.iterabletype.foreign}
-                                                                                  additionalModels={this.props.additionalModels}/>
+                                        field={field.iterabletype.foreign}
+                                        additionalModels={this.props.additionalModels} />
                                     </div>
                                 }
 
                                 if (field.iterabletype.type === "checkbox") {
-                                    return <ListCheckboxComponent model={datum} field={field}/>
+                                    return <ListCheckboxComponent model={datum} field={field} />
                                 }
 
                                 if (field.iterabletype.inlineEdit) {
                                     return <div key={index}><InlineEditComponent text={datum}
-                                                                                 handleChange={this.modelChanged.bind(this, index)}/>
+                                        handleChange={this.modelChanged.bind(this, index)} />
                                     </div>
                                 } else {
                                     return <div key={index}>{datum}</div>
@@ -191,7 +191,7 @@ class CruxComponentCreator {
                 }
 
                 try {
-                    if (_.isEmpty(this.props.model)) return <div/>
+                    if (_.isEmpty(this.props.model)) return <div />
                     const foreignDoc = this.props.additionalModels[this.props.field.modelName].find((datum: any) => datum[this.props.field.key] === this.props.model)
                     return foreignDoc ? <div>{_.get(foreignDoc, this.props.field.title)}</div> :
                         <div>{this.props.model + " - Bad Value"}</div>
@@ -223,23 +223,23 @@ class CruxComponentCreator {
             }
 
             modelChanged = (data: any, success: any, error: any) => {
-                const newModel = Object.assign({}, this.props.model, {[this.props.field.field]: data})
+                const newModel = Object.assign({}, this.props.model, { [this.props.field.field]: data })
                 this.props.modelChanged(newModel, success, error)
             }
 
             render(): any {
                 if (this.props.field.type === "custom") {
                     const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels, this.props.parentModel)
-                    return <CustomComponent/>
+                    return <CustomComponent />
                 } else {
                     const value = this.props.model[this.props.field.field]
                     const field = this.props.field
                     if (value === null || value === undefined) {
-                        return <div/>
+                        return <div />
                     }
 
                     if (typeof value === "object" && _.isEmpty(value) && _.isEmpty(field.foreign)) {
-                        return <div/>
+                        return <div />
                     }
 
                     if (!this.props) {
@@ -248,16 +248,16 @@ class CruxComponentCreator {
 
                     if (field.type === "iterable") {
                         return <ListIterableComponent model={value} field={field}
-                                                      additionalModels={this.props.additionalModels}
-                                                      modelChanged={this.modelChanged}/>
+                            additionalModels={this.props.additionalModels}
+                            modelChanged={this.modelChanged} />
                     }
 
                     if (field.type === "datepicker") {
-                        return <ListDateComponent model={value} field={field}/>
+                        return <ListDateComponent model={value} field={field} />
                     }
 
                     if (field.type === "checkbox") {
-                        return <ListCheckboxComponent model={value} field={field}/>
+                        return <ListCheckboxComponent model={value} field={field} />
                     }
 
                     if (field.type === "nested") {
@@ -265,19 +265,19 @@ class CruxComponentCreator {
                             return <div key={index}>
                                 <span>{f.title + " : "}</span>
                                 <span><ListNestedComponent field={f} model={value}
-                                                           additionalModels={this.props.additionalModels}
-                                                           modelChanged={this.modelChanged}/></span>
+                                    additionalModels={this.props.additionalModels}
+                                    modelChanged={this.modelChanged} /></span>
                             </div>
                         })
                     }
 
                     if (!_.isEmpty(field.foreign)) {
                         return <ListForeignComponent model={this.props.model[field.field]} field={field.foreign}
-                                                     additionalModels={this.props.additionalModels}/>
+                            additionalModels={this.props.additionalModels} />
                     }
 
                     if (field.inlineEdit) {
-                        return <InlineEditComponent text={value} handleChange={this.modelChanged}/>
+                        return <InlineEditComponent text={value} handleChange={this.modelChanged} />
                     } else {
                         return <div>{value}</div>
                     }
@@ -308,29 +308,29 @@ class CruxComponentCreator {
             }
 
             showCreateModal = () => {
-                this.setState(Object.assign({}, this.state, {showCreateModal: true}))
+                this.setState(Object.assign({}, this.state, { showCreateModal: true }))
             }
 
             closeCreateModal = () => {
-                this.setState(Object.assign({}, this.state, {showCreateModal: false}))
+                this.setState(Object.assign({}, this.state, { showCreateModal: false }))
             }
 
             showFilterModal() {
-                this.setState(Object.assign({}, this.state, {showFilterModal: true}))
+                this.setState(Object.assign({}, this.state, { showFilterModal: true }))
             }
 
             closeFilterModal() {
-                this.setState(Object.assign({}, this.state, {showFilterModal: false}))
+                this.setState(Object.assign({}, this.state, { showFilterModal: false }))
             }
 
             showEditModal = (model: M) => {
                 return () => {
-                    this.setState(Object.assign({}, this.state, {showEditModal: true, model}))
+                    this.setState(Object.assign({}, this.state, { showEditModal: true, model }))
                 }
             }
 
             closeEditModal = () => {
-                this.setState(Object.assign({}, this.state, {showEditModal: false, model: {}}))
+                this.setState(Object.assign({}, this.state, { showEditModal: false, model: {} }))
             }
 
             createOrEditSuccess = (data?: any) => {
@@ -343,7 +343,7 @@ class CruxComponentCreator {
             }
 
             resetFilter() {
-                this.setState(Object.assign({}, this.state, {filterModel: {}}))
+                this.setState(Object.assign({}, this.state, { filterModel: {} }))
                 this.fetchModel(constants.modelName)
             }
 
@@ -359,7 +359,7 @@ class CruxComponentCreator {
             }
 
             handleSearch = (e: any) => {
-                this.setState(Object.assign({}, this.state, {searchQuery: e.target.value}))
+                this.setState(Object.assign({}, this.state, { searchQuery: e.target.value }))
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -382,96 +382,96 @@ class CruxComponentCreator {
                 const filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container"
-                                style={{width: "100%", padding: 10, paddingLeft: 218}}>
+                        style={{ width: "100%", padding: 10, paddingLeft: 218 }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
                     </div>
                 }
                 return (
 
-                    <div className="cf-main-content-container" style={{width: "100%", padding: 10, paddingLeft: 218}}>
+                    <div className="cf-main-content-container" style={{ width: "100%", padding: 10, paddingLeft: 218 }}>
                         {constants.createModal && <div className="pull-right btn btn-primary btn-xs"
-                                                       onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
+                            onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
                         {constants.filterModal &&
-                        <div style={{marginRight: 10}} className="pull-right btn btn-primary btn-xs"
-                             onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
+                            <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
+                                onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
                         {constants.filterModal &&
-                        <div style={{marginRight: 10}} className="pull-right btn btn-primary btn-xs"
-                             onClick={this.resetFilter}>{"Reset Filter "}</div>}
+                            <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
+                                onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
                         {constants.enableSearch && <div>
-                            <FormGroup style={{paddingTop: "10px"}}>
+                            <FormGroup style={{ paddingTop: "10px" }}>
                                 <FormControl type="text" value={this.state.searchQuery} placeholder="Search"
-                                             onChange={this.handleSearch}/>
+                                    onChange={this.handleSearch} />
                             </FormGroup>
                         </div>}
-                        <div style={{marginTop: "10px"}}/>
+                        <div style={{ marginTop: "10px" }} />
 
                         {_.isEmpty(this.props[constants.modelName]) ? <div>No {constants.title} in the system</div> :
                             <Table className="table table-striped cftable" striped bordered condensed hover>
                                 <thead>
-                                <tr>
-                                    {_.map(constants.fields.filter((field: any) => field.display), (field: any, index: any) =>
-                                        <th key={index}>{field.title}</th>)}
-                                    {constants.editModal && <th></th>}
-                                </tr>
+                                    <tr>
+                                        {_.map(constants.fields.filter((field: any) => field.display), (field: any, index: any) =>
+                                            <th key={index}>{field.title}</th>)}
+                                        {constants.editModal && <th></th>}
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {_.map(filteredRows,
-                                    (model: any, index: number) => {
-                                        const filtered = constants.fields.filter((field: any) => field.display === true)
-                                        return <tr key={index}>
-                                            {_.map(filtered, (field: any, i: number) => {
+                                    {_.map(filteredRows,
+                                        (model: any, index: number) => {
+                                            const filtered = constants.fields.filter((field: any) => field.display === true)
+                                            return <tr key={index}>
+                                                {_.map(filtered, (field: any, i: number) => {
                                                     return <td key={i}
-                                                               style={(field.cellCss) ? field.cellCss : {margin: "0px"}}>
-                                                        <div style={{marginTop: 8}}><ListNestedComponent field={field}
-                                                                                                         model={model}
-                                                                                                         additionalModels={this.props.additionalModels}
-                                                                                                         modelChanged={this.inlineEdit}/>
+                                                        style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                        <div style={{ marginTop: 8 }}><ListNestedComponent field={field}
+                                                            model={model}
+                                                            additionalModels={this.props.additionalModels}
+                                                            modelChanged={this.inlineEdit} />
                                                         </div>
                                                     </td>
                                                 }
-                                            )}
-                                            {constants.editModal &&
-                                            <td key={2}><span style={{marginLeft: "20px", marginTop: 8, color: "grey"}}
-                                                              className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                              aria-hidden="true" onClick={this.showEditModal(model)}/>
-                                            </td>}
-                                        </tr>
-                                    })}
+                                                )}
+                                                {constants.editModal &&
+                                                    <td key={2}><span style={{ marginLeft: "20px", marginTop: 8, color: "grey" }}
+                                                        className="glyphicon glyphicon-pencil fas fa-pencil-alt"
+                                                        aria-hidden="true" onClick={this.showEditModal(model)} />
+                                                    </td>}
+                                            </tr>
+                                        })}
 
                                 </tbody>
                             </Table>
                         }
                         {constants.createModal && this.state.showCreateModal &&
-                        <ModalComponent
-                            showModal={this.state.showCreateModal}
-                            closeModal={this.closeCreateModal}
-                            modalType={"CREATE"}
-                            createOrModify={this.props.createOrModify}
-                            createOrEditSuccess={this.createOrEditSuccess}
-                            additionalModels={this.props.additionalModels}/>
+                            <ModalComponent
+                                showModal={this.state.showCreateModal}
+                                closeModal={this.closeCreateModal}
+                                modalType={"CREATE"}
+                                createOrModify={this.props.createOrModify}
+                                createOrEditSuccess={this.createOrEditSuccess}
+                                additionalModels={this.props.additionalModels} />
                         }
                         {constants.editModal && this.state.showEditModal &&
-                        <ModalComponent
-                            showModal={this.state.showEditModal}
-                            closeModal={this.closeEditModal}
-                            modalType={"EDIT"}
-                            fetch={(model: string) => this.props.fetch(model)}
-                            item={this.state.model}
-                            createOrModify={this.props.createOrModify}
-                            createOrEditSuccess={this.createOrEditSuccess}
-                            deleteModel={this.props.deleteModel}
-                            additionalModels={this.props.additionalModels}/>
+                            <ModalComponent
+                                showModal={this.state.showEditModal}
+                                closeModal={this.closeEditModal}
+                                modalType={"EDIT"}
+                                fetch={(model: string) => this.props.fetch(model)}
+                                item={this.state.model}
+                                createOrModify={this.props.createOrModify}
+                                createOrEditSuccess={this.createOrEditSuccess}
+                                deleteModel={this.props.deleteModel}
+                                additionalModels={this.props.additionalModels} />
                         }
                         {constants.filterModal && this.state.showFilterModal &&
-                        <ModalComponent
-                            showModal={this.state.showFilterModal}
-                            closeModal={this.closeFilterModal}
-                            modalType={"FILTER"}
-                            item={this.state.filterModel}
-                            filterSuccess={this.filterSuccess}
-                            filter={this.props.filter}
-                            additionalModels={this.props.additionalModels}/>
+                            <ModalComponent
+                                showModal={this.state.showFilterModal}
+                                closeModal={this.closeFilterModal}
+                                modalType={"FILTER"}
+                                item={this.state.filterModel}
+                                filterSuccess={this.filterSuccess}
+                                filter={this.props.filter}
+                                additionalModels={this.props.additionalModels} />
                         }
                     </div>
                 )
@@ -538,11 +538,11 @@ class CruxComponentCreator {
             }
 
             filterError(err: any) {
-                this.setState(Object.assign({}, this.state, {error: err}))
+                this.setState(Object.assign({}, this.state, { error: err }))
             }
 
             createOrEditError = (err: any) => {
-                this.setState(Object.assign({}, this.state, {error: err}))
+                this.setState(Object.assign({}, this.state, { error: err }))
                 this.closeDeleteModal()
             }
 
@@ -552,16 +552,16 @@ class CruxComponentCreator {
             }
 
             modelChanged = (value: any) => {
-                const newModel = {item: Object.assign({}, this.state.item, value)}
+                const newModel = { item: Object.assign({}, this.state.item, value) }
                 this.setState(Object.assign({}, this.state, newModel))
             }
 
             openDeleteModal = () => {
-                this.setState(Object.assign({}, this.state, {deleteModal: true}))
+                this.setState(Object.assign({}, this.state, { deleteModal: true }))
             }
 
             closeDeleteModal = () => {
-                this.setState(Object.assign({}, this.state, {deleteModal: false}))
+                this.setState(Object.assign({}, this.state, { deleteModal: false }))
             }
 
             deleteModel = () => {
@@ -587,50 +587,50 @@ class CruxComponentCreator {
                     dialogClassName={constants.largeEdit ? "large-modal" : ""}>
                     <Modal.Header closeButton>
                         {this.props.modalType === "CREATE" &&
-                        <Modal.Title id="contained-modal-title">{"+ New " + constants.creationTitle}</Modal.Title>}
+                            <Modal.Title id="contained-modal-title">{"+ New " + constants.creationTitle}</Modal.Title>}
                         {this.props.modalType === "EDIT" && <Modal.Title
                             id="contained-modal-title">{"Edit " + constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
                         {this.props.modalType === "FILTER" &&
-                        <Modal.Title id="contained-modal-title">{"Filter " + constants.creationTitle}</Modal.Title>}
+                            <Modal.Title id="contained-modal-title">{"Filter " + constants.creationTitle}</Modal.Title>}
                     </Modal.Header>
                     <Modal.Body>
                         {this.state.error &&
-                        <Alert bsStyle="danger">
-                            {
-                                <div>
-                                    {errorType && <b>{errorType}</b>}
-                                    {errorMessage && <div>{errorMessage}</div>}
-                                </div>
-                            }
-                        </Alert>
+                            <Alert bsStyle="danger">
+                                {
+                                    <div>
+                                        {errorType && <b>{errorType}</b>}
+                                        {errorMessage && <div>{errorMessage}</div>}
+                                    </div>
+                                }
+                            </Alert>
                         }
                         <NestedEditComponent field={constants} modalType={this.props.modalType}
-                                             additionalModels={this.props.additionalModels} fetch={this.props.fetch}
-                                             modelChanged={this.modelChanged} currentModel={this.state.item}
-                                             showTitle={false}
-                                             parentModel={{}}
+                            additionalModels={this.props.additionalModels} fetch={this.props.fetch}
+                            modelChanged={this.modelChanged} currentModel={this.state.item}
+                            showTitle={false}
+                            parentModel={{}}
                         />
                     </Modal.Body>
                     <Modal.Footer>
                         {this.props.modalType === "EDIT" &&
-                        <div className="btn btn-danger" style={{float: "left"}} onClick={this.openDeleteModal}>
-                            Delete</div>}
+                            <div className="btn btn-danger" style={{ float: "left" }} onClick={this.openDeleteModal}>
+                                Delete</div>}
                         {this.state.deleteModal &&
-                        <Modal show={this.state.deleteModal} onHide={this.closeDeleteModal} container={this}>
-                            <Modal.Header closeButton>
-                                {"Delete " + constants.creationTitle}
-                            </Modal.Header>
-                            <Modal.Body>
-                                {"Are you sure you want to delete " + this.props.item[this.getRepField().field] + " ?"}
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <div className="btn btn-danger" onClick={this.deleteModel}>Delete</div>
-                                <div className="btn btn-secondary" onClick={this.closeDeleteModal}>Cancel</div>
-                            </Modal.Footer>
-                        </Modal>
+                            <Modal show={this.state.deleteModal} onHide={this.closeDeleteModal} container={this}>
+                                <Modal.Header closeButton>
+                                    {"Delete " + constants.creationTitle}
+                                </Modal.Header>
+                                <Modal.Body>
+                                    {"Are you sure you want to delete " + this.props.item[this.getRepField().field] + " ?"}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <div className="btn btn-danger" onClick={this.deleteModel}>Delete</div>
+                                    <div className="btn btn-secondary" onClick={this.closeDeleteModal}>Cancel</div>
+                                </Modal.Footer>
+                            </Modal>
                         }
                         <div className="btn btn-primary"
-                             onClick={this.modalPerformOperation(this.props.modalType)}>{this.props.modalType === "EDIT" ? "Save" : this.props.modalType === "CREATE" ? "Create" : "Filter"}</div>
+                            onClick={this.modalPerformOperation(this.props.modalType)}>{this.props.modalType === "EDIT" ? "Save" : this.props.modalType === "CREATE" ? "Create" : "Filter"}</div>
                         <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
                     </Modal.Footer>
                 </Modal>
@@ -642,47 +642,47 @@ class CruxComponentCreator {
         class InlineEditComponent extends React.Component<any, any> {
             constructor(props: any) {
                 super(props)
-                this.state = {text: this.props.text, edit: false, loading: false}
+                this.state = { text: this.props.text, edit: false, loading: false }
             }
 
             componentWillReceiveProps(nextProps: any) {
-                this.setState({text: nextProps.text, edit: false, loading: false})
+                this.setState({ text: nextProps.text, edit: false, loading: false })
             }
 
             render() {
                 return <div>
                     {
                         this.state.edit ? <input type="text" value={this.state.text}
-                                                 onKeyPress={this.handleEnter}
-                                                 style={{paddingTop: 5}}
-                                                 onChange={this.handleChange}
-                            /> :
+                            onKeyPress={this.handleEnter}
+                            style={{ paddingTop: 5 }}
+                            onChange={this.handleChange}
+                        /> :
                             <span onClick={this.startEditing}>{this.state.text}</span>
 
                     }
                     {this.state.loading &&
-                    <i className="fa fa-spinner fa-spin" style={{fontSize: 12, marginLeft: 10}}/>}
+                        <i className="fa fa-spinner fa-spin" style={{ fontSize: 12, marginLeft: 10 }} />}
                 </div>
             }
 
             startEditing() {
-                this.setState({...this.state, edit: true})
+                this.setState({ ...this.state, edit: true })
             }
 
             stopEditing() {
-                this.setState({...this.state, edit: false})
+                this.setState({ ...this.state, edit: false })
             }
 
             startLoading() {
-                this.setState({...this.state, loading: true, edit: false})
+                this.setState({ ...this.state, loading: true, edit: false })
             }
 
             stopLoading() {
-                this.setState({...this.state, loading: false})
+                this.setState({ ...this.state, loading: false })
             }
 
             handleChange(e: any) {
-                this.setState({...this.state, text: e.target.value})
+                this.setState({ ...this.state, text: e.target.value })
             }
 
             handleEnter(e: any) {
@@ -713,7 +713,7 @@ class CruxComponentCreator {
 
             componentWillReceiveProps(nextProps: any) {
                 if (nextProps.currentModel) {
-                    this.setState(Object.assign({}, this.state, {model: JSON.parse(JSON.stringify(nextProps.currentModel))}))
+                    this.setState(Object.assign({}, this.state, { model: JSON.parse(JSON.stringify(nextProps.currentModel)) }))
                 }
             }
 
@@ -729,12 +729,12 @@ class CruxComponentCreator {
 
                 return <div>
                     {!(this.props.field.style && this.props.field.style.hideLabel) &&
-                    <label onClick={this.collapseToggle} style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label>}
+                        <label onClick={this.collapseToggle} style={{
+                            fontSize: "10px",
+                            marginRight: "10px"
+                        }}>{this.props.field.title.toUpperCase()}</label>}
                     <div
-                        style={this.state.collapsed ? {display: "none"} : (!_.isEmpty(this.state.model) ? ({padding: 0}) : {padding: 0})}>
+                        style={this.state.collapsed ? { display: "none" } : (!_.isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                         {
                             _.map(this.state.model, ((datum: any, index: any) => {
                                 const parentModel = {
@@ -743,173 +743,173 @@ class CruxComponentCreator {
                                 }
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
                                     return <div key={index}
-                                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                                    padding: "5px 0px",
-                                                    display: "inline-block",
-                                                    marginRight: "30px"
-                                                } : {padding: "5px 0px"}}>
-                                        <div style={{display: "inline-block"}}><SelectComponent key={index}
-                                                                                                currentModel={this.state.model[index]}
-                                                                                                field={this.props.field.iterabletype}
-                                                                                                additionalModels={this.props.additionalModels}
-                                                                                                modelChanged={this.fieldChanged(index)}
-                                                                                                showTitle={false}
-                                                                                                parentModel={parentModel}
+                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                            padding: "5px 0px",
+                                            display: "inline-block",
+                                            marginRight: "30px"
+                                        } : { padding: "5px 0px" }}>
+                                        <div style={{ display: "inline-block" }}><SelectComponent key={index}
+                                            currentModel={this.state.model[index]}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
                                         />
                                         </div>
-                                        <span style={{marginLeft: "10px", color: "grey"}}
-                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                              onClick={this.remove.bind(this, index)}/>
+                                        <span style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
                                     return <div key={index}
-                                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                                    padding: "5px 0px",
-                                                    display: "inline-block",
-                                                    marginRight: "30px"
-                                                } : {padding: "5px 0px"}}>
-                                        <div style={{display: "inline-block"}}><ImageUploadComponent key={index}
-                                                                                                     width={this.props.width}
-                                                                                                     height={this.props.height}
-                                                                                                     contentType={this.props.contentType}
-                                                                                                     currentModel={this.state.model[index]}
-                                                                                                     field={this.props.field.iterabletype}
-                                                                                                     additionalModels={this.props.additionalModels}
-                                                                                                     modelChanged={this.fieldChanged(index)}
-                                                                                                     showTitle={false}
-                                                                                                     parentModel={parentModel}
+                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                            padding: "5px 0px",
+                                            display: "inline-block",
+                                            marginRight: "30px"
+                                        } : { padding: "5px 0px" }}>
+                                        <div style={{ display: "inline-block" }}><ImageUploadComponent key={index}
+                                            width={this.props.width}
+                                            height={this.props.height}
+                                            contentType={this.props.contentType}
+                                            currentModel={this.state.model[index]}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
                                         />
                                         </div>
-                                        <span style={{marginLeft: "10px", color: "grey"}}
-                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                              onClick={this.remove.bind(this, index)}/>
+                                        <span style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datepicker") {
                                     return <div key={index}
-                                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                                    padding: "5px 0px",
-                                                    display: "inline-block",
-                                                    marginRight: "30px"
-                                                } : {padding: "5px 0px"}}>
-                                        <div style={{display: "inline-block"}}><DatePickerComponent key={index}
-                                                                                                    currentModel={this.state.model[index]}
-                                                                                                    field={this.props.field.iterabletype}
-                                                                                                    additionalModels={this.props.additionalModels}
-                                                                                                    modelChanged={this.fieldChanged(index)}
-                                                                                                    showTitle={false}
-                                                                                                    parentModel={parentModel}
+                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                            padding: "5px 0px",
+                                            display: "inline-block",
+                                            marginRight: "30px"
+                                        } : { padding: "5px 0px" }}>
+                                        <div style={{ display: "inline-block" }}><DatePickerComponent key={index}
+                                            currentModel={this.state.model[index]}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
                                         />
                                         </div>
-                                        <span style={{marginLeft: "10px", color: "grey"}}
-                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                              onClick={this.remove.bind(this, index)}/>
+                                        <span style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
                                     return <div key={index}
-                                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                                    padding: "5px 0px",
-                                                    display: "inline-block",
-                                                    marginRight: "30px"
-                                                } : {padding: "5px 0px"}}>
-                                        <div style={{display: "inline-block"}}><TypeaheadComponent key={index}
-                                                                                                   currentModel={this.state.model[index]}
-                                                                                                   fetch={this.props.fetch}
-                                                                                                   field={this.props.field.iterabletype}
-                                                                                                   additionalModels={this.props.additionalModels}
-                                                                                                   modelChanged={this.fieldChanged(index)}
-                                                                                                   showTitle={false}
-                                                                                                   parentModel={parentModel}/>
+                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                            padding: "5px 0px",
+                                            display: "inline-block",
+                                            marginRight: "30px"
+                                        } : { padding: "5px 0px" }}>
+                                        <div style={{ display: "inline-block" }}><TypeaheadComponent key={index}
+                                            currentModel={this.state.model[index]}
+                                            fetch={this.props.fetch}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel} />
                                         </div>
-                                        <span style={{marginLeft: "10px", color: "grey"}}
-                                              className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                              onClick={this.remove.bind(this, index)}/>
+                                        <span style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
                                     return <div key={index}
-                                                style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                                                    border: "1px solid #EEE",
-                                                    padding: "10px"
-                                                }}>
-                                        <div style={{display: "inline-block"}}><NestedEditComponent key={index}
-                                                                                                    currentModel={this.state.model[index]}
-                                                                                                    fetch={this.props.fetch}
-                                                                                                    field={this.props.field.iterabletype}
-                                                                                                    additionalModels={this.props.additionalModels}
-                                                                                                    modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                                                                                    showTitle={false}
-                                                                                                    indent={false}
-                                                                                                    modalType={this.props.modalType}
-                                                                                                    parentModel={parentModel}/>
+                                        style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
+                                            border: "1px solid #EEE",
+                                            padding: "10px"
+                                        }}>
+                                        <div style={{ display: "inline-block" }}><NestedEditComponent key={index}
+                                            currentModel={this.state.model[index]}
+                                            fetch={this.props.fetch}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                            showTitle={false}
+                                            indent={false}
+                                            modalType={this.props.modalType}
+                                            parentModel={parentModel} />
                                         </div>
-                                        <div style={{marginLeft: "10px", color: "grey"}}
-                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                             onClick={this.remove.bind(this, index)}/>
+                                        <div style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
-                                    return <div key={index} style={{border: "1px solid #EEE", padding: "10px"}}>
+                                    return <div key={index} style={{ border: "1px solid #EEE", padding: "10px" }}>
                                         <NestedEditComponent key={index} currentModel={this.state.model[index]}
-                                                             fetch={this.props.fetch}
-                                                             field={Object.assign({}, anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
-                                                             additionalModels={this.props.additionalModels}
-                                                             modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                                             showTitle={true} indent={true}
-                                                             modalType={this.props.modalType}
-                                                             parentModel={parentModel}/>
-                                        <div style={{marginLeft: "10px", color: "grey"}}
-                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                             onClick={this.remove.bind(this, index)}/>
+                                            fetch={this.props.fetch}
+                                            field={Object.assign({}, anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                            showTitle={true} indent={true}
+                                            modalType={this.props.modalType}
+                                            parentModel={parentModel} />
+                                        <div style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "checkbox") {
-                                    return <div style={{display: "inline-block"}}>
+                                    return <div style={{ display: "inline-block" }}>
                                         <CheckboxComponent key={index} currentModel={this.state.model[index]}
-                                                           field={this.props.field.iterabletype}
-                                                           additionalModels={this.props.additionalModels}
-                                                           modelChanged={this.fieldChanged(index)} showTitle={false}
-                                                           parentModel={parentModel}/>
-                                        <div style={{marginLeft: "10px", color: "grey"}}
-                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                             onClick={this.remove.bind(this, index)}/>
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)} showTitle={false}
+                                            parentModel={parentModel} />
+                                        <div style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 if (this.props.field.iterabletype && this.props.field.iterabletype.type === "bigtext") {
                                     return <div key={index}>
                                         <textarea key={index} value={datum}
-                                                  onChange={this.handleChange.bind(this, index)} style={{width: 250}}/>
-                                        <div style={{marginLeft: "10px", color: "grey"}}
-                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                             onClick={this.remove.bind(this, index)}/>
+                                            onChange={this.handleChange.bind(this, index)} style={{ width: 250 }} />
+                                        <div style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
                                     </div>
                                 }
 
                                 return <div key={index}>
                                     <input key={index} type="text" value={datum}
-                                           onChange={this.handleChange.bind(this, index)}
-                                           style={this.props.field.iterabletype === "tinyinput" ? {
-                                               width: 64,
-                                               paddingTop: 5
-                                           } : {width: 200, paddingTop: 5}}
+                                        onChange={this.handleChange.bind(this, index)}
+                                        style={this.props.field.iterabletype === "tinyinput" ? {
+                                            width: 64,
+                                            paddingTop: 5
+                                        } : { width: 200, paddingTop: 5 }}
                                     />
-                                    <div style={{marginLeft: "10px", color: "grey"}}
-                                         className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                         onClick={this.remove.bind(this, index)}/>
+                                    <div style={{ marginLeft: "10px", color: "grey" }}
+                                        className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                        onClick={this.remove.bind(this, index)} />
                                 </div>
                             }))
                         }
                     </div>
-                    <div className="btn btn-xs btn-passive" style={{marginTop: "5px"}} onClick={this.createNew}>
+                    <div className="btn btn-xs btn-passive" style={{ marginTop: "5px" }} onClick={this.createNew}>
                         +Add {this.props.field.iterabletype.title}</div>
                 </div>
             }
@@ -944,7 +944,7 @@ class CruxComponentCreator {
             }
 
             collapseToggle = () => {
-                this.setState(Object.assign({}, this.state, {collapsed: !this.state.collapsed}))
+                this.setState(Object.assign({}, this.state, { collapsed: !this.state.collapsed }))
             }
         }
 
@@ -991,7 +991,7 @@ class CruxComponentCreator {
                         console.error("Did you forget to add a \"title\" field in foreign . Possible culprit: ", this.props.field)
                     }
                     if (!_.isEmpty(this.props.currentModel)) {
-                        const foreignDoc = _.find(optionsData, (doc: any)  => {
+                        const foreignDoc = _.find(optionsData, (doc: any) => {
                             if (this.props.field.valueType === "object") {
                                 return doc.id === this.props.currentModel.id
                             }
@@ -1012,15 +1012,15 @@ class CruxComponentCreator {
                         <div><label style={{
                             fontSize: "10px",
                             marginRight: "10px"
-                        }}>{this.props.field.title.toUpperCase()}</label><br/></div>
+                        }}>{this.props.field.title.toUpperCase()}</label><br /></div>
                     }
-                    <DropdownButton bsSize="small" style={{width: "auto"}} id={this.props.field.field + "_dropdown"}
-                                    title={foreignTitle}>
+                    <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
+                        title={foreignTitle}>
                         {
                             _.map(optionsData, ((doc: any, index: any) =>
                                 <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)}
-                                          key={index}
-                                          eventKey={this.props.field.valueType === "object" ? doc : doc[this.props.field.foreign.key]}>{doc[this.props.field.foreign.title]}</MenuItem>))
+                                    key={index}
+                                    eventKey={this.props.field.valueType === "object" ? doc : doc[this.props.field.foreign.key]}>{doc[this.props.field.foreign.title]}</MenuItem>))
                         }
                     </DropdownButton></div>
             }
@@ -1040,9 +1040,9 @@ class CruxComponentCreator {
                     <div><label style={{
                         fontSize: "10px",
                         marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label><br/></div>
+                    }}>{this.props.field.title.toUpperCase()}</label><br /></div>
                     <Checkbox bsClass="custom-checkbox" onChange={this.handleCheckbox}
-                              checked={this.props.currentModel === true}/>
+                        checked={this.props.currentModel === true} />
                 </div>
             }
 
@@ -1070,17 +1070,17 @@ class CruxComponentCreator {
                                 marginRight: "10px"
                             }}>{this.props.field.title.toUpperCase()}</label>
                             {this.props.field.showRefresh &&
-                            <span style={{float: "right", fontSize: "10px"}}>
-                                <span style={{marginLeft: "20px", color: "grey"}}
-                                      className="glyphicon glyphicon-refresh" aria-hidden="true"
-                                      onClick={this.refreshMovements}/>
-                            </span>}
+                                <span style={{ float: "right", fontSize: "10px" }}>
+                                    <span style={{ marginLeft: "20px", color: "grey" }}
+                                        className="glyphicon glyphicon-refresh" aria-hidden="true"
+                                        onClick={this.refreshMovements} />
+                                </span>}
 
-                            <br/>
+                            <br />
                         </div>
                     }
                     <Typeahead labelKey={this.props.field.foreign.title} onChange={this.handleChange} options={options}
-                               selected={selected ? [selected] : undefined}/>
+                        selected={selected ? [selected] : undefined} />
                 </div>
             }
 
@@ -1089,8 +1089,10 @@ class CruxComponentCreator {
             }
 
             handleChange = (selected: any) => {
-                const newObject = selected[0]
-                this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
+                if (selected && selected.length > 0) {
+                    const newObject = selected[0]
+                    this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
+                }
             }
         }
 
@@ -1098,7 +1100,7 @@ class CruxComponentCreator {
         class NestedEditComponent extends React.Component<InlineComponentProps, any> {
             constructor(props: any) {
                 super(props)
-                this.state = {collapsed: this.props.field.collapsed}
+                this.state = { collapsed: this.props.field.collapsed }
             }
 
             getEditable(field: any, modalType: string) {
@@ -1117,12 +1119,12 @@ class CruxComponentCreator {
                 // console.log("nested", this.props.field.title, " Parent " ,this.props.parentModel)
                 if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
                     console.error("Nested component got empty field prop. Check the parent component. Props:", this.props)
-                    return <div/>
+                    return <div />
                 }
 
                 if (_.isEmpty(this.props.field.fields)) {
                     console.error("Attribute fields missing in the nested component config", this.props.field)
-                    return <div/>
+                    return <div />
                 }
 
                 let fields
@@ -1140,10 +1142,10 @@ class CruxComponentCreator {
                     return true
                 })
 
-                fields =  _.filter(fields, (field: any) => {
+                fields = _.filter(fields, (field: any) => {
                     if (field.shouldRender) {
                         if (typeof field.shouldRender === "function") {
-                            if (field.shouldRender.length !== 4 ) {
+                            if (field.shouldRender.length !== 4) {
                                 console.error("No. of arguments don't match in the shouldRender function. Function should have 4 args. Possible culprit: ", field.field)
                                 return false
                             }
@@ -1157,97 +1159,97 @@ class CruxComponentCreator {
                 })
 
                 const wysiwygFields = _.filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
-                return <div style={this.props.indent ? {border: "1px solid #EEE", padding: "10px"} : {padding: 0}}>
+                return <div style={this.props.indent ? { border: "1px solid #EEE", padding: "10px" } : { padding: 0 }}>
                     {this.props.showTitle && !(this.props.field.style && this.props.field.style.hideLabel) &&
-                    <div onClick={this.collapseToggle} style={{cursor: "pointer"}}><label
-                        style={{fontSize: "10px", marginRight: "10px"}}>{this.props.field.title.toUpperCase()}</label>
-                    </div>}
-                    <div style={this.state.collapsed ? {display: "none"} : {display: "block"}}>
-                        <div style={{display: "inline-block"}}>
+                        <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}><label
+                            style={{ fontSize: "10px", marginRight: "10px" }}>{this.props.field.title.toUpperCase()}</label>
+                        </div>}
+                    <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
+                        <div style={{ display: "inline-block" }}>
                             {
                                 _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
-                                    const currentModelWithParent = {data: this.props.currentModel, parentModel: this.props.parentModel}
+                                    const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
                                     return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                         display: "inline-block",
                                         marginRight: "10px",
                                         marginBottom: "30px",
                                         verticalAlign: "top"
-                                    } : {marginBottom: "30px", marginRight: "10px"}}>
+                                    } : { marginBottom: "30px", marginRight: "10px" }}>
                                         <div>
                                             {
                                                 field.type === "select" &&
                                                 <SelectComponent field={field}
-                                                                 additionalModels={this.props.additionalModels}
-                                                                 modelChanged={this.select}
-                                                                 currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                 showTitle={true}
-                                                                 parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    modelChanged={this.select}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "imageUpload" &&
                                                 <ImageUploadComponent field={field}
-                                                                      width={this.props.width}
-                                                                      height={this.props.height}
-                                                                      contentType={this.props.contentType}
-                                                                      additionalModels={this.props.additionalModels}
-                                                                      modelChanged={this.select}
-                                                                      currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                                                      showTitle={true}
-                                                                      parentModel={currentModelWithParent}
+                                                    width={this.props.width}
+                                                    height={this.props.height}
+                                                    contentType={this.props.contentType}
+                                                    additionalModels={this.props.additionalModels}
+                                                    modelChanged={this.select}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "datepicker" &&
                                                 <DatePickerComponent field={field}
-                                                                     additionalModels={this.props.additionalModels}
-                                                                     modelChanged={this.select}
-                                                                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                                                     showTitle={true}
-                                                                     parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    modelChanged={this.select}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "typeahead" &&
                                                 <TypeaheadComponent field={field}
-                                                                    additionalModels={this.props.additionalModels}
-                                                                    fetch={this.props.fetch} modelChanged={this.select}
-                                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                    showTitle={true}
-                                                                    parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    fetch={this.props.fetch} modelChanged={this.select}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "nested" &&
                                                 <NestedEditComponent field={field} modalType={this.props.modalType}
-                                                                     additionalModels={this.props.additionalModels}
-                                                                     fetch={this.props.fetch}
-                                                                     modelChanged={this.select.bind(this, field)}
-                                                                     indent={false}
-                                                                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                                                     showTitle={true}
-                                                                     parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    fetch={this.props.fetch}
+                                                    modelChanged={this.select.bind(this, field)}
+                                                    indent={false}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "iterable" &&
                                                 <IterableEditComponent field={field} modalType={this.props.modalType}
-                                                                       additionalModels={this.props.additionalModels}
-                                                                       fetch={this.props.fetch}
-                                                                       modelChanged={this.select.bind(this, field)}
-                                                                       indent={true}
-                                                                       currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
-                                                                       parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    fetch={this.props.fetch}
+                                                    modelChanged={this.select.bind(this, field)}
+                                                    indent={true}
+                                                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
                                                 field.type === "checkbox" &&
                                                 <CheckboxComponent field={field}
-                                                                   additionalModels={this.props.additionalModels}
-                                                                   modelChanged={this.select}
-                                                                   currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
-                                                                   showTitle={true}
-                                                                   parentModel={currentModelWithParent}
+                                                    additionalModels={this.props.additionalModels}
+                                                    modelChanged={this.select}
+                                                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
+                                                    showTitle={true}
+                                                    parentModel={currentModelWithParent}
                                                 />
                                             }
                                             {
@@ -1256,11 +1258,11 @@ class CruxComponentCreator {
                                                     {!_.isEmpty(field.title) && <span><label style={{
                                                         fontSize: "10px",
                                                         marginRight: "10px"
-                                                    }}>{field.title.toUpperCase()}</label><br/></span>}
+                                                    }}>{field.title.toUpperCase()}</label><br /></span>}
                                                     <textarea
                                                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                         onChange={this.handleChange.bind(this, field)}
-                                                        style={{width: 250}}/>
+                                                        style={{ width: 250 }} />
                                                 </div>
                                             }
                                             {
@@ -1270,14 +1272,14 @@ class CruxComponentCreator {
                                                     {!_.isEmpty(field.title) && <span><label style={{
                                                         fontSize: "10px",
                                                         marginRight: "10px"
-                                                    }}>{field.title.toUpperCase()}</label><br/></span>}
+                                                    }}>{field.title.toUpperCase()}</label><br /></span>}
                                                     <input type="text"
-                                                           value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                                                           onChange={this.handleChange.bind(this, field)}
-                                                           style={field.type === "tinyinput" ? {
-                                                               width: 64,
-                                                               paddingTop: 5
-                                                           } : {width: 200, paddingTop: 5}}
+                                                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                                                        onChange={this.handleChange.bind(this, field)}
+                                                        style={field.type === "tinyinput" ? {
+                                                            width: 64,
+                                                            paddingTop: 5
+                                                        } : { width: 200, paddingTop: 5 }}
                                                     />
                                                 </div>
                                             }
@@ -1302,7 +1304,7 @@ class CruxComponentCreator {
                                                 fontSize: "10px",
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label>
-                                            <CustomComponent key={index}/>
+                                            <CustomComponent key={index} />
                                         </div>
                                     })
                                 }
@@ -1313,16 +1315,16 @@ class CruxComponentCreator {
             }
 
             select = (field: any, eventKey: any) => {
-                this.props.modelChanged(Object.assign({}, this.props.currentModel, {[field.field]: eventKey}))
+                this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
             }
 
             handleChange = (field: any, event: any) => {
-                const newModel = Object.assign({}, this.props.currentModel, {[field.field]: event.target.value})
+                const newModel = Object.assign({}, this.props.currentModel, { [field.field]: event.target.value })
                 this.props.modelChanged(newModel)
             }
 
             collapseToggle = () => {
-                this.setState(Object.assign({}, this.state, {collapsed: !this.state.collapsed}))
+                this.setState(Object.assign({}, this.state, { collapsed: !this.state.collapsed }))
             }
         }
 
@@ -1344,13 +1346,13 @@ class CruxComponentCreator {
                 if (height) {
                     formData.append("height", height)
                 }
-                this.setState(Object.assign({}, this.state, {inProgress: true}))
+                this.setState(Object.assign({}, this.state, { inProgress: true }))
                 if (this.props.item && this.props.item["contentType"] && this.props.item["contentType"] !== contentType) {
                     contentType = this.props.item["contentType"]
                 }
                 upload.post("/content/" + contentType + "/upload/").send(formData)
                     .end((err: any, res: any) => {
-                        this.setState(Object.assign({}, this.state, {inProgress: false}))
+                        this.setState(Object.assign({}, this.state, { inProgress: false }))
                         if (res.status !== 200) {
                             const data = JSON.parse(res.text)
                             alert("Error: " + data.message)
@@ -1366,16 +1368,16 @@ class CruxComponentCreator {
             render() {
                 return (
                     <div>
-                        <Dropzone style={{width: "140px", textAlign: "center", color: "#E2356F"}}
-                                  onDrop={(data: any) => {
-                                      this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
-                                  }} multiple={true}>
-                            <div style={{textAlign: "left", color: "#E2356F"}}>Upload {this.props.field.title}</div>
+                        <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
+                            onDrop={(data: any) => {
+                                this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
+                            }} multiple={true}>
+                            <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                             {this.state.inProgress &&
-                            <img src="./images/loadingGif.gif" style={{width: "112px", textAlign: "center"}}/>}
+                                <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                             {this.props.currentModel &&
-                            <div><a target="_blank" style={{color: "#4292f4"}} href={this.props.field.urlPrefix + this.props.currentModel + this.props.field.urlSuffix}> {this.props.contentType}
-                                Link </a></div>}
+                                <div><a target="_blank" style={{ color: "#4292f4" }} href={this.props.field.urlPrefix + this.props.currentModel + this.props.field.urlSuffix}> {this.props.contentType}
+                                    Link </a></div>}
                         </Dropzone>
                     </div>
                 )
@@ -1395,7 +1397,7 @@ class CruxComponentCreator {
 
             componentWillReceiveProps(nextProps: any) {
                 if (nextProps.currentModel) {
-                    this.setState({...this.state, dateTime: moment(nextProps.currentModel)})
+                    this.setState({ ...this.state, dateTime: moment(nextProps.currentModel) })
                 }
             }
 
@@ -1405,7 +1407,7 @@ class CruxComponentCreator {
                         <label style={{
                             fontSize: "10px",
                             marginRight: "10px"
-                        }}>{this.props.field.title.toUpperCase()}</label><br/>
+                        }}>{this.props.field.title.toUpperCase()}</label><br />
                         <DatePicker
                             showTimeSelect={!!this.props.field.showTimeSelect}
                             timeIntervals={30}
