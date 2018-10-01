@@ -1,5 +1,5 @@
 import { Dispatch } from "redux"
-import FetchUtil from "./FetchUtil"
+import { FetchUtil } from "./FetchUtil"
 
 const apiServer = process.env.API_SERVER ? process.env.API_SERVER : ""
 

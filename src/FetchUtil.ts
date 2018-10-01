@@ -1,11 +1,11 @@
 export class AuthError extends Error {
     constructor(message: string) {
-        super(message);
-        this.name = 'AuthError';
+        super(message)
+        this.name = 'AuthError'
     }
 }
 
-class FetchUtil {
+export class FetchUtil {
     static get(headers?: any): any {
         const concatHeaders = Object.assign({}, {
             Accept: "application/json",
@@ -95,5 +95,3 @@ class FetchUtil {
         return respString
     }
 }
-
-export default FetchUtil
