@@ -1089,7 +1089,7 @@ class CruxComponentCreator {
             }
 
             handleChange = (selected: any) => {
-                if (selected && selected.length > 0) {
+                if (!_.isEmpty(selected)) {
                     const newObject = selected[0]
                     this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
                 }
