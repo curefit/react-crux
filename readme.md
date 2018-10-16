@@ -108,6 +108,8 @@ const store = createStore(
     * _customComponent_ - Required for wysiwyg and for _type_ "custom". 
 
 ### Select/Typeahead fields
+Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter.
+
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 ```
@@ -123,10 +125,55 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 }
 ```
 ### Nested Fields
+If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
+
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
 ```
+// DefaultModels.tsx
+
+const DefaultModels = {
+    mediaTypes: [
+        {
+            typeId: "IMAGE",
+            title: "Image"
+        },
+        {
+            typeId: "VIDEO",
+            title: "Video"
+        }
+    ],
+    addressTypes: [
+        {
+            typeId: "HOME",
+            title: "Home"
+        },
+        {
+            typeId: "OFFICE",
+            title: "Office"
+        },
+        {
+            typeId: "OTHERS",
+            title: "Other"
+        },
+    ]
+}
+
+// index.tsx (Main React App)
+import { DefaultModels } from "./DefaultModels"
+
+const appReducer = combineReducers({crux: CruxReducerFactory(DefaultModels), ...})
+const store = createStore(
+    appReducer,
+    applyMiddleware(thunk, createLogger())
+)
 ```
+### Filtering and Ordering
+
+### Refreshing other models in creation / modification mode
+
+### Dependent Dynamic Modelling
+
 
 # Examples
 
@@ -197,4 +244,45 @@ export class EmployeeContainer extends React.Component<{}, {}> {
 }
 
 ```
+#### Iterable of nested
+One very common pattern is to have a field which is a list of objects. In CRUX terminology that translates to iterable of nested. The example below shows how to model it. The example if for products which typically have list of media attached to them. Each media object can either be a image or video and have a url.
 
+```
+{
+    title: "Media",
+    field: "media",
+    display: false,
+    editable: true,
+    type: "iterable",
+    iterabletype: {
+        type: "nested",
+        title: "Media",
+        fields: [
+            {
+                title: "Media Type",
+                field: "type",
+                display: true,
+                editable: true,
+                type: "select",
+                foreign: {
+                    modelName: "mediaTypes",
+                    key: "typeId",
+                    title: "title"
+                }
+            },
+            {
+                title: "Media Url",
+                field: "url",
+                display: true,
+                editable: true,
+            }
+        ]
+    }
+}
+```
+
+# TBD
+- Pagination support
+- Typings for schema
+- Refactoring of schema into (displayOptions, editOptions, createOptions, deleteOptions)
+- Defragment style options
