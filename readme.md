@@ -102,6 +102,10 @@ const store = createStore(
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
         - _tinyinput_ - For very small texts.
         - _bigtext_ - For large blobs of text.
+        - _checkbox_ - For boolean fields
+        - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document
+        - _datepicker_ - For fields that have dates. Detailed spec later.
+        - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
     * _wysiwyg_ - If present and true, adds support to show a live preview will editing the object. Requires another field called _customComponent_
@@ -109,6 +113,20 @@ const store = createStore(
 
 ### Select/Typeahead fields
 Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter.
+```
+{
+    title: "Media Type",
+    field: "type",
+    display: true,
+    editable: true,
+    type: "select",
+    foreign: {
+        modelName: "mediaTypes",
+        key: "typeId",
+        title: "title"
+    }
+}
+```
 
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
@@ -126,6 +144,11 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 ```
 ### Nested Fields
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
+
+### Recursive fields
+### Checkbox
+### Datepickers
+### File upload
 
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
@@ -174,6 +197,7 @@ const store = createStore(
 
 ### Dependent Dynamic Modelling
 
+### Styles
 
 # Examples
 
@@ -285,4 +309,6 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Pagination support
 - Typings for schema
 - Refactoring of schema into (displayOptions, editOptions, createOptions, deleteOptions)
-- Defragment style options
+- Defragment style options into one uniform way of specifying styles
+- Create a UI to generate schema
+- Removing hardcoding of /model in fetch urls
