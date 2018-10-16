@@ -54,7 +54,7 @@ import { CruxReducerFactory } from "@curefit/react-crux"
 
 ...
 
-const appReducer = combineReducers({crux: CruxReducerFactory(DefaultModels), user: UserReducer})
+const appReducer = combineReducers({crux: CruxReducerFactory({}), user: UserReducer})
 
 ...
 
@@ -112,20 +112,38 @@ const store = createStore(
     * _customComponent_ - Required for wysiwyg and for _type_ "custom". 
 
 ### Select/Typeahead fields
-Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter.
+Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter. 
+
+For fields with _type_: "select", another field _foreign_ is mandatory. This field tells CRUX where to get the options for select from. Three fields are mandatory in foreign
+ - _modelName_: where to get the options from. The logic for this is same. Initially find it in redux store. If not found, fetch it by making http get call to /model/:modelName
+ - _title_: Which field in the foreign object to use to show title in the option
+ - _key_: Which field in the foreign object to use to store the value (typically some sort of id field)
+
 ```
 {
     title: "Media Type",
-    field: "type",
+    field: "mediaType",
     display: true,
     editable: true,
     type: "select",
     foreign: {
         modelName: "mediaTypes",
-        key: "typeId",
-        title: "title"
+        key: "typeId", // typeId is what will be stored while storing mediaType for the object
+        title: "title" // title is what will be used to show in the dropdown
     }
 }
+
+// Above example assumes that /model/mediaTypes returns a response like
+[
+    {
+        typeId: "IMAGE",
+        title: "Image"
+    },
+    {
+        typeId: "VIDEO",
+        title: "Video"
+    }
+]
 ```
 
 ### Iterable fields
@@ -198,6 +216,8 @@ const store = createStore(
 ### Dependent Dynamic Modelling
 
 ### Styles
+
+### Fetching login in CRUX
 
 # Examples
 
