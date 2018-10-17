@@ -239,6 +239,10 @@ A crux component when mounted does the following in order
 5. Fetches the filtered models by making http calls to /model/:modelName in no particular order
 
 # Examples
+All the live examples can be found at https://curefit.github.io/react-crux-examples
+The code for the examples can be found at https://github.com/curefit/react-crux-examples/tree/master
+
+Some example snippets have been copied below for convenience.
 
 #### Table + Basic form with text inputs for create/modify/delete
 Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify and delete employees 
@@ -352,3 +356,4 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
 - For fetching models, create a proper DAG, do a topological sort and then fetch
+    
