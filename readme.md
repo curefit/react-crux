@@ -240,7 +240,7 @@ A crux component when mounted does the following in order
 
 # Examples
 All the live examples can be found at https://curefit.github.io/react-crux-examples
-The code for the examples can be found at https://github.com/curefit/react-crux-examples/tree/master
+The code for the examples can be found at https://github.com/curefit/react-crux-examples
 
 Some example snippets have been copied below for convenience.
 
@@ -356,4 +356,3 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
 - For fetching models, create a proper DAG, do a topological sort and then fetch
-    
