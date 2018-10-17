@@ -6,10 +6,20 @@ It is not a replacement for React or Redux or Bootstrap but rather a higher leve
 
 Since its a client side library, it is completely agnostic to server side tech stack. 
 
-If you use CRUX, you would not have to write HTML/JSX/TSX code.
+If you use CRUX, you would not have to write HTML/JSX/TSX code. Essentially it converts a config in JSON to a UI that creates a table with all objects and a model to create new objects or modify existing objects in a user friendly manner.
 
 ### Quick Setup
 - yarn add @curefit/react-crux
+- yarn add react-bootstrap bootstrap-sass
+- Add react crux css and bootstrap to your app.scss
+```
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+$bootstrap-sass-asset-helper: true;
+
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "~@curefit/react-crux/scss/crux.scss";
+
+```
 - Write the config and pass it to the factory method to create the component (config guide explained later)
 ```
 
@@ -82,9 +92,12 @@ const store = createStore(
   }
 ```
 # Specification
+### Information Flow (Where does crux fit in redux)
+![alt text](https://s3.ap-south-1.amazonaws.com/react-crux-doc/images/redux.png "Redux flow")
+
 
 ### Basic Schema
-- **modelName**: The source name. Crux first looks for this locally. If not present, a http call to /model/:modelName will be made to fetch the list of models. For this to work, a controller on the server side needs to listen to this route
+- **modelName**: The source name. Crux first looks for this locally in redux store. If not present, a http call to /model/:modelName will be made to fetch the list of models. For this to work, a controller on the server side needs to listen to this route
 - **title**: The title for the table
 - **creationTitle**: Title for the create button. (+ New <creationTitle>)
 - **createModal**: If false, option to create new object wont come in the UI. Also note that disabling creation here is not sufficient. You should also make sure that your server does not support creation of this model.
@@ -217,7 +230,13 @@ const store = createStore(
 
 ### Styles
 
-### Fetching login in CRUX
+### Fetching logic in CRUX
+A crux component when mounted does the following in order
+1. Parse the whole config.
+2. Collects all modelNames (normal or foreign)
+3. Filters distinct modelNames
+4. Filters out those which are already present in redux store
+5. Fetches the filtered models by making http calls to /model/:modelName in no particular order
 
 # Examples
 
@@ -332,3 +351,4 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Defragment style options into one uniform way of specifying styles
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
+- For fetching models, create a proper DAG, do a topological sort and then fetch
