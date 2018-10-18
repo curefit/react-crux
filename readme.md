@@ -109,15 +109,15 @@ const store = createStore(
    * _field_ - The key in the model to access this field (e.g. "name" field inside "Employee")
    * _representative_ - Set to true if this field is representative of the parent object. Used to show in other select menus etc. Typically name/title fields are representative
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
-        - _select_ - For dropdowns with single select option. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/select)
+        - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-        - _nested_ - For objects which have fields of their own. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/nested)
+        - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
-        - _tinyinput_ - For very small texts. [Example](https://curefit.github.io/react-crux-examples/#/nested)
-        - _bigtext_ - For large blobs of text.
-        - _checkbox_ - For boolean fields
-        - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document
-        - _datepicker_ - For fields that have dates. Detailed spec later.
+        - _tinyinput_ - For very small texts. [Example](http://localhost:3000/#/bigtext) 
+        - _bigtext_ - For large blobs of text. [Example](http://localhost:3000/#/bigtext)
+        - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
+        - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document. [Example](https://curefit.github.io/react-crux-examples/#/file)
+        - _datepicker_ - For fields that have dates. Detailed spec later. [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
@@ -460,4 +460,3 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
 - For fetching models, create a proper DAG, do a topological sort and then fetch
-    
