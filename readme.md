@@ -243,12 +243,35 @@ If the field is itself an object containing more fields, its _type_ should be "n
 }
 ```
 
-
 ### Recursive fields
 ### Checkbox
-### Datepickers
-### File upload
+This is to support boolean fields. If the field is not present in the object, the edit modal shows it "unchecked" and saving does not set it. Otherwise that field is set as true or false (based on state). [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
 
+```
+{
+  "title": "Is Part Time ?",
+  "editable": true,
+  "display": true,
+  "field": "isPartTime",
+  "type": "checkbox"
+}
+```
+
+### Datepickers
+### File/Image upload
+This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
+```
+{
+    editable: true,
+    width: 100,
+    height: 100,
+    title: "App Image",
+    field: "image",
+    contentType: "image",
+    type: "imageUpload"
+},
+```
+### Custom Components
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
 ```
