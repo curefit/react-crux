@@ -258,6 +258,19 @@ This is to support boolean fields. If the field is not present in the object, th
 ```
 
 ### Datepickers
+Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors.
+[Example](https://curefit.github.io/react-crux-examples/#/datepicker)
+
+```
+{
+  "title": "Date Of Joining",
+  "editable": true,
+  "display": true,
+  "field": "joiningDate",
+  "type": "datepicker"
+}
+```
+
 ### File/Image upload
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
 ```
