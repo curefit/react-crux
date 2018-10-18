@@ -109,15 +109,15 @@ const store = createStore(
    * _field_ - The key in the model to access this field (e.g. "name" field inside "Employee")
    * _representative_ - Set to true if this field is representative of the parent object. Used to show in other select menus etc. Typically name/title fields are representative
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
-        - _select_ - For dropdowns with single select option. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/select)
+        - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-        - _nested_ - For objects which have fields of their own. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/nested)
+        - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
-        - _tinyinput_ - For very small texts. [Example](https://curefit.github.io/react-crux-examples/#/nested)
-        - _bigtext_ - For large blobs of text.
-        - _checkbox_ - For boolean fields
-        - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document
-        - _datepicker_ - For fields that have dates. Detailed spec later.
+        - _tinyinput_ - For very small texts. [Example](http://localhost:3000/#/bigtext) 
+        - _bigtext_ - For large blobs of text. [Example](http://localhost:3000/#/bigtext)
+        - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
+        - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document. [Example](https://curefit.github.io/react-crux-examples/#/file)
+        - _datepicker_ - For fields that have dates. Detailed spec later. [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
@@ -243,12 +243,48 @@ If the field is itself an object containing more fields, its _type_ should be "n
 }
 ```
 
-
-### Recursive fields
+### Recursive fields (To be documented)
 ### Checkbox
-### Datepickers
-### File upload
+This is to support boolean fields. If the field is not present in the object, the edit modal shows it "unchecked" and saving does not set it. Otherwise that field is set as true or false (based on state). [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
 
+```
+{
+  "title": "Is Part Time ?",
+  "editable": true,
+  "display": true,
+  "field": "isPartTime",
+  "type": "checkbox"
+}
+```
+
+### Datepickers
+Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors.
+[Example](https://curefit.github.io/react-crux-examples/#/datepicker)
+
+```
+{
+  "title": "Date Of Joining",
+  "editable": true,
+  "display": true,
+  "field": "joiningDate",
+  "type": "datepicker"
+}
+```
+
+### File/Image upload
+This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
+```
+{
+    editable: true,
+    width: 100,
+    height: 100,
+    title: "App Image",
+    field: "image",
+    contentType: "image",
+    type: "imageUpload"
+},
+```
+### Custom Components
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
 ```
@@ -424,4 +460,3 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
 - For fetching models, create a proper DAG, do a topological sort and then fetch
-    
