@@ -14,7 +14,7 @@ If you use CRUX, you would not have to write HTML/JSX/TSX code. Essentially it c
 - Add react crux css and bootstrap to your app.scss
 ```
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
-$bootstrap-sass-asset-helper: true;
+$bootstrap-sass-asset-helper: false;
 
 @import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 @import "~@curefit/react-crux/scss/crux.scss";
@@ -109,11 +109,11 @@ const store = createStore(
    * _field_ - The key in the model to access this field (e.g. "name" field inside "Employee")
    * _representative_ - Set to true if this field is representative of the parent object. Used to show in other select menus etc. Typically name/title fields are representative
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
-        - _select_ - For dropdowns with single select option. Detailed explanation later.
-        - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later.
-        - _nested_ - For objects which have fields of their own. Detailed explanation later.
+        - _select_ - For dropdowns with single select option. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/select)
+        - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
+        - _nested_ - For objects which have fields of their own. Detailed explanation later.[Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
-        - _tinyinput_ - For very small texts.
+        - _tinyinput_ - For very small texts. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _bigtext_ - For large blobs of text.
         - _checkbox_ - For boolean fields
         - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document
@@ -131,6 +131,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
  - _modelName_: where to get the options from. The logic for this is same. Initially find it in redux store. If not found, fetch it by making http get call to /model/:modelName
  - _title_: Which field in the foreign object to use to show title in the option
  - _key_: Which field in the foreign object to use to store the value (typically some sort of id field)
+[Example](https://curefit.github.io/react-crux-examples/#/select)
 
 ```
 {
@@ -161,6 +162,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
+[Example](https://curefit.github.io/react-crux-examples/#/iterable)
 ```
 {
     title: "Nicknames",
@@ -175,6 +177,72 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 ```
 ### Nested Fields
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
+[Example](https://curefit.github.io/react-crux-examples/#/nested)
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+      "title": "Address",
+      "editable": true,
+      "display": true,
+      "field": "address",
+      "type": "nested",
+      "fields": [
+        {
+          "title": "Address Type",
+          "field": "type",
+          "display": true,
+          "editable": true,
+          "type": "select",
+          "foreign": {
+            "modelName": "addressTypes",
+            "key": "typeId",
+            "title": "displayName"
+          }
+        },
+        {
+          "title": "Address Line 1",
+          "field": "addressLine1",
+          "display": true,
+          "editable": true
+        },
+        {
+          "title": "Address Type",
+          "field": "addressLine2",
+          "display": true,
+          "editable": true
+        },
+        {
+          "title": "City",
+          "field": "city",
+          "display": true,
+          "editable": true
+        },
+        {
+          "title": "ZipCode",
+          "field": "zipcode",
+          "display": true,
+          "editable": true,
+          "type": "tinyinput"
+        }
+      ]
+    }
+  ],
+  "createModal": true
+}
+```
+
 
 ### Recursive fields
 ### Checkbox
@@ -239,6 +307,10 @@ A crux component when mounted does the following in order
 5. Fetches the filtered models by making http calls to /model/:modelName in no particular order
 
 # Examples
+All the live examples can be found at https://curefit.github.io/react-crux-examples
+The code for the examples can be found at https://github.com/curefit/react-crux-examples
+
+Some example snippets have been copied below for convenience.
 
 #### Table + Basic form with text inputs for create/modify/delete
 Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify and delete employees 
@@ -352,3 +424,4 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 - Create a UI to generate schema
 - Removing hardcoding of /model in fetch urls
 - For fetching models, create a proper DAG, do a topological sort and then fetch
+    
