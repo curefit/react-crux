@@ -191,7 +191,7 @@ class CruxComponentCreator {
                 }
 
                 try {
-                    if (_.isEmpty(this.props.model)) return <div />
+                    if (_.isEmpty(this.props.model) && !_.isNumber(this.props.model)) return <div />
                     const foreignDoc = this.props.additionalModels[this.props.field.modelName].find((datum: any) => datum[this.props.field.key] === this.props.model)
                     return foreignDoc ? <div>{_.get(foreignDoc, this.props.field.title)}</div> :
                         <div>{this.props.model + " - Bad Value"}</div>
