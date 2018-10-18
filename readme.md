@@ -243,7 +243,7 @@ If the field is itself an object containing more fields, its _type_ should be "n
 }
 ```
 
-### Recursive fields
+### Recursive fields (To be documented)
 ### Checkbox
 This is to support boolean fields. If the field is not present in the object, the edit modal shows it "unchecked" and saving does not set it. Otherwise that field is set as true or false (based on state). [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
 
