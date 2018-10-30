@@ -7,7 +7,7 @@ import {
 } from "react-bootstrap"
 import * as _ from "lodash"
 import { Typeahead } from "react-bootstrap-typeahead"
-const Dropzone = require("react-dropzone")
+import Dropzone from "react-dropzone"
 import DatePicker from "react-datepicker"
 import * as upload from "superagent"
 import * as moment from "moment"

@@ -36,6 +36,7 @@
     "@types/react-bootstrap": "^0.32.13",
     "@types/react-bootstrap-typeahead": "^3.2.1",
     "@types/react-datepicker": "^1.1.7",
+    "@types/react-dropzone": "^4.2.2",
     "@types/react-redux": "^6.0.6",
     "@types/superagent": "^3.8.4",
     "barrelsby": "^1.0.2",
