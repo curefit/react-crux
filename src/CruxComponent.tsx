@@ -1376,11 +1376,15 @@ class CruxComponentCreator {
                             {this.state.inProgress &&
                                 <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                             {this.props.currentModel &&
-                                <div><a target="_blank" style={{ color: "#4292f4" }} href={this.props.field.urlPrefix + this.props.currentModel + this.props.field.urlSuffix}> {this.props.contentType}
+                                <div><a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> {this.props.contentType}
                                     Link </a></div>}
                         </Dropzone>
                     </div>
                 )
+            }
+
+            getUrl(url: string, field: any) {
+                return (field.urlPrefix ? field.urlPrefix : "") + url + (field.urlSuffix ? field.urlSuffix : "")
             }
         }
 
