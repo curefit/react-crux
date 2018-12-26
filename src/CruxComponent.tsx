@@ -895,7 +895,9 @@ class CruxComponentCreator {
                                 }
 
                                 return <div key={index}>
-                                    <input key={index} type="text" value={datum}
+                                    <input key={index} 
+                                        type={this.props.field.iterabletype ? (this.props.field.iterabletype.type === "number" ? "number" : "text") : "text"} 
+                                        value={datum}
                                         onChange={this.handleChange.bind(this, index)}
                                         style={this.props.field.iterabletype === "tinyinput" ? {
                                             width: 64,
@@ -1225,7 +1227,7 @@ class CruxComponentCreator {
                                                     additionalModels={this.props.additionalModels}
                                                     fetch={this.props.fetch}
                                                     modelChanged={this.select.bind(this, field)}
-                                                    indent={false}
+                                                    indent={field.style ? (field.style.forceIndent ? true : false) : false}
                                                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
                                                     showTitle={true}
                                                     parentModel={currentModelWithParent}
@@ -1273,7 +1275,7 @@ class CruxComponentCreator {
                                                         fontSize: "10px",
                                                         marginRight: "10px"
                                                     }}>{field.title.toUpperCase()}</label><br /></span>}
-                                                    <input type="text"
+                                                    <input type={field.type === "number" ? "number" : "text"}
                                                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                         onChange={this.handleChange.bind(this, field)}
                                                         style={field.type === "tinyinput" ? {
