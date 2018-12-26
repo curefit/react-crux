@@ -894,9 +894,23 @@ class CruxComponentCreator {
                                     </div>
                                 }
 
+                                if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
+                                    return <div key={index}>
+                                        <input key={index}
+                                            type="number"
+                                            value={datum}
+                                            onChange={this.handleChange.bind(this, index)}
+                                            style={{ width: 200, paddingTop: 5 }}
+                                        />
+                                        <div style={{ marginLeft: "10px", color: "grey" }}
+                                            className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                                            onClick={this.remove.bind(this, index)} />
+                                    </div>
+                                }
+
                                 return <div key={index}>
-                                    <input key={index} 
-                                        type={this.props.field.iterabletype ? (this.props.field.iterabletype.type === "number" ? "number" : "text") : "text"} 
+                                    <input key={index}
+                                        type="text"
                                         value={datum}
                                         onChange={this.handleChange.bind(this, index)}
                                         style={this.props.field.iterabletype === "tinyinput" ? {
@@ -918,9 +932,9 @@ class CruxComponentCreator {
 
             handleChange = (index: any, event: any) => {
                 const modelCopy = JSON.parse(JSON.stringify(this.state.model));
-                let value : any = event.target.value;
+                let value: any = event.target.value;
 
-                if(event.target.type === "number") {
+                if (event.target.type === "number") {
                     value = parseFloat(event.target.value);
                 }
 
@@ -1274,14 +1288,28 @@ class CruxComponentCreator {
                                                 </div>
                                             }
                                             {
-                                                field.type !== "iterable" && field.type !== "select" && field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
-                                                field.type !== "datepicker" && field.type !== "imageUpload" &&
+                                                field.type === "number" &&
                                                 <div>
                                                     {!_.isEmpty(field.title) && <span><label style={{
                                                         fontSize: "10px",
                                                         marginRight: "10px"
                                                     }}>{field.title.toUpperCase()}</label><br /></span>}
-                                                    <input type={field.type === "number" ? "number" : "text"}
+                                                    <input type="number"
+                                                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                                                        onChange={this.handleChange.bind(this, field)}
+                                                        style={{ width: 200, paddingTop: 5 }}
+                                                    />
+                                                </div>
+                                            }
+                                            {
+                                                field.type !== "iterable" && field.type !== "select" && field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
+                                                field.type !== "datepicker" && field.type !== "imageUpload" && field.type !== "number" &&
+                                                <div>
+                                                    {!_.isEmpty(field.title) && <span><label style={{
+                                                        fontSize: "10px",
+                                                        marginRight: "10px"
+                                                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                                                    <input type="text"
                                                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                         onChange={this.handleChange.bind(this, field)}
                                                         style={field.type === "tinyinput" ? {
@@ -1327,8 +1355,8 @@ class CruxComponentCreator {
             }
 
             handleChange = (field: any, event: any) => {
-                let value : any = event.target.value;
-                if(event.target.type === "number"){
+                let value: any = event.target.value;
+                if (event.target.type === "number") {
                     value = parseFloat(event.target.value);
                 }
                 const newModel = Object.assign({}, this.props.currentModel, { [field.field]: value })
