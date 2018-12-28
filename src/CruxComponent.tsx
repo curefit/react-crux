@@ -931,14 +931,8 @@ class CruxComponentCreator {
             }
 
             handleChange = (index: any, event: any) => {
-                const modelCopy = JSON.parse(JSON.stringify(this.state.model));
-                let value: any = event.target.value;
-
-                if (event.target.type === "number") {
-                    value = parseFloat(event.target.value);
-                }
-
-                modelCopy[index] = value
+                const modelCopy = JSON.parse(JSON.stringify(this.state.model))
+                modelCopy[index] = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
                 this.props.modelChanged(modelCopy)
             }
 
@@ -1355,10 +1349,7 @@ class CruxComponentCreator {
             }
 
             handleChange = (field: any, event: any) => {
-                let value: any = event.target.value;
-                if (event.target.type === "number") {
-                    value = parseFloat(event.target.value);
-                }
+                const value : any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
                 const newModel = Object.assign({}, this.props.currentModel, { [field.field]: value })
                 this.props.modelChanged(newModel)
             }
