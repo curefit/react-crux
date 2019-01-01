@@ -14,17 +14,15 @@ export class InlineEditComponent extends React.Component<any, any> {
 
     render() {
         return <div>
-            {
-                this.state.edit ? <input type="text" value={this.state.text}
-                                         onKeyPress={this.handleEnter}
-                                         style={{ paddingTop: 5 }}
-                                         onChange={this.handleChange}
-                    /> :
-                    <span onClick={this.startEditing}>{this.state.text}</span>
-
+            {this.state.edit ?
+                <input type="text" value={this.state.text}
+                       onKeyPress={this.handleEnter}
+                       style={{ paddingTop: 5 }}
+                       onChange={this.handleChange}
+                /> :
+                <span onClick={this.startEditing}>{this.state.text}</span>
             }
-            {this.state.loading &&
-            <i className="fa fa-spinner fa-spin" style={{ fontSize: 12, marginLeft: 10 }} />}
+            {this.state.loading && <i className="fa fa-spinner fa-spin" style={{ fontSize: 12, marginLeft: 10 }} />}
         </div>
     }
 

@@ -39,9 +39,11 @@ export class ListNestedComponent extends React.Component<any, any> {
             }
 
             if (field.type === "iterable") {
-                return <ListIterableComponent model={value} field={field}
-                                              additionalModels={this.props.additionalModels}
-                                              modelChanged={this.modelChanged} />
+                return <ListIterableComponent
+                    model={value} field={field}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.modelChanged}
+                />
             }
 
             if (field.type === "datepicker") {
@@ -53,19 +55,22 @@ export class ListNestedComponent extends React.Component<any, any> {
             }
 
             if (field.type === "nested") {
-                return _.map(_.filter(field.fields, (f: any) => f.display && !_.isEmpty(value[f.field])), (f: any, index: number) => {
-                    return <div key={index}>
+                return _.map(_.filter(field.fields, (f: any) => f.display && !_.isEmpty(value[f.field])), (f: any, index: number) => (
+                    <div key={index}>
                         <span>{f.title + " : "}</span>
-                        <span><ListNestedComponent field={f} model={value}
-                                                   additionalModels={this.props.additionalModels}
-                                                   modelChanged={this.modelChanged} /></span>
+                        <span>
+                            <ListNestedComponent
+                                field={f} model={value}
+                                additionalModels={this.props.additionalModels}
+                                modelChanged={this.modelChanged}
+                            />
+                        </span>
                     </div>
-                })
+                ))
             }
 
             if (!_.isEmpty(field.foreign)) {
-                return <ListForeignComponent model={this.props.model[field.field]} field={field.foreign}
-                                             additionalModels={this.props.additionalModels} />
+                return <ListForeignComponent model={this.props.model[field.field]} field={field.foreign} additionalModels={this.props.additionalModels} />
             }
 
             if (field.inlineEdit) {

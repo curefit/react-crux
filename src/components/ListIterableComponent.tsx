@@ -34,9 +34,13 @@ export class ListIterableComponent extends React.Component<any, any> {
                         }
 
                         if (field.iterabletype.type === "iterable") {
-                            return <ListIterableComponent model={datum} field={field}
-                                                          additionalModels={this.props.additionalModels}
-                                                          modelChanged={this.modelChanged.bind(this, index)} />
+                            return (
+                                <ListIterableComponent
+                                    model={datum} field={field}
+                                    additionalModels={this.props.additionalModels}
+                                    modelChanged={this.modelChanged.bind(this, index)}
+                                />
+                            )
                         }
 
                         if (field.iterabletype.type === "nested") {
@@ -44,19 +48,22 @@ export class ListIterableComponent extends React.Component<any, any> {
                             return _.map(filtered, (f: any, index: number) => {
                                 return <div key={index}>
                                     <div style={{ display: "inline-block" }}>{f.title + " : "}</div>
-                                    <div style={{ display: "inline-block" }}><ListNestedComponent model={datum}
-                                                                                                  additionalModels={this.props.additionalModels}
-                                                                                                  field={f}
-                                                                                                  modelChanged={this.modelChanged.bind(this, index)} />
+                                    <div style={{ display: "inline-block" }}>
+                                        <ListNestedComponent
+                                            model={datum} additionalModels={this.props.additionalModels}
+                                            field={f} modelChanged={this.modelChanged.bind(this, index)}
+                                        />
                                     </div>
                                 </div>
                             })
                         }
 
                         if (field.iterabletype.type === "select") {
-                            return <div key={index}><ListForeignComponent model={datum}
-                                                                          field={field.iterabletype.foreign}
-                                                                          additionalModels={this.props.additionalModels} />
+                            return <div key={index}>
+                                <ListForeignComponent
+                                    model={datum} field={field.iterabletype.foreign}
+                                    additionalModels={this.props.additionalModels}
+                                />
                             </div>
                         }
 
@@ -65,8 +72,8 @@ export class ListIterableComponent extends React.Component<any, any> {
                         }
 
                         if (field.iterabletype.inlineEdit) {
-                            return <div key={index}><InlineEditComponent text={datum}
-                                                                         handleChange={this.modelChanged.bind(this, index)} />
+                            return <div key={index}>
+                                <InlineEditComponent text={datum} handleChange={this.modelChanged.bind(this, index)} />
                             </div>
                         } else {
                             return <div key={index}>{datum}</div>

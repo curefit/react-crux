@@ -64,14 +64,16 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                             display: "inline-block",
                                             marginRight: "30px"
                                         } : { padding: "5px 0px" }}>
-                                <div style={{ display: "inline-block" }}><SelectComponent key={index}
-                                                                                          constants={this.props.constants}
-                                                                                          currentModel={this.state.model[index]}
-                                                                                          field={this.props.field.iterabletype}
-                                                                                          additionalModels={this.props.additionalModels}
-                                                                                          modelChanged={this.fieldChanged(index)}
-                                                                                          showTitle={false}
-                                                                                          parentModel={parentModel}
+                                <div style={{ display: "inline-block" }}>
+                                    <SelectComponent
+                                        key={index}
+                                        constants={this.props.constants}
+                                        currentModel={this.state.model[index]}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
                                 />
                                 </div>
                                 <span style={{ marginLeft: "10px", color: "grey" }}
@@ -110,14 +112,16 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                             display: "inline-block",
                                             marginRight: "30px"
                                         } : { padding: "5px 0px" }}>
-                                <div style={{ display: "inline-block" }}><DatePickerComponent key={index}
-                                                                                              constants={this.props.constants}
-                                                                                              currentModel={this.state.model[index]}
-                                                                                              field={this.props.field.iterabletype}
-                                                                                              additionalModels={this.props.additionalModels}
-                                                                                              modelChanged={this.fieldChanged(index)}
-                                                                                              showTitle={false}
-                                                                                              parentModel={parentModel}
+                                <div style={{ display: "inline-block" }}>
+                                    <DatePickerComponent
+                                        key={index}
+                                        constants={this.props.constants}
+                                        currentModel={this.state.model[index]}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
                                 />
                                 </div>
                                 <span style={{ marginLeft: "10px", color: "grey" }}
@@ -133,15 +137,18 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                             display: "inline-block",
                                             marginRight: "30px"
                                         } : { padding: "5px 0px" }}>
-                                <div style={{ display: "inline-block" }}><TypeaheadComponent key={index}
-                                                                                             constants={this.props.constants}
-                                                                                             currentModel={this.state.model[index]}
-                                                                                             fetch={this.props.fetch}
-                                                                                             field={this.props.field.iterabletype}
-                                                                                             additionalModels={this.props.additionalModels}
-                                                                                             modelChanged={this.fieldChanged(index)}
-                                                                                             showTitle={false}
-                                                                                             parentModel={parentModel} />
+                                <div style={{ display: "inline-block" }}>
+                                    <TypeaheadComponent
+                                        key={index}
+                                        constants={this.props.constants}
+                                        currentModel={this.state.model[index]}
+                                        fetch={this.props.fetch}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                    />
                                 </div>
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                       className="glyphicon glyphicon-remove-circle" aria-hidden="true"
@@ -155,16 +162,19 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                             border: "1px solid #EEE",
                                             padding: "10px"
                                         }}>
-                                <div style={{ display: "inline-block" }}><NestedEditComponent key={index}
-                                                                                              currentModel={this.state.model[index]}
-                                                                                              fetch={this.props.fetch}
-                                                                                              field={this.props.field.iterabletype}
-                                                                                              additionalModels={this.props.additionalModels}
-                                                                                              modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                                                                              showTitle={false}
-                                                                                              indent={false}
-                                                                                              modalType={this.props.modalType}
-                                                                                              parentModel={parentModel} />
+                                <div style={{ display: "inline-block" }}>
+                                    <NestedEditComponent
+                                        key={index}
+                                        currentModel={this.state.model[index]}
+                                        fetch={this.props.fetch}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                        showTitle={false}
+                                        indent={false}
+                                        modalType={this.props.modalType}
+                                        parentModel={parentModel}
+                                    />
                                 </div>
                                 <div style={{ marginLeft: "10px", color: "grey" }}
                                      className="glyphicon glyphicon-remove-circle" aria-hidden="true"
