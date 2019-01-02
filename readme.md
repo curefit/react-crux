@@ -130,7 +130,9 @@ Most common use case after text fields is to have a field whose value is restric
 For fields with _type_: "select", another field _foreign_ is mandatory. This field tells CRUX where to get the options for select from. Three fields are mandatory in foreign
  - _modelName_: where to get the options from. The logic for this is same. Initially find it in redux store. If not found, fetch it by making http get call to /model/:modelName
  - _title_: Which field in the foreign object to use to show title in the option
- - _key_: Which field in the foreign object to use to store the value (typically some sort of id field)
+ - _key_: @deprecated(use keys) - Which field in the foreign object to use to store the value (typically some sort of id field)
+ - _keys_: array of fields in the foreign object to use to store the value
+
 [Example](https://curefit.github.io/react-crux-examples/#/select)
 
 ```

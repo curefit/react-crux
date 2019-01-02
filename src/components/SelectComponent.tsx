@@ -40,14 +40,17 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
         }
         let foreignTitle = !hideLabel ? "Choose " + this.props.field.title : "Choose"
         if (this.props.field.foreign) {
-            if (!this.props.field.foreign.key) {
-                console.error("Did you forget to add a \"key\" field in foreign . Possible culprit: ", this.props.field)
+            if (!this.props.field.foreign.key && !this.props.field.foreign.keys) {
+                console.error("Did you forget to add a \"key(s)\" field in foreign . Possible culprit: ", this.props.field)
             }
             if (!this.props.field.foreign.title) {
                 console.error("Did you forget to add a \"title\" field in foreign . Possible culprit: ", this.props.field)
             }
             if (!_.isEmpty(this.props.currentModel)) {
                 const foreignDoc = _.find(optionsData, (doc: any) => {
+                    if (this.props.field.foreign.keys) {
+                        return this.props.field.foreign.keys.every((key: any) => doc[key] === this.props.currentModel[key])
+                    }
                     if (this.props.field.valueType === "object") {
                         return doc.id === this.props.currentModel.id
                     }
@@ -73,10 +76,22 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
                             title={foreignTitle}>
                 {
-                    _.map(optionsData, ((doc: any, index: any) =>
-                        <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)}
-                                  key={index}
-                                  eventKey={this.props.field.valueType === "object" ? doc : doc[this.props.field.foreign.key]}>{doc[this.props.field.foreign.title]}</MenuItem>))
+                    _.map(optionsData, ((doc: any, index: any) => {
+                        let eventKey = doc
+                        if (this.props.field.valueType === "object") {
+                            eventKey = doc
+                        } else if (this.props.field.foreign.keys) {
+                            eventKey = {}
+                            for (const key of this.props.field.foreign.keys) {
+                                eventKey[key] = doc[key]
+                            }
+                        } else {
+                            eventKey = doc[this.props.field.foreign.key]
+                        }
+                        return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
+                            {doc[this.props.field.foreign.title]}
+                        </MenuItem>
+                    }))
                 }
             </DropdownButton></div>
     }
