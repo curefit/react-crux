@@ -1,6 +1,6 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { fetchModel, createOrModify, deleteModel, filterModel } from "./Actions"
+import { fetchModel, createOrModify, deleteModel, filterModel, cloneModel } from "./Actions"
 import {
     Table, Row, Col, Button, Modal, FormControl, FormGroup, ControlLabel, DropdownButton, MenuItem,
     Alert, Checkbox
@@ -12,8 +12,7 @@ import DatePicker from "react-datepicker"
 import * as upload from "superagent"
 import * as moment from "moment"
 import autobind from "autobind-decorator"
-
-export type ModalType = "CREATE" | "EDIT" | "FILTER"
+export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CLONE"
 interface InlineComponentProps {
     field: any,
     modelChanged: any,
@@ -102,6 +101,9 @@ class CruxComponentCreator {
                 },
                 deleteModel: (model: string, item: any, success: any, error: any) => {
                     dispatch(deleteModel(model, item, success, error))
+                },
+                cloneModel: (model: string, item: any, success: any, error: any) => {
+                    dispatch(cloneModel(model, item, success, error))
                 }
             }
         }
@@ -303,7 +305,9 @@ class CruxComponentCreator {
                     showCreateModal: false,
                     showFilterModal: false,
                     model: {},
-                    filterModel: {}
+                    filterModel: {},
+                    cloneModel: {},
+                    showCloneModal: false,
                 }
             }
 
@@ -375,6 +379,18 @@ class CruxComponentCreator {
                 error(data)
             }
 
+            showCloneModal = (model: M) => {
+                return () => this.setState(Object.assign({}, this.state, { showCloneModal: true, model }))
+            }
+
+            closeCloneModal = () => {
+                this.setState(Object.assign({}, this.state, { showCloneModal: false }))
+            }
+
+            cloneSuccess(data: any) {
+                this.closeCloneModal()
+            }
+
             render() {
                 const rows = _.isEmpty(constants.orderby) ? this.props[constants.modelName] : _.sortBy(this.props[constants.modelName], (doc: any) => {
                     return _.trim(doc[constants.orderby].toLowerCase())
@@ -413,6 +429,7 @@ class CruxComponentCreator {
                                         {_.map(constants.fields.filter((field: any) => field.display), (field: any, index: any) =>
                                             <th key={index}>{field.title}</th>)}
                                         {constants.editModal && <th></th>}
+                                        {constants.cloneModal && <th></th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -435,6 +452,11 @@ class CruxComponentCreator {
                                                     <td key={2}><span style={{ marginLeft: "20px", marginTop: 8, color: "grey" }}
                                                         className="glyphicon glyphicon-pencil fas fa-pencil-alt"
                                                         aria-hidden="true" onClick={this.showEditModal(model)} />
+                                                    </td>}
+                                                {constants.cloneModal &&
+                                                    <td key={3}><span style={{ marginLeft: "20px", marginTop: 8, color: "grey" }}
+                                                        className="glyphicon glyphicon-duplicate"
+                                                        aria-hidden="true" onClick={this.showCloneModal(model)} />
                                                     </td>}
                                             </tr>
                                         })}
@@ -473,6 +495,16 @@ class CruxComponentCreator {
                                 filter={this.props.filter}
                                 additionalModels={this.props.additionalModels} />
                         }
+                        {constants.cloneModal && this.state.showCloneModal &&
+                            <ModalComponent
+                                showModal={this.state.showCloneModal}
+                                closeModal={this.closeCloneModal}
+                                modalType={"CLONE"}
+                                item={this.state.model}
+                                cloneSuccess={this.cloneSuccess}
+                                clone={this.props.cloneModel}
+                                additionalModels={this.props.additionalModels} />
+                        }
                     </div>
                 )
             }
@@ -490,6 +522,9 @@ class CruxComponentCreator {
             filterSuccess?: any,
             filter?: any,
             additionalModels: any[],
+            cloneSuccess?: any,
+            clone?: any,
+
         }
 
         @autobind
@@ -525,6 +560,8 @@ class CruxComponentCreator {
                         this.props.filter(constants.modelName, this.state.item, this.filterSuccess, this.filterError)
                     } else if (modalType === "CREATE" || modalType === "EDIT") {
                         this.props.createOrModify(constants.modelName, this.state.item, modalType === "EDIT", this.createOrEditSuccess, this.createOrEditError)
+                    } else if (modalType === "CLONE") {
+                        this.props.clone(constants.modelName, this.state.item, this.cloneSuccess, this.filterError)
                     }
                 }
             }
@@ -568,6 +605,10 @@ class CruxComponentCreator {
                 this.props.deleteModel(constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError)
             }
 
+            cloneSuccess(data: any) {
+                this.props.cloneSuccess()
+            }
+
             render() {
                 let errorType, errorMessage
                 if (this.state.error && !_.isEmpty(this.state.error.message)) {
@@ -592,6 +633,9 @@ class CruxComponentCreator {
                             id="contained-modal-title">{"Edit " + constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
                         {this.props.modalType === "FILTER" &&
                             <Modal.Title id="contained-modal-title">{"Filter " + constants.creationTitle}</Modal.Title>}
+                        {this.props.modalType === "CLONE" &&
+                            <Modal.Title id="contained-modal-title">{"Clone " + constants.creationTitle}</Modal.Title>}
+
                     </Modal.Header>
                     <Modal.Body>
                         {this.state.error &&
@@ -630,7 +674,7 @@ class CruxComponentCreator {
                             </Modal>
                         }
                         <div className="btn btn-primary"
-                            onClick={this.modalPerformOperation(this.props.modalType)}>{this.props.modalType === "EDIT" ? "Save" : this.props.modalType === "CREATE" ? "Create" : "Filter"}</div>
+                            onClick={this.modalPerformOperation(this.props.modalType)}>{this.props.modalType === "EDIT" ? "Save" : this.props.modalType === "CREATE" ? "Create" : this.props.modalType === "CLONE" ? "Clone" : "Filter"}</div>
                         <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
                     </Modal.Footer>
                 </Modal>
@@ -718,7 +762,7 @@ class CruxComponentCreator {
             }
 
             render() {
-                // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
+                let totalLength = this.state.model.length
                 if (!this.props.field.iterabletype) {
                     console.error("Did you forget to add a iterabletype to the field ? Possible culprit:", this.props.field)
                 }
@@ -760,6 +804,10 @@ class CruxComponentCreator {
                                         <span style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
+
                                     </div>
                                 }
 
@@ -785,6 +833,10 @@ class CruxComponentCreator {
                                         <span style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
+
                                     </div>
                                 }
 
@@ -807,6 +859,9 @@ class CruxComponentCreator {
                                         <span style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -829,6 +884,9 @@ class CruxComponentCreator {
                                         <span style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -852,6 +910,9 @@ class CruxComponentCreator {
                                         <div style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -868,6 +929,9 @@ class CruxComponentCreator {
                                         <div style={{ marginLeft: "10px", color: "grey" }}
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
+                                        <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -918,6 +982,33 @@ class CruxComponentCreator {
                 const modelCopy = JSON.parse(JSON.stringify(this.state.model))
                 modelCopy[index] = event.target.value
                 this.props.modelChanged(modelCopy)
+            }
+
+            addAtIndex = (index: any) => {
+                const clone = _.cloneDeep(this.state.model)
+                if (this.props.field.iterabletype.type === "nested") {
+                    clone.splice(index, 0, {});
+                    this.props.modelChanged(clone)
+                } else {
+                    clone.splice(index, 0, "");
+                    this.props.modelChanged(clone)
+                }
+            }
+
+            reorder(index: any, flag: number) {
+                const clone = _.cloneDeep(this.state.model)
+                if (flag === 0) {
+                    const tempArr = clone[index - 1]
+                    clone[index - 1] = clone[index]
+                    clone[index] = tempArr
+                    this.props.modelChanged(clone)
+                }
+                if (flag === 1) {
+                    const tempArr = clone[index + 1]
+                    clone[index + 1] = clone[index]
+                    clone[index] = tempArr
+                    this.props.modelChanged(clone)
+                }
             }
 
             fieldChanged = (index: any) => {
@@ -1134,6 +1225,9 @@ class CruxComponentCreator {
                 } else if (this.props.modalType === "FILTER") {
                     fields = _.filter(this.props.field.fields, (field: any) => field.filterParameter === true)
                 }
+                else if (this.props.modalType === "CLONE") {
+                    fields = _.filter(this.props.field.fields, (field: any) => field.cloneParameter === true)
+                }
                 // Filter out the filed not matching specified conditional field
                 fields = _.filter(fields, (field: any) => {
                     if (field.conditionalField) {
@@ -1167,7 +1261,7 @@ class CruxComponentCreator {
                     <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
                         <div style={{ display: "inline-block" }}>
                             {
-                                _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
+                                _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true || field.cloneParameter === true), (field: any, index: any) => {
                                     const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
                                     return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                         display: "inline-block",
@@ -1377,7 +1471,7 @@ class CruxComponentCreator {
                                 <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                             {this.props.currentModel &&
                                 <div><a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> {this.props.contentType}
-                                    Link </a></div>}
+                                    <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} /> </a></div>}
                         </Dropzone>
                     </div>
                 )
@@ -1407,22 +1501,31 @@ class CruxComponentCreator {
 
             render() {
                 return (
-                    <div>
-                        <label style={{
-                            fontSize: "10px",
-                            marginRight: "10px"
-                        }}>{this.props.field.title.toUpperCase()}</label><br />
-                        <DatePicker
-                            showTimeSelect={!!this.props.field.showTimeSelect}
-                            timeIntervals={30}
-                            dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
-                            timeFormat="HH:mm"
-                            selected={this.state.dateTime}
-                            onChange={this.handleChange}
-                            className="autowidth"
-                        />
+                    <div style={{ display: "flex" }}>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <label style={{
+                                fontSize: "10px",
+                                marginRight: "10px"
+                            }}>{this.props.field.title.toUpperCase()}</label>
+                            <DatePicker
+                                showTimeSelect={this.props.field.showTimeSelect}
+                                timeIntervals={30}
+                                dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
+                                timeFormat="HH:mm"
+                                selected={this.state.dateTime}
+                                onChange={this.handleChange}
+                            />
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <label style={{ fontSize: "10px", marginRight: "10px" }}>Time Interval</label>
+                            <input type="number" value={this.state.interval} onChange={this.handleIntervalChange} min="0" max="59" />
+                        </div>
                     </div>
                 )
+            }
+
+            handleIntervalChange = (event: any) => {
+                this.setState({ interval: event.target.value })
             }
 
             handleChange(selected: any) {
