@@ -41,10 +41,13 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
         let foreignTitle = !hideLabel ? "Choose " + this.props.field.title : "Choose"
         if (this.props.field.foreign) {
             if (!this.props.field.foreign.key && !this.props.field.foreign.keys) {
-                console.error("Did you forget to add a \"key(s)\" field in foreign . Possible culprit: ", this.props.field)
+                console.error(`Did you forget to add a "key(s)" field in foreign. Possible culprit: ${this.props.field}`)
+            }
+            if (this.props.field.foreign.key && this.props.field.foreign.keys) {
+                console.error(`ambiguous use of "key" and "keys", use any one`)
             }
             if (!this.props.field.foreign.title) {
-                console.error("Did you forget to add a \"title\" field in foreign . Possible culprit: ", this.props.field)
+                console.error(`Did you forget to add a "title" field in foreign . Possible culprit: ${this.props.field}`)
             }
             if (!_.isEmpty(this.props.currentModel)) {
                 const foreignDoc = _.find(optionsData, (doc: any) => {
@@ -54,7 +57,11 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                     if (this.props.field.valueType === "object") {
                         return doc.id === this.props.currentModel.id
                     }
-                    return doc[this.props.field.foreign.key] === this.props.currentModel
+                    if (this.props.field.foreign.key) {
+                        console.warn(`deprecated usage of "key", use "keys" instead`)
+                        return doc[this.props.field.foreign.key] === this.props.currentModel
+                    }
+                    console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                 })
                 if (_.isEmpty(foreignDoc)) {
                     foreignTitle = this.props.currentModel + " Bad Value"
@@ -85,8 +92,11 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                             for (const key of this.props.field.foreign.keys) {
                                 eventKey[key] = doc[key]
                             }
-                        } else {
+                        } else if (this.props.field.foreign.key) {
+                            console.warn(`deprecated usage of "key", use "keys" instead`)
                             eventKey = doc[this.props.field.foreign.key]
+                        } else {
+                            console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
                         return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
                             {doc[this.props.field.foreign.title]}
