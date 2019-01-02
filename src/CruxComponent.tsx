@@ -162,14 +162,13 @@ export class CruxComponentCreator {
                 })
                 const filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
-                    return <div className="cf-main-content-container"
-                                style={{ width: "100%", padding: 10 }}>
+                    return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
                     </div>
                 }
                 return (
 
-                    <div className="cf-main-content-container" style={{ width: "100%", padding: 10 }}>
+                    <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
                         {constants.createModal && <div className="pull-right btn btn-primary btn-xs"
                                                        onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
                         {constants.filterModal &&
