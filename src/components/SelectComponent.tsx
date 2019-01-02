@@ -6,20 +6,6 @@ import { InlineComponentProps } from "../CruxComponent"
 
 @autobind
 export class SelectComponent extends React.Component<InlineComponentProps, any> {
-    // constructor(props: any) {
-    //     super(props)
-    //     this.state = {
-    //         isTransformed: false
-    //     }
-    // }
-    //
-    // componentWillUpdate(nextProps: any, nextState: any) {
-    //
-    //     if (this.state.isTransformed) {
-    //         // console.log("nextProps", nextProps, "currentProps", this.props)
-    //     }
-    // }
-
     render() {
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
@@ -82,9 +68,6 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
     }
 
     select = (field: any, eventKey: any) => {
-        // this.setState({
-        //     isTransformed : true
-        // })
         this.props.modelChanged(field, eventKey)
     }
 }

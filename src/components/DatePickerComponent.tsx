@@ -8,12 +8,8 @@ import { InlineComponentProps } from "../CruxComponent"
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        // this.state = this.props.field.showTimeSelect ? {dateTime: moment()} : {dateTime: moment(moment().format("ll"))}
         this.state = {}
     }
-    // componentDidMount() {
-    //
-    // }
 
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.currentModel) {
