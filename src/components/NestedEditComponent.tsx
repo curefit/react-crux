@@ -190,7 +190,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="number"
-                                                   disabled={field.readonly}
+                                                   disabled={field.readonly === true}
                                                    value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                    onChange={this.handleChange.bind(this, field)}
                                                    style={{ width: 200, paddingTop: 5 }}
@@ -206,7 +206,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="text"
-                                                   disabled={field.readonly}
+                                                   disabled={field.readonly === true}
                                                    value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                    onChange={this.handleChange.bind(this, field)}
                                                    style={field.type === "tinyinput" ? {
