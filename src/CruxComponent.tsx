@@ -7,8 +7,8 @@ import {
 } from "react-bootstrap"
 import * as _ from "lodash"
 import { Typeahead } from "react-bootstrap-typeahead"
-import Dropzone from "react-dropzone"
-import DatePicker from "react-datepicker"
+const Dropzone = require("react-dropzone")
+const DatePicker = require("react-datepicker")
 import * as upload from "superagent"
 import * as moment from "moment"
 import autobind from "autobind-decorator"
@@ -805,9 +805,8 @@ class CruxComponentCreator {
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
                                         <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
-                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
-                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
-
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -834,9 +833,8 @@ class CruxComponentCreator {
                                             className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                             onClick={this.remove.bind(this, index)} />
                                         <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
-                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
-                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index)} />}
-
+                                        {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
+                                        {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
                                     </div>
                                 }
 
@@ -996,6 +994,7 @@ class CruxComponentCreator {
             }
 
             reorder(index: any, flag: number) {
+                console.log(this.state.model, "Before")
                 const clone = _.cloneDeep(this.state.model)
                 if (flag === 0) {
                     const tempArr = clone[index - 1]
@@ -1009,6 +1008,8 @@ class CruxComponentCreator {
                     clone[index] = tempArr
                     this.props.modelChanged(clone)
                 }
+                console.log(clone, "After")
+
             }
 
             fieldChanged = (index: any) => {
@@ -1487,7 +1488,7 @@ class CruxComponentCreator {
             constructor(props: any) {
                 super(props)
                 // this.state = this.props.field.showTimeSelect ? {dateTime: moment()} : {dateTime: moment(moment().format("ll"))}
-                this.state = {}
+                this.state = { interval: 30 }
             }
             // componentDidMount() {
             //
@@ -1509,7 +1510,7 @@ class CruxComponentCreator {
                             }}>{this.props.field.title.toUpperCase()}</label>
                             <DatePicker
                                 showTimeSelect={this.props.field.showTimeSelect}
-                                timeIntervals={30}
+                                timeIntervals={this.state.interval}
                                 dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
                                 timeFormat="HH:mm"
                                 selected={this.state.dateTime}
