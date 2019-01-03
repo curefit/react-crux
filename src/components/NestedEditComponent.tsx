@@ -21,8 +21,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return field.creatable === true
         }
 
-        if (modalType === "CREATE" || modalType === "EDIT") {
+        if(modalType === 'CREATE'){
             return field.editable === true
+        }
+
+        if (modalType === "EDIT") {
+            return field.editable === true || field.readonly === true
         }
 
         return false
@@ -186,6 +190,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="number"
+                                                   disabled={field.readonly}
                                                    value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                    onChange={this.handleChange.bind(this, field)}
                                                    style={{ width: 200, paddingTop: 5 }}
@@ -201,6 +206,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="text"
+                                                   disabled={field.readonly}
                                                    value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                    onChange={this.handleChange.bind(this, field)}
                                                    style={field.type === "tinyinput" ? {

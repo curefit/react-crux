@@ -224,6 +224,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
                             return <div key={index}>
                                 <input key={index}
+                                       disabled={this.props.field.iterabletype.readonly}
                                        type="number"
                                        value={datum}
                                        onChange={this.handleChange.bind(this, index)}
@@ -237,6 +238,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
                         return <div key={index}>
                             <input key={index}
+                                   disabled={this.props.field.iterabletype.readonly}
                                    type="text"
                                    value={datum}
                                    onChange={this.handleChange.bind(this, index)}

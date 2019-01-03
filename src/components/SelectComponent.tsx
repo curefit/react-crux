@@ -52,7 +52,9 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 if (_.isEmpty(foreignDoc)) {
                     foreignTitle = this.props.currentModel + " Bad Value"
                 } else {
-                    foreignTitle = foreignDoc[this.props.field.foreign.title]
+                    foreignTitle = this.props.field.foreign.version ? 
+                        `${foreignDoc[this.props.field.foreign.title]} ~ V ${foreignDoc[this.props.field.foreign.version]}`
+                        : foreignDoc[this.props.field.foreign.title]
                 }
             }
         } else {
@@ -67,7 +69,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 }}>{this.props.field.title.toUpperCase()}</label><br /></div>
             }
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
-                            title={foreignTitle}>
+                title={foreignTitle}>
                 {
                     _.map(optionsData, ((doc: any, index: any) => {
                         let eventKey = doc
@@ -85,11 +87,14 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
                         return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
-                            {doc[this.props.field.foreign.title]}
+                            {this.props.field.foreign.version ? 
+                                `${doc[this.props.field.foreign.title]} ~ V ${doc[this.props.field.foreign.version]}`
+                                : doc[this.props.field.foreign.title]}
                         </MenuItem>
                     }))
                 }
-            </DropdownButton></div>
+            </DropdownButton>
+        </div>
     }
 
     select = (field: any, eventKey: any) => {
