@@ -42,7 +42,6 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
     }
 
     render() {
-        console.log("At dropzone", this.props.currentModel, this.props.field)
         return (
             <div>
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
