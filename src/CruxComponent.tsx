@@ -994,7 +994,6 @@ class CruxComponentCreator {
             }
 
             reorder(index: any, flag: number) {
-                console.log(this.state.model, "Before")
                 const clone = _.cloneDeep(this.state.model)
                 if (flag === 0) {
                     const tempArr = clone[index - 1]
@@ -1008,8 +1007,6 @@ class CruxComponentCreator {
                     clone[index] = tempArr
                     this.props.modelChanged(clone)
                 }
-                console.log(clone, "After")
-
             }
 
             fieldChanged = (index: any) => {
