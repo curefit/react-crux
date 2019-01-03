@@ -138,13 +138,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                                      showTitle={false}
                                      parentModel={{}}
                 />
-                {this.props.constants.additionalInformation && <Alert bsStyle="warning">
-                    {
-                        <div>
-                            <b>{`${this.props.constants.creationTitle} Version will also be Updated `}</b>
-                        </div>
-                    }
-                </Alert>}
             </Modal.Body>
             <Modal.Footer>
                 {this.props.modalType === "EDIT" &&
