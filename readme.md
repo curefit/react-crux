@@ -132,6 +132,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
  - _title_: Which field in the foreign object to use to show title in the option
  - _key_: @deprecated(use keys) - Which field in the foreign object to use to store the value (typically some sort of id field)
  - _keys_: array of fields in the foreign object to use to store the value
+ - _titleTransform_: lambda fn to generate title for foreign object
 
 [Example](https://curefit.github.io/react-crux-examples/#/select)
 
