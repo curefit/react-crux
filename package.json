@@ -1,6 +1,6 @@
 {
   "name": "react-crux",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
