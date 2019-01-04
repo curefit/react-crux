@@ -28,6 +28,7 @@ export interface InlineComponentProps {
     urlSuffix?: string
     constants?: any,
     anchors?: any,
+    readonly?: boolean
 }
 
 export class CruxComponentCreator {
