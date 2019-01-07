@@ -14,7 +14,7 @@ export function CruxReducerFactory(defaultModels: any) {
                 }
 
                 if (action.type.endsWith("_COMPLETED")) {
-                    return Object.assign({}, initialState, {[action.model]: action.data, fetchComplete: true})
+                    return Object.assign({}, initialState, {[action.model]: {data: action.data, metaData: action.metaData}, fetchComplete: true})
                 }
 
                 if (action.type.endsWith("_FAILURE")) {

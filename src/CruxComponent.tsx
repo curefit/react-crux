@@ -76,7 +76,7 @@ export class CruxComponentCreator {
 
             fetchModels = () => {
                 const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => _.isEmpty(this.props.additionalModels[model]))
-                additionalModels && additionalModels.forEach((model: string) => this.props.fetch(model))
+                additionalModels && additionalModels.forEach((model: string) => constants.paginate && constants.paginate.defaultPageSize ? this.props.filter(model, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(model))
             }
 
             constructor(props: any) {
@@ -85,8 +85,19 @@ export class CruxComponentCreator {
                     showCreateModal: false,
                     showFilterModal: false,
                     model: {},
-                    filterModel: {}
+                    filterModel: {
+                        paginate: {
+                            currentPage: 1,
+                            currentPageSize: this.getInitialPageSize()
+                        },
+                        limit: this.getInitialPageSize(),
+                        skip: 0
+                    }
                 }
+            }
+
+            getInitialPageSize = () => {
+                return constants.paginate ? (constants.paginate.defaultPageSize ? constants.paginate.defaultPageSize : '') : ''
             }
 
             showCreateModal = () => {
@@ -118,7 +129,7 @@ export class CruxComponentCreator {
             createOrEditSuccess = (data?: any) => {
                 this.closeEditModal()
                 this.closeCreateModal()
-                if (constants.filterModal)
+                if (constants.filterModal || (this.state.filterModel && this.state.filterModel.paginate))
                     this.props.filter(constants.modelName, this.state.filterModel)
                 else
                     this.fetchModel(constants.modelName)
@@ -157,53 +168,109 @@ export class CruxComponentCreator {
                 error(data)
             }
 
+            previousPage() {
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPage'] -= 1
+                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit + 
+                                           (paginationData['currentPage'] - 1 === 0 ? 0 : 1) 
+                filterModelData['paginate'] = paginationData
+                this.setState({
+                    filterModel : filterModelData
+                })
+                this.props.filter(constants.modelName, filterModelData)
+            }
+
+            nextPage() {
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPage'] += 1
+                filterModelData['skip'] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
+                filterModelData['paginate'] = paginationData
+                this.setState({
+                    filterModel : filterModelData
+                })
+                this.props.filter(constants.modelName, filterModelData)
+            }
+
+            paginate(pageSize: number) {
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPageSize'] = pageSize
+                filterModelData['paginate'] = paginationData
+                filterModelData['skip'] = 0
+                filterModelData['limit'] = pageSize
+                this.setState({filterModel : filterModelData})
+                this.props.filter(constants.modelName, filterModelData)
+            }
+
             render() {
-                const rows = _.isEmpty(constants.orderby) ? this.props[constants.modelName] : _.sortBy(this.props[constants.modelName], (doc: any) => {
+                const rows = _.isEmpty(constants.orderby) ? this.props[constants.modelName] && this.props[constants.modelName].data : _.sortBy(this.props[constants.modelName].data, (doc: any) => {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
                 const filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
-                    return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
+                    return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
                     </div>
                 }
                 return (
-
-                    <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
+                    <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
                         {constants.createModal && <div className="pull-right btn btn-primary btn-xs"
-                                                       onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
+                            onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
                         {constants.filterModal &&
-                        <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
-                             onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
+                            <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
+                                onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
                         {constants.filterModal &&
-                        <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
-                             onClick={this.resetFilter}>{"Reset Filter "}</div>}
+                            <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
+                                onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
+                        {constants.paginate && constants.paginate.allowedPageSizes && Array.isArray(constants.paginate.allowedPageSizes) &&
+                        this.state.filterModel && this.state.filterModel.paginate && this.props[constants.modelName] 
+                        && this.props[constants.modelName].metaData &&
+                            <>
+                                <button style={{ marginRight: 10 }} 
+                                    className="btn btn-default btn-xs"
+                                    disabled={this.state.filterModel.paginate.currentPage === 1}
+                                    onClick={this.previousPage}>Prev</button>
+                                <span className="heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.state.filterModel.paginate.currentPage 
+                                    + '/' + Math.round(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
+                                <button style={{ marginRight: 10 }} 
+                                    className="btn btn-default btn-xs"
+                                    disabled={Math.round(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize) - this.state.filterModel.paginate.currentPage === 0}
+                                    onClick={this.nextPage}>Next</button>
+                                {constants.paginate.allowedPageSizes.filter((pageSize : number) => pageSize <= this.props[constants.modelName].metaData.totalCount).map((paginateSize: number) => {
+                                    return (
+                                        <div style={{ marginRight: 10 }} className="btn btn-primary btn-xs"
+                                            onClick={this.paginate.bind(this, paginateSize)}>{paginateSize}</div>
+                                    )
+                                })}
+                            </>
+                        }
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
                                 <FormControl type="text" value={this.state.searchQuery} placeholder="Search"
-                                             onChange={this.handleSearch} />
+                                    onChange={this.handleSearch} />
                             </FormGroup>
                         </div>}
                         <div style={{ marginTop: "10px" }} />
-
-                        {_.isEmpty(this.props[constants.modelName]) ? <div>No {constants.title} in the system</div> :
+                        {this.props[constants.modelName] && _.isEmpty(this.props[constants.modelName].data) ? <div>No {constants.title} in the system</div> :
                             <Table className="table table-striped cftable" striped bordered condensed hover>
                                 <thead>
-                                <tr>
-                                    {_.map(constants.fields.filter((field: any) => field.display), (field: any, index: any) =>
-                                        <th key={index}>{field.title}</th>)}
-                                    {constants.editModal && <th></th>}
-                                </tr>
+                                    <tr>
+                                        {_.map(constants.fields.filter((field: any) => field.display), (field: any, index: any) =>
+                                            <th key={index}>{field.title}</th>)}
+                                        {constants.editModal && <th></th>}
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {_.map(filteredRows,
-                                    (model: any, index: number) => {
-                                        const filtered = constants.fields.filter((field: any) => field.display === true)
-                                        return <tr key={index}>
-                                            {_.map(filtered, (field: any, i: number) => {
+                                    {_.map(filteredRows,
+                                        (model: any, index: number) => {
+                                            const filtered = constants.fields.filter((field: any) => field.display === true)
+                                            return <tr key={index}>
+                                                {_.map(filtered, (field: any, i: number) => {
                                                     return <td key={i}
-                                                               style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                        style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                         <div style={{ marginTop: 8 }}>
                                                             <ListNestedComponent
                                                                 field={field} model={model}
@@ -212,51 +279,51 @@ export class CruxComponentCreator {
                                                         </div>
                                                     </td>
                                                 }
-                                            )}
-                                            {constants.editModal &&
-                                            <td key={2}><span style={{ marginLeft: "20px", marginTop: 8, color: "grey" }}
-                                                              className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                              aria-hidden="true" onClick={this.showEditModal(model)} />
-                                            </td>}
-                                        </tr>
-                                    })}
+                                                )}
+                                                {constants.editModal &&
+                                                    <td key={2}><span style={{ marginLeft: "20px", marginTop: 8, color: "grey" }}
+                                                        className="glyphicon glyphicon-pencil fas fa-pencil-alt"
+                                                        aria-hidden="true" onClick={this.showEditModal(model)} />
+                                                    </td>}
+                                            </tr>
+                                        })}
 
                                 </tbody>
                             </Table>
                         }
                         {constants.createModal && this.state.showCreateModal &&
-                        <ModalComponent
-                            constants={constants}
-                            showModal={this.state.showCreateModal}
-                            closeModal={this.closeCreateModal}
-                            modalType={"CREATE"}
-                            createOrModify={this.props.createOrModify}
-                            createOrEditSuccess={this.createOrEditSuccess}
-                            additionalModels={this.props.additionalModels} />
+                            <ModalComponent
+                                constants={constants}
+                                showModal={this.state.showCreateModal}
+                                closeModal={this.closeCreateModal}
+                                modalType={"CREATE"}
+                                createOrModify={this.props.createOrModify}
+                                createOrEditSuccess={this.createOrEditSuccess}
+                                additionalModels={this.props.additionalModels} />
                         }
                         {constants.editModal && this.state.showEditModal &&
-                        <ModalComponent
-                            constants={constants}
-                            showModal={this.state.showEditModal}
-                            closeModal={this.closeEditModal}
-                            modalType={"EDIT"}
-                            fetch={(model: string) => this.props.fetch(model)}
-                            item={this.state.model}
-                            createOrModify={this.props.createOrModify}
-                            createOrEditSuccess={this.createOrEditSuccess}
-                            deleteModel={this.props.deleteModel}
-                            additionalModels={this.props.additionalModels} />
+                            <ModalComponent
+                                constants={constants}
+                                showModal={this.state.showEditModal}
+                                closeModal={this.closeEditModal}
+                                modalType={"EDIT"}
+                                fetch={this.state.filterModel && this.state.filterModel.paginate ? (model: string) => this.props.filter(model, this.state.filterModel) : (model: string) => this.props.fetch(model)}
+                                item={this.state.model}
+                                createOrModify={this.props.createOrModify}
+                                createOrEditSuccess={this.createOrEditSuccess}
+                                deleteModel={this.props.deleteModel}
+                                additionalModels={this.props.additionalModels} />
                         }
                         {constants.filterModal && this.state.showFilterModal &&
-                        <ModalComponent
-                            constants={constants}
-                            showModal={this.state.showFilterModal}
-                            closeModal={this.closeFilterModal}
-                            modalType={"FILTER"}
-                            item={this.state.filterModel}
-                            filterSuccess={this.filterSuccess}
-                            filter={this.props.filter}
-                            additionalModels={this.props.additionalModels} />
+                            <ModalComponent
+                                constants={constants}
+                                showModal={this.state.showFilterModal}
+                                closeModal={this.closeFilterModal}
+                                modalType={"FILTER"}
+                                item={this.state.filterModel}
+                                filterSuccess={this.filterSuccess}
+                                filter={this.props.filter}
+                                additionalModels={this.props.additionalModels} />
                         }
                     </div>
                 )
