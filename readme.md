@@ -150,19 +150,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
     }
 }
 
-// Readonly Select
-{
-    title: "Media Type",
-    field: "mediaType",
-    display: true,
-    readonly: true,
-    type: "select",
-    foreign: {
-        modelName: "mediaTypes",
-        key: "typeId", // typeId is what will be stored while storing mediaType for the object
-        title: "title" // title is what will be used to show in the dropdown
-    }
-}
+// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 // Above example assumes that /model/mediaTypes returns a response like
 [
@@ -192,6 +180,8 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
     }
 }
 ```
+// Add readonly attribute with boolean value, to make it disabled (readonly : true)
+
 ### Nested Fields
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
 [Example](https://curefit.github.io/react-crux-examples/#/nested)
@@ -273,6 +263,7 @@ This is to support boolean fields. If the field is not present in the object, th
   "type": "checkbox"
 }
 ```
+// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### Datepickers
 Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors.
@@ -287,6 +278,7 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
   "type": "datepicker"
 }
 ```
+// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### File/Image upload
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
@@ -301,6 +293,8 @@ This is to support fields that require a image/file upload. When _type_ is _imag
     type: "imageUpload"
 },
 ```
+// Add readonly attribute with boolean value, to make it disabled (readonly : true)
+
 ### Custom Components
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
@@ -383,19 +377,22 @@ const schema = {
             field: "name",
             representative: true,
             display: true, // We want to display it in table
-            editable: true // We want to be able to edit it
+            editable: true, // We want to be able to edit it
+            readonly: true // We want to be able to disable it
         },
         {
             title: "Age",
             field: "age",
             display: false, // We _dont_ want to display it in table
-            editable: true // We want to be able to edit it
+            editable: true, // We want to be able to edit it
+            readonly: true // We want to be able to disable it
         },
         {
             title: "Email Address", 
             field: "emailAddress",
             display: true, // We want to display it in table
-            editable: true // We want to be able to edit it
+            editable: true, // We want to be able to edit it
+            readonly: true // We want to be able to disable it
         }
     ]
 }
