@@ -45,14 +45,14 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
         }
     }
 
-    modalPerformOperation(modalType: ModalType) {
+    modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
             if (modalType === "FILTER") {
                 // Copies the filter items to persist the preference
                 Object.assign(this.props.item, this.state.item)
                 this.props.filter(this.props.constants.modelName, this.state.item, this.filterSuccess, this.filterError)
             } else if (modalType === "CREATE" || modalType === "EDIT") {
-                this.props.createOrModify(this.props.constants.modelName, this.state.item, modalType === "EDIT", this.createOrEditSuccess, this.createOrEditError)
+                this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError)
             }
         }
     }
@@ -157,11 +157,19 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     </Modal.Footer>
                 </Modal>
                 }
-                <div className="btn btn-primary"
-                     onClick={this.modalPerformOperation(this.props.modalType)}>{this.props.modalType === "EDIT" ? "Save" : this.props.modalType === "CREATE" ? "Create" : "Filter"}</div>
+                {this.props.modalType === "EDIT" ?
+                    <>
+                        <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</div>
+                        <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</div>
+                    </> : null}
+                {this.props.modalType === "CREATE" ? (
+                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Create</div>
+                ) : null}
+                {this.props.modalType === "FILTER" ? (
+                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Filter</div>
+                ) : null}
                 <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
             </Modal.Footer>
         </Modal>
     }
 }
-
