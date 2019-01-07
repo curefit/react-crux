@@ -192,55 +192,57 @@ export class CruxComponentCreator {
                         </div>}
                         <div style={{ marginTop: "10px" }} />
 
-                        {_.isEmpty(this.props[constants.modelName]) ? <div>No {constants.title} in the system</div> :
-                            <Table className="table table-striped cftable" striped bordered condensed hover>
-                                <thead>
-                                <tr>
-                                    {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
-                                        <th key={index}>{field.title}</th>)}
-                                    {constants.editModal && <th></th>}
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr key='searchRow'>
-                                    {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
-                                        <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                            <div>
-                                                {field.search && field.search.key && field.search.filterLocation === "server" && <FormGroup>
-                                                    <FormControl type="text"
-                                                        value={(this.state.filterModel || {})[field.search.key]}
-                                                        onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
-                                                        onBlur={(e: any) => this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)}
-                                                    />
-                                                </FormGroup>}
+                        <Table className="table table-striped cftable" striped bordered condensed hover>
+                            <thead>
+                            <tr>
+                                {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
+                                    <th key={index}>{field.title}</th>)}
+                                {constants.editModal && <th></th>}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr key='searchRow'>
+                                {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
+                                    <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                        <div>
+                                            {field.search && field.search.key && <FormGroup>
+                                                <FormControl type="text"
+                                                             value={(this.state.filterModel || {})[field.search.key]}
+                                                             onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
+                                                             onBlur={(e: any) => {
+                                                                 if (field.search.filterLocation === "server") {
+                                                                     this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
+                                                                 }
+                                                             }}
+                                                />
+                                            </FormGroup>}
+                                        </div>
+                                    </td>
+                                ))}
+                            </tr>
+                            {_.map(filteredRows, (model: any, index: number) => {
+                                const filtered = constants.fields.filter((field: any) => field.display === true)
+                                return <tr key={index}>
+                                    {_.map(filtered, (field: any, i: number) => {
+                                        return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                            <div style={{ marginTop: 8 }}>
+                                                <ListNestedComponent
+                                                    field={field} model={model}
+                                                    additionalModels={this.props.additionalModels}
+                                                    modelChanged={this.inlineEdit} />
                                             </div>
                                         </td>
-                                    ))}
+                                    })}
+                                    {constants.editModal &&
+                                    <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                                      className="glyphicon glyphicon-pencil fas fa-pencil-alt"
+                                                      aria-hidden="true" onClick={this.showEditModal(model)} />
+                                    </td>}
                                 </tr>
-                                {_.map(filteredRows, (model: any, index: number) => {
-                                    const filtered = constants.fields.filter((field: any) => field.display === true)
-                                    return <tr key={index}>
-                                        {_.map(filtered, (field: any, i: number) => {
-                                            return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                                <div style={{ marginTop: 8 }}>
-                                                    <ListNestedComponent
-                                                        field={field} model={model}
-                                                        additionalModels={this.props.additionalModels}
-                                                        modelChanged={this.inlineEdit} />
-                                                </div>
-                                            </td>
-                                        })}
-                                        {constants.editModal &&
-                                        <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
-                                                          className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                          aria-hidden="true" onClick={this.showEditModal(model)} />
-                                        </td>}
-                                    </tr>
-                                })}
+                            })}
 
-                                </tbody>
-                            </Table>
-                        }
+                            </tbody>
+                        </Table>
                         {constants.createModal && this.state.showCreateModal &&
                         <ModalComponent
                             constants={constants}
