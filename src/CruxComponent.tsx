@@ -164,7 +164,10 @@ export class CruxComponentCreator {
                 const rows = _.isEmpty(constants.orderby) ? this.props[constants.modelName] : _.sortBy(this.props[constants.modelName], (doc: any) => {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
-                const filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
+                let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
+                _.forEach(_.filter(constants.fields, (field) => field.search && field.search.filterLocation === "client"), (field) => {
+                    filteredRows = _.filter(filteredRows, (row: any) => !row[field] || JSON.stringify(row[field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
+                })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
@@ -184,8 +187,7 @@ export class CruxComponentCreator {
                         <div className="heading cf-container-header">{constants.title}</div>
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
-                                <FormControl type="text" value={this.state.searchQuery} placeholder="Search"
-                                             onChange={this.handleSearch} />
+                                <FormControl type="text" value={this.state.searchQuery} placeholder="Search" onChange={this.handleSearch} />
                             </FormGroup>
                         </div>}
                         <div style={{ marginTop: "10px" }} />
@@ -201,10 +203,10 @@ export class CruxComponentCreator {
                                 </thead>
                                 <tbody>
                                 <tr key='searchRow'>
-                                    {constants.fields.filter((field: any) => field.display === true).map((field: any, i: number) => {
-                                        return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                    {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
+                                        <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                             <div>
-                                                {field.search && <FormGroup>
+                                                {field.search && field.search.key && field.search.filterLocation === "server" && <FormGroup>
                                                     <FormControl type="text"
                                                         value={(this.state.filterModel || {})[field.search.key]}
                                                         onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
@@ -213,7 +215,7 @@ export class CruxComponentCreator {
                                                 </FormGroup>}
                                             </div>
                                         </td>
-                                    })}
+                                    ))}
                                 </tr>
                                 {_.map(filteredRows, (model: any, index: number) => {
                                     const filtered = constants.fields.filter((field: any) => field.display === true)
