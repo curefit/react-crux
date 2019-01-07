@@ -133,6 +133,8 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
  - _key_: @deprecated(use keys) - Which field in the foreign object to use to store the value (typically some sort of id field)
  - _keys_: array of fields in the foreign object to use to store the value
  - _titleTransform_: lambda fn to generate title for foreign object
+ - _search_: if set, allows field level filtering
+    - _key_: identifier used for this field in filterModel
 
 [Example](https://curefit.github.io/react-crux-examples/#/select)
 
