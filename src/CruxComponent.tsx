@@ -165,8 +165,8 @@ export class CruxComponentCreator {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
                 let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
-                _.forEach(_.filter(constants.fields, (field) => field.search && field.search.filterLocation === "client"), (field) => {
-                    filteredRows = _.filter(filteredRows, (row: any) => !row[field] || JSON.stringify(row[field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
+                _.forEach(_.filter(constants.fields, (field) => field.search && this.state.filterModel[field.search.key]), (field: any) => {
+                    filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
                 })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY :"scroll" }}>
