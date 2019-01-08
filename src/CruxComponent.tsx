@@ -76,7 +76,7 @@ export class CruxComponentCreator {
 
             fetchModels = () => {
                 const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => _.isEmpty(this.props.additionalModels[model]))
-                additionalModels && additionalModels.forEach((model: string) => constants.paginate && constants.paginate.defaultPageSize ? this.props.filter(model, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(model))
+                additionalModels && additionalModels.forEach((model: string) => this.getInitialPageSize() ? this.props.filter(model, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(model))
             }
 
             constructor(props: any) {
@@ -97,7 +97,7 @@ export class CruxComponentCreator {
             }
 
             getInitialPageSize = () => {
-                return constants.paginate ? (constants.paginate.defaultPageSize ? constants.paginate.defaultPageSize : '') : ''
+                return constants.paginate && constants.paginate.defaultPageSize ? constants.paginate.defaultPageSize : ''
             }
 
             showCreateModal = () => {
@@ -233,8 +233,8 @@ export class CruxComponentCreator {
                             <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
                                 onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
-                        {constants.paginate && constants.paginate.allowedPageSizes && Array.isArray(constants.paginate.allowedPageSizes) &&
-                        this.state.filterModel && this.state.filterModel.paginate && this.props[constants.modelName] 
+                        {constants.paginate && Array.isArray(constants.paginate.allowedPageSizes) &&
+                        this.state.filterModel && this.props[constants.modelName] 
                         && this.props[constants.modelName].metaData &&
                             <div className="pull-right" style={{marginBottom : 10}}>
                                 <button style={{ marginRight: 10 }} 
@@ -335,7 +335,7 @@ export class CruxComponentCreator {
                                 showModal={this.state.showEditModal}
                                 closeModal={this.closeEditModal}
                                 modalType={"EDIT"}
-                                fetch={this.state.filterModel && this.state.filterModel.paginate ? (model: string) => this.props.filter(model, this.state.filterModel) : (model: string) => this.props.fetch(model)}
+                                fetch={(model: string) => this.props.fetch(model)}
                                 item={this.state.model}
                                 createOrModify={this.props.createOrModify}
                                 createOrEditSuccess={this.createOrEditSuccess}
