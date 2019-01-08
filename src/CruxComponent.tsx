@@ -241,16 +241,21 @@ export class CruxComponentCreator {
                                     className="btn btn-default btn-xs"
                                     disabled={this.state.filterModel.paginate.currentPage === 1}
                                     onClick={this.previousPage}>Prev</button>
-                                <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.state.filterModel.paginate.currentPage 
-                                    + '/' + Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
+                                <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{"Page: " + this.state.filterModel.paginate.currentPage 
+                                    + ' / ' + Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
                                 <button style={{ marginRight: 10 }} 
                                     className=" btn btn-default btn-xs"
                                     disabled={Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize) - this.state.filterModel.paginate.currentPage === 0}
                                     onClick={this.nextPage}>Next</button>
+                                <span className="heading" style={{marginRight: 10}}>Page Size: </span>
                                 {constants.paginate.allowedPageSizes.map((paginateSize: number) => {
+                                    let buttonClass = "btn btn-default btn-xs"
+                                    if(this.state.filterModel.paginate.currentPageSize === paginateSize){
+                                        buttonClass = "btn btn-primary btn-xs"
+                                    }
                                     return (
                                         <button style={{ marginRight: 10 }} 
-                                            className="btn btn-primary btn-xs"
+                                            className={buttonClass}
                                             onClick={this.paginate.bind(this, paginateSize)}>{paginateSize}</button>
                                     )
                                 })}
