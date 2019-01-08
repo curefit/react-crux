@@ -7,6 +7,7 @@ import autobind from "autobind-decorator"
 import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
+import { PaginationComponent } from "./components/PaginationComponent"
 
 export type ModalType = "CREATE" | "EDIT" | "FILTER"
 export interface InlineComponentProps {
@@ -97,7 +98,7 @@ export class CruxComponentCreator {
             }
 
             getInitialPageSize = () => {
-                return constants.paginate && constants.paginate.defaultPageSize ? constants.paginate.defaultPageSize : ''
+                return constants.paginate && constants.paginate.defaultPageSize || ''
             }
 
             showCreateModal = () => {
@@ -233,34 +234,15 @@ export class CruxComponentCreator {
                             <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
                                 onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
-                        {constants.paginate && Array.isArray(constants.paginate.allowedPageSizes) &&
-                        this.state.filterModel && this.props[constants.modelName] 
-                        && this.props[constants.modelName].metaData &&
-                            <div className="pull-right" style={{marginBottom : 10}}>
-                                <button style={{ marginRight: 10 }} 
-                                    className="btn btn-default btn-xs"
-                                    disabled={this.state.filterModel.paginate.currentPage === 1}
-                                    onClick={this.previousPage}>Prev</button>
-                                <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{"Page: " + this.state.filterModel.paginate.currentPage 
-                                    + ' / ' + Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
-                                <button style={{ marginRight: 10 }} 
-                                    className=" btn btn-default btn-xs"
-                                    disabled={Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize) - this.state.filterModel.paginate.currentPage === 0}
-                                    onClick={this.nextPage}>Next</button>
-                                <span className="heading" style={{marginRight: 10}}>Page Size: </span>
-                                {constants.paginate.allowedPageSizes.map((paginateSize: number) => {
-                                    let buttonClass = "btn btn-default btn-xs"
-                                    if(this.state.filterModel.paginate.currentPageSize === paginateSize){
-                                        buttonClass = "btn btn-primary btn-xs"
-                                    }
-                                    return (
-                                        <button style={{ marginRight: 10 }} 
-                                            className={buttonClass}
-                                            onClick={this.paginate.bind(this, paginateSize)}>{paginateSize}</button>
-                                    )
-                                })}
-                            </div>
-                        }
+                        {constants.paginate && this.props[constants.modelName] && this.props[constants.modelName].metaData &&
+                        <PaginationComponent 
+                            prev={this.previousPage}
+                            next={this.nextPage}
+                            paginate={this.paginate}
+                            metadata={this.props[constants.modelName].metaData}
+                            dataconstant={constants.paginate}
+                            item={this.state.filterModel}
+                            />}
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
                                 <FormControl type="text" value={this.state.searchQuery} placeholder="Search" onChange={this.handleSearch} />
