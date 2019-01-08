@@ -54,7 +54,11 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         // Filter out the filed not matching specified conditional field
         fields = _.filter(fields, (field: any) => {
             if (field.conditionalField) {
-                return this.props.currentModel && this.props.currentModel[field.conditionalField] === field.conditionalValue
+                if(Array.isArray(field.conditionalValue)){
+                    return this.props.currentModel && field.conditionalValue.includes(this.props.currentModel[field.conditionalField]) 
+                } else {
+                    return this.props.currentModel && this.props.currentModel[field.conditionalField] === field.conditionalValue
+                }
             }
             return true
         })
