@@ -197,6 +197,7 @@ export class CruxComponentCreator {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
                 paginationData['currentPageSize'] = pageSize
+                paginationData['currentPage'] = 1
                 filterModelData['paginate'] = paginationData
                 filterModelData['skip'] = 0
                 filterModelData['limit'] = pageSize
@@ -228,24 +229,25 @@ export class CruxComponentCreator {
                         {constants.paginate && constants.paginate.allowedPageSizes && Array.isArray(constants.paginate.allowedPageSizes) &&
                         this.state.filterModel && this.state.filterModel.paginate && this.props[constants.modelName] 
                         && this.props[constants.modelName].metaData &&
-                            <>
+                            <div className="pull-right" style={{marginBottom : 10}}>
                                 <button style={{ marginRight: 10 }} 
                                     className="btn btn-default btn-xs"
                                     disabled={this.state.filterModel.paginate.currentPage === 1}
                                     onClick={this.previousPage}>Prev</button>
-                                <span className="heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.state.filterModel.paginate.currentPage 
-                                    + '/' + Math.round(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
+                                <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.state.filterModel.paginate.currentPage 
+                                    + '/' + Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize)}</span>
                                 <button style={{ marginRight: 10 }} 
-                                    className="btn btn-default btn-xs"
-                                    disabled={Math.round(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize) - this.state.filterModel.paginate.currentPage === 0}
+                                    className=" btn btn-default btn-xs"
+                                    disabled={Math.ceil(this.props[constants.modelName].metaData.totalCount / this.state.filterModel.paginate.currentPageSize) - this.state.filterModel.paginate.currentPage === 0}
                                     onClick={this.nextPage}>Next</button>
-                                {constants.paginate.allowedPageSizes.filter((pageSize : number) => pageSize <= this.props[constants.modelName].metaData.totalCount).map((paginateSize: number) => {
+                                {constants.paginate.allowedPageSizes.map((paginateSize: number) => {
                                     return (
-                                        <div style={{ marginRight: 10 }} className="btn btn-primary btn-xs"
-                                            onClick={this.paginate.bind(this, paginateSize)}>{paginateSize}</div>
+                                        <button style={{ marginRight: 10 }} 
+                                            className="btn btn-primary btn-xs"
+                                            onClick={this.paginate.bind(this, paginateSize)}>{paginateSize}</button>
                                     )
                                 })}
-                            </>
+                            </div>
                         }
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
