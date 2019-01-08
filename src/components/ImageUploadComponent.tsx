@@ -45,7 +45,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         return (
             <div>
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
-                          disabled={this.props.readonly === true}
+                          disabled={this.props.readonly}
                           onDrop={(data: any) => {
                               this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
                           }} multiple={true}>
