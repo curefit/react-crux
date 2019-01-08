@@ -76,8 +76,24 @@ export class CruxComponentCreator {
             }
 
             fetchModels = () => {
-                const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => _.isEmpty(this.props.additionalModels[model]))
-                additionalModels && additionalModels.forEach((model: string) => this.getInitialPageSize() ? this.props.filter(model, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(model))
+                const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model))
+                additionalModels && additionalModels.forEach((model: string) => this.fetchServerData(model))
+            }
+
+            checkAdditionalModel(modelName: string) {
+                if((modelName === constants.modelName && constants.paginate) || 
+                    !Array.isArray(this.props.additionalModels[modelName])){
+                    return true
+                }
+                return _.isEmpty(this.props.additionalModels[modelName])
+            }
+
+            fetchServerData(modelName: string) {
+                if(modelName === constants.modelName){
+                    this.getDefaultPageSize() ? this.props.filter(modelName, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(modelName)
+                } else {
+                    this.props.fetch(modelName)
+                }
             }
 
             constructor(props: any) {
@@ -89,15 +105,15 @@ export class CruxComponentCreator {
                     filterModel: {
                         paginate: {
                             currentPage: 1,
-                            currentPageSize: this.getInitialPageSize()
+                            currentPageSize: this.getDefaultPageSize()
                         },
-                        limit: this.getInitialPageSize(),
+                        limit: this.getDefaultPageSize(),
                         skip: 0
                     }
                 }
             }
 
-            getInitialPageSize = () => {
+            getDefaultPageSize = () => {
                 return constants.paginate && constants.paginate.defaultPageSize || ''
             }
 
@@ -210,8 +226,12 @@ export class CruxComponentCreator {
                 this.props.filter(constants.modelName, filterModelData)
             }
 
+            getTableData() {
+                return this.props[constants.modelName] && this.props[constants.modelName].results ? this.props[constants.modelName].results : this.props[constants.modelName]
+            }
+
             render() {
-                const rows = _.isEmpty(constants.orderby) ? this.props[constants.modelName] && this.props[constants.modelName].data : _.sortBy(this.props[constants.modelName].data, (doc: any) => {
+                const rows = _.isEmpty(constants.orderby) ? this.getTableData() : _.sortBy(this.getTableData(), (doc: any) => {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
                 let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
@@ -234,12 +254,12 @@ export class CruxComponentCreator {
                             <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
                                 onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
-                        {constants.paginate && this.props[constants.modelName] && this.props[constants.modelName].metaData &&
+                        {constants.paginate && this.props[constants.modelName] && this.props[constants.modelName].metadata &&
                         <PaginationComponent 
                             prev={this.previousPage}
                             next={this.nextPage}
                             paginate={this.paginate}
-                            metadata={this.props[constants.modelName].metaData}
+                            metadata={this.props[constants.modelName].metadata}
                             dataconstant={constants.paginate}
                             item={this.state.filterModel}
                             />}

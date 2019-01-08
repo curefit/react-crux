@@ -25,7 +25,7 @@ export function filterModel(model: string, item: any, success?: any, error?: any
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "FETCH_" + model + "_STARTED", model: model })
         fetch(apiServer + "/model/" + model + "/filter", FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: data.results ? data.results : data, model: model, metaData: data.metaPaginationData })
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: {results : data.results ? data.results : data, metadata: data.metadata}, model: model})
             if (success) success(data.results ? data.results : data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
@@ -43,7 +43,7 @@ export function fetchModel(model: string, success?: any, error?: any) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "FETCH_" + model + "_STARTED", model: model })
         fetch(apiServer + "/model/" + model, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data : data.results ? data.results : data, model: model, metaData: data.metaPaginationData })
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data : data.results ? data.results : data, model: model})
             if (success) success(data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
