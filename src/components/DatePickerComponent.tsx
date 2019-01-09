@@ -1,7 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import * as moment from "moment"
-const DatePicker = require("react-datepicker")
+import DatePicker from "react-datepicker"
 import { InlineComponentProps } from "../CruxComponent"
 
 @autobind
@@ -34,10 +34,11 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
                         onChange={this.handleChange}
                     />
                 </div>
+                { this.props.field.showTimeSelect &&
                 <div style={{ display: "flex", flexDirection: "column" }}>
                     <label style={{ fontSize: "10px", marginRight: "10px" }}>Time Interval</label>
                     <input type="number" value={this.state.interval} onChange={this.handleIntervalChange} min="0" max="59" />
-                </div>
+                </div>}
             </div>
         )
     }

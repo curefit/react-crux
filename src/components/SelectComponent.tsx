@@ -51,6 +51,8 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 })
                 if (_.isEmpty(foreignDoc)) {
                     foreignTitle = this.props.currentModel + " Bad Value"
+                } else if (this.props.field.foreign.titleTransform && typeof this.props.field.foreign.titleTransform === "function") {
+                    foreignTitle = this.props.field.foreign.titleTransform(foreignDoc)
                 } else {
                     foreignTitle = foreignDoc[this.props.field.foreign.title]
                 }
@@ -85,7 +87,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
                         return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
-                            {doc[this.props.field.foreign.title]}
+                            {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
                         </MenuItem>
                     }))
                 }

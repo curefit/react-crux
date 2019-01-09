@@ -75,9 +75,8 @@ export class ListNestedComponent extends React.Component<any, any> {
 
             if (field.inlineEdit) {
                 return <InlineEditComponent text={value} handleChange={this.modelChanged} />
-            } else {
-                return <div>{value}</div>
             }
+            return <div>{value}</div>
         }
     }
 }
