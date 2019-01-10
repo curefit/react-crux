@@ -80,9 +80,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
                                 {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
                                 {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
@@ -106,9 +103,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         showTitle={false} parentModel={parentModel}
                                     />
                                 </div>
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
@@ -137,9 +131,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         parentModel={parentModel}
                                     />
                                 </div>
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
@@ -172,9 +163,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-plus" aria-hidden="true" onClick={this.addAtIndex.bind(this, index)} />
                                 {index != 0 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-up" aria-hidden="true" onClick={this.reorder.bind(this, index, 0)} />}
                                 {index != totalLength - 1 && <span style={{ marginLeft: "10px", color: "grey" }} className="glyphicon glyphicon-arrow-down" aria-hidden="true" onClick={this.reorder.bind(this, index, 1)} />}
@@ -201,9 +189,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         parentModel={parentModel}
                                     />
                                 </div>
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
@@ -223,9 +208,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     showTitle={true} indent={true}
                                     modalType={this.props.modalType}
                                     parentModel={parentModel} />
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                    className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                    onClick={this.remove.bind(this, index)} />
                                 <span style={{ marginLeft: "10px", color: "grey" }}
                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                                     onClick={this.remove.bind(this, index)} />
