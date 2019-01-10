@@ -1,6 +1,6 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { createOrModify, deleteModel, fetchModel, filterModel, cloneModel } from "./Actions"
+import { createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal } from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
@@ -8,7 +8,7 @@ import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
 
-export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CLONE"
+export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CUSTOM"
 export interface InlineComponentProps {
     field: any,
     modelChanged: any,
@@ -29,6 +29,8 @@ export interface InlineComponentProps {
     constants?: any,
     anchors?: any,
 }
+
+export { ModalComponent } from './components/ModalComponent'
 
 export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
@@ -62,8 +64,11 @@ export class CruxComponentCreator {
                 deleteModel: (model: string, item: any, success: any, error: any) => {
                     dispatch(deleteModel(model, item, success, error))
                 },
-                cloneModel: (model: string, item: any, success: any, error: any) => {
-                    dispatch(cloneModel(model, item, success, error))
+                successCustomModal: (data: any, type: string, model: string ) => {
+                    dispatch(successCustomModal(data, type, model))
+                },
+                failureCustomModal: (err: any, model: string, type: string) => {
+                    dispatch(failureCustomModal(type, err, model))
                 }
             }
         }
@@ -90,6 +95,7 @@ export class CruxComponentCreator {
                     filterModel: {},
                     cloneModel: {},
                     showCloneModal: false,
+                    showCustomModal: false
                 }
             }
 
@@ -113,6 +119,14 @@ export class CruxComponentCreator {
                 return () => {
                     this.setState({ showEditModal: true, model })
                 }
+            }
+
+            showCustomModal = (model: any) => {
+                this.setState({ showCustomModal: true, model})
+            }
+
+            closeCustomModal = () => {
+                this.setState({ showCustomModal: false, model: {} })
             }
 
             closeEditModal = () => {
@@ -149,7 +163,7 @@ export class CruxComponentCreator {
             }
 
             handleFieldSearch = (field: string, searchQuery: any) => {
-                this.setState({ filterModel: Object.assign({}, this.state.filterModel, {[field]: searchQuery}) })
+                this.setState({ filterModel: Object.assign({}, this.state.filterModel, { [field]: searchQuery }) })
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -175,6 +189,19 @@ export class CruxComponentCreator {
 
             cloneSuccess(data: any) {
                 this.closeCloneModal()
+            }
+
+            successCustomModalDispatch(data: any, type: string, model: string) {
+                this.props.successCustomModal(data, type, model)
+            }
+
+            failureCustomModalDispatch(err: any, modelName: string, type: string) {
+                this.props.failureCustomModal(err, modelName, type)
+            }
+
+            getCustomComponent() {
+                const CustomComponent = constants.customModalComponent(this.state.model, this.closeCustomModal, this.successCustomModalDispatch, this.failureCustomModalDispatch)
+                return <CustomComponent />
             }
 
             render() {
@@ -210,52 +237,59 @@ export class CruxComponentCreator {
 
                         <Table className="table table-striped cftable" striped bordered condensed hover>
                             <thead>
-                            <tr>
-                                {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
-                                    <th key={index}>{field.title}</th>)}
-                                {constants.editModal && <th></th>}
-                            </tr>
+                                <tr>
+                                    {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
+                                        <th key={index}>{field.title}</th>)}
+                                    {constants.editModal && <th></th>}
+                                    {constants.customModal && <th></th>}
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr key='searchRow'>
-                                {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
-                                    <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                        <div>
-                                            {field.search && field.search.key && <FormGroup>
-                                                <FormControl type="text"
-                                                             value={(this.state.filterModel || {})[field.search.key]}
-                                                             onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
-                                                             onBlur={(e: any) => {
-                                                                 if (field.search.filterLocation === "server") {
-                                                                     this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
-                                                                 }
-                                                             }}
-                                                />
-                                            </FormGroup>}
-                                        </div>
-                                    </td>
-                                ))}
-                            </tr>
-                            {_.map(filteredRows, (model: any, index: number) => {
-                                const filtered = constants.fields.filter((field: any) => field.display === true)
-                                return <tr key={index}>
-                                    {_.map(filtered, (field: any, i: number) => {
-                                        return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                            <div style={{ marginTop: 8 }}>
-                                                <ListNestedComponent
-                                                    field={field} model={model}
-                                                    additionalModels={this.props.additionalModels}
-                                                    modelChanged={this.inlineEdit} />
-                                            </div>
-                                        </td>
-                                    })}
-                                    {constants.editModal &&
-                                    <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
-                                                      className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                      aria-hidden="true" onClick={this.showEditModal(model)} />
-                                    </td>}
+                                {constants.fields.some((field: any) => field.search) &&
+                                    <tr key='searchRow'>
+                                        {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
+                                            <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                <div>
+                                                    {field.search && field.search.key && <FormGroup>
+                                                        <FormControl type="text"
+                                                            value={(this.state.filterModel || {})[field.search.key]}
+                                                            onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
+                                                            onBlur={(e: any) => {
+                                                                if (field.search.filterLocation === "server") {
+                                                                    this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
+                                                                }
+                                                            }}
+                                                        />
+                                                    </FormGroup>}
+                                                </div>
+                                            </td>
+                                        ))}
+                                    </tr>}
+                                {_.map(filteredRows, (model: any, index: number) => {
+                                    const filtered = constants.fields.filter((field: any) => field.display === true)
+                                    return <tr key={index}>
+                                        {_.map(filtered, (field: any, i: number) => {
+                                            return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                <div style={{ marginTop: 8 }}>
+                                                    <ListNestedComponent
+                                                        field={field} model={model}
+                                                        additionalModels={this.props.additionalModels}
+                                                        modelChanged={this.inlineEdit} />
+                                                </div>
+                                            </td>
+                                        })}
+                                        {constants.editModal &&
+                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-pencil fas fa-pencil-alt"
+                                                aria-hidden="true" onClick={this.showEditModal(model)} />
+                                            </td>}
+                                        {constants.customModal &&
+                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-duplicate"
+                                                aria-hidden="true" onClick={this.showCustomModal.bind(this, model)} />
+                                            </td>}
                                 </tr>
-                            })}
+                                })}
 
                             </tbody>
                         </Table>
@@ -293,16 +327,8 @@ export class CruxComponentCreator {
                                 filter={this.props.filter}
                                 additionalModels={this.props.additionalModels} />
                         }
-                        {constants.cloneModal && this.state.showCloneModal &&
-                            <ModalComponent
-                                constants={constants}
-                                showModal={this.state.showCloneModal}
-                                closeModal={this.closeCloneModal}
-                                modalType={"CLONE"}
-                                item={this.state.model}
-                                cloneSuccess={this.cloneSuccess}
-                                clone={this.props.cloneModel}
-                                additionalModels={this.props.additionalModels} />
+                        {constants.customModal && this.state.showCustomModal &&
+                            this.getCustomComponent()
                         }
                     </div>
                 )

@@ -12,9 +12,9 @@ export function CruxReducerFactory(defaultModels: any) {
                         return Object.assign({}, initialState, { fetchComplete: false })
                     }
                 }
-                if (action.type.endsWith("_COMPLETED_CLONE")) {
-                    initialState[action.model].unshift(action.data)
-                    const data = initialState[action.model]
+                if (action.type.endsWith("_NEWDATA")) {
+                    const data = _.cloneDeep(initialState[action.model])
+                    data.unshift(action.data)
                     return Object.assign({}, initialState, { [action.model]: data, fetchComplete: true })
                 }
                 if (action.type.endsWith("_COMPLETED")) {

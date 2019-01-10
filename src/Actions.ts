@@ -94,20 +94,14 @@ export function deleteModel(model: string, item: any, success?: any, error?: any
     }
 }
 
-export function cloneModel(model: string, item: any, success?: any, error?: any) {
+export function successCustomModal(data: any, type: string, model: string) {
     return (dispatch: Dispatch<any>) => {
-        dispatch({ type: "FETCH_" + model + "_STARTED_CLONE", model: model })
-        fetch(apiServer + "/model/" + model + "/clone", FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED_CLONE", data: data, model: model })
-            if (success) success(data)
-        }).catch((err: any) => {
-            if (err.name === "AuthError") {
-                dispatch({ type: "AUTH_FAILED" })
-                return
-            }
-            console.log("Error while deleting" + model, err)
-            dispatch({ type: "DELETE_" + model + "_FAILURE_CLONE", err: err, model: model })
-            if (error) error(err)
-        })
+        dispatch({ data, type, model })
+    }
+}
+
+export function failureCustomModal(err: any, model: string, type: string) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ type, err, model })
     }
 }

@@ -19,7 +19,8 @@ interface ModalComponentProps {
     filter?: any,
     additionalModels: any[],
     cloneSuccess?: any,
-    clone?: any
+    clone?: any,
+    successButtonLabel?: string
 }
 
 @autobind
@@ -53,7 +54,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 // Copies the filter items to persist the preference
                 Object.assign(this.props.item, this.state.item)
                 this.props.filter(this.props.constants.modelName, this.state.item, this.filterSuccess, this.filterError)
-            } else if (modalType === "CREATE" || modalType === "EDIT") {
+            } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError)
             }
         }
@@ -126,8 +127,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     id="contained-modal-title">{"Edit " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
                 {this.props.modalType === "FILTER" &&
                     <Modal.Title id="contained-modal-title">{"Filter " + this.props.constants.creationTitle}</Modal.Title>}
-                {this.props.modalType === "CLONE" &&
-                    <Modal.Title id="contained-modal-title">{"Clone " + this.props.constants.creationTitle}</Modal.Title>}
+                {this.props.modalType === "CUSTOM" &&
+                    <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
             </Modal.Header>
             <Modal.Body>
                 {this.state.error &&
@@ -170,8 +171,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</div>
                         <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</div>
                     </> : null}
-                {this.props.modalType === "CREATE" ? (
-                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Create</div>
+                {this.props.modalType === "CREATE" || this.props.modalType === "CUSTOM" ? (
+                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>{this.props.successButtonLabel || "Create"}</div>
                 ) : null}
                 {this.props.modalType === "FILTER" ? (
                     <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Filter</div>
