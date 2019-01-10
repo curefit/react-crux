@@ -18,8 +18,6 @@ interface ModalComponentProps {
     filterSuccess?: any,
     filter?: any,
     additionalModels: any[],
-    cloneSuccess?: any,
-    clone?: any,
     successButtonLabel?: string
 }
 
@@ -97,10 +95,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     deleteModel = () => {
         this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError)
-    }
-
-    cloneSuccess(data: any) {
-        this.props.cloneSuccess()
     }
 
     render() {
