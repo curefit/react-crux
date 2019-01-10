@@ -46,8 +46,6 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             fields = _.filter(this.props.field.fields, (field: any) => this.getEditable(field, this.props.modalType))
         } else if (this.props.modalType === "FILTER") {
             fields = _.filter(this.props.field.fields, (field: any) => field.filterParameter === true)
-        } else if (this.props.modalType === "CLONE") {
-            fields = _.filter(this.props.field.fields, (field: any) => field.cloneParameter === true)
         }
 
         // Filter out the filed not matching specified conditional field
@@ -83,7 +81,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
                 <div style={{ display: "inline-block" }}>
                     {
-                        _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true || field.cloneParameter === true), (field: any, index: any) => {
+                        _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
                             const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
                             return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                 display: "inline-block",
