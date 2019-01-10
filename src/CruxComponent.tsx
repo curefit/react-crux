@@ -94,7 +94,6 @@ export class CruxComponentCreator {
                     model: {},
                     filterModel: {},
                     cloneModel: {},
-                    showCloneModal: false,
                     showCustomModal: false
                 }
             }
@@ -177,18 +176,6 @@ export class CruxComponentCreator {
 
             inlineEditError(error: any, data: any) {
                 error(data)
-            }
-
-            showCloneModal = (model: M) => {
-                return () => this.setState(Object.assign({}, this.state, { showCloneModal: true, model }))
-            }
-
-            closeCloneModal = () => {
-                this.setState(Object.assign({}, this.state, { showCloneModal: false }))
-            }
-
-            cloneSuccess(data: any) {
-                this.closeCloneModal()
             }
 
             successCustomModalDispatch(data: any, type: string, model: string) {
