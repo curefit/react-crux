@@ -45,9 +45,10 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         return (
             <div>
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
-                    onDrop={(data: any) => {
-                        this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
-                    }} multiple={true}>
+                          disabled={this.props.readonly}
+                          onDrop={(data: any) => {
+                              this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
+                          }} multiple={true}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}

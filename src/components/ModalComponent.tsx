@@ -136,10 +136,11 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     </Alert>
                 }
                 <NestedEditComponent field={this.props.constants} modalType={this.props.modalType}
-                    additionalModels={this.props.additionalModels} fetch={this.props.fetch}
-                    modelChanged={this.modelChanged} currentModel={this.state.item}
-                    showTitle={false}
-                    parentModel={{}}
+                                     readonly={this.props.constants.readonly === true}
+                                     additionalModels={this.props.additionalModels} fetch={this.props.fetch}
+                                     modelChanged={this.modelChanged} currentModel={this.state.item}
+                                     showTitle={false}
+                                     parentModel={{}}
                 />
             </Modal.Body>
             <Modal.Footer>

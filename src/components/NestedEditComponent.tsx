@@ -21,8 +21,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return field.creatable === true
         }
 
-        if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
+        if (modalType === 'CREATE') {
             return field.editable === true
+        }
+
+        if (modalType === "EDIT" || modalType === "CUSTOM") {
+            return field.editable === true || field.readonly === true
         }
 
         return false
@@ -51,6 +55,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         // Filter out the filed not matching specified conditional field
         fields = _.filter(fields, (field: any) => {
             if (field.conditionalField) {
+                if (Array.isArray(field.conditionalValue)) {
+                    return this.props.currentModel && field.conditionalValue.includes(this.props.currentModel[field.conditionalField])
+                }
                 return this.props.currentModel && this.props.currentModel[field.conditionalField] === field.conditionalValue
             }
             return true
@@ -93,6 +100,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "select" &&
                                         <SelectComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             modelChanged={this.select}
                                             currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
@@ -103,6 +111,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "imageUpload" &&
                                         <ImageUploadComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             width={this.props.width}
                                             height={this.props.height}
                                             contentType={this.props.contentType}
@@ -116,6 +125,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "datepicker" &&
                                         <DatePickerComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             modelChanged={this.select}
                                             currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
@@ -126,6 +136,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "typeahead" &&
                                         <TypeaheadComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             fetch={this.props.fetch} modelChanged={this.select}
                                             currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
@@ -136,6 +147,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "nested" &&
                                         <NestedEditComponent field={field} modalType={this.props.modalType}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             fetch={this.props.fetch}
                                             modelChanged={this.select.bind(this, field)}
@@ -148,6 +160,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "iterable" &&
                                         <IterableEditComponent field={field} modalType={this.props.modalType}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             fetch={this.props.fetch}
                                             modelChanged={this.select.bind(this, field)}
@@ -159,6 +172,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "checkbox" &&
                                         <CheckboxComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             modelChanged={this.select}
                                             currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
@@ -174,6 +188,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <textarea
+                                                disabled={field.readonly === true || this.props.readonly}
                                                 value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                 onChange={this.handleChange.bind(this, field)}
                                                 style={{ width: 250 }} />
@@ -187,6 +202,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="number"
+                                                disabled={field.readonly === true || this.props.readonly}
                                                 value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                 onChange={this.handleChange.bind(this, field)}
                                                 style={{ width: 200, paddingTop: 5 }}
@@ -202,6 +218,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                                 marginRight: "10px"
                                             }}>{field.title.toUpperCase()}</label><br /></span>}
                                             <input type="text"
+                                                disabled={field.readonly === true || this.props.readonly}
                                                 value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                                                 onChange={this.handleChange.bind(this, field)}
                                                 style={field.type === "tinyinput" ? {
