@@ -1,6 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { Item } from "react-bootstrap/lib/Carousel";
+import { SelectComponent } from "./SelectComponent"
+
 
 interface PaginationComponentProps {
     prev: any,
@@ -13,30 +14,51 @@ interface PaginationComponentProps {
 
 @autobind
 export class PaginationComponent extends React.Component<PaginationComponentProps, any> {
+
+    pageSelectField = {
+        foreign : {
+            modelName: "pageSizes",
+            key: "typeId",
+            title: "title",
+        }
+    }
+
     render() {
-        return <div className="pull-right" style={{marginBottom : 10}}>
-        <button style={{ marginRight: 10 }} 
-            className="btn btn-default btn-xs"
-            disabled={this.isPrevDisabled()}
-            onClick={this.props.prev}>Prev</button>
-        <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.getPageNumber()}</span>
-        <button style={{ marginRight: 10 }} 
-            className=" btn btn-default btn-xs"
-            disabled={this.isNextDisabled()}
-            onClick={this.props.next}>Next</button>
-        <span className="heading" style={{marginRight: 10}}>Page Size: </span>
-        {this.props.dataconstant.allowedPageSizes.map((paginateSize: number) => {
-            let buttonClass = "btn btn-default btn-xs"
-            if(this.props.item.paginate.currentPageSize === paginateSize){
-                buttonClass = "btn btn-primary btn-xs"
+        return <div className="pull-right" style={{ marginBottom: 10 }}>
+            <button style={{ marginRight: 10 }}
+                className="btn btn-default btn-xs"
+                disabled={this.isPrevDisabled()}
+                onClick={this.props.prev}>Prev</button>
+            <span className=" heading" style={{ marginLeft: 10, marginRight: 20 }}>{this.getPageNumber()}</span>
+            <button style={{ marginRight: 10 }}
+                className=" btn btn-default btn-xs"
+                disabled={this.isNextDisabled()}
+                onClick={this.props.next}>Next</button>
+            <span className="heading" style={{ marginRight: 10 }}>Page Size: </span>
+            <span style={{ display: "inline-block", marginRight: 5 }}>
+                <SelectComponent field={this.pageSelectField}
+                    readonly={false}
+                    additionalModels={{pageSizes : this.getPageSizes()}}
+                    modelChanged={this.handlePageSelect}
+                    currentModel={this.props.item.paginate.currentPageSize.toString()}
+                    showTitle={false}
+                    parentModel=""
+                />
+            </span>
+        </div>
+    }
+
+    getPageSizes() {
+        return this.props.dataconstant.allowedPageSizes.map((pageSize: number) => {
+            return {
+                typeId: pageSize.toString(),
+                title: pageSize
             }
-            return (
-                <button style={{ marginRight: 10 }} 
-                    className={buttonClass}
-                    onClick={this.props.paginate.bind(this, paginateSize)}>{paginateSize}</button>
-            )
-        })}
-    </div>
+        })
+    }
+
+    handlePageSelect(field: any, pageSize: string) {
+        this.props.paginate(Number(pageSize))
     }
 
     isNextDisabled() {
