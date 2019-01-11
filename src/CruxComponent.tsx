@@ -221,12 +221,12 @@ export class CruxComponentCreator {
             }
             
             previousPage() {
-                const paginationData = Object.assign({}, ...this.state.filterModel.paginate, {
-                    currentPage: this.state.filterModel.paginate.currentPage - 1 })
-                const filterModelData = Object.assign({}, ...this.state.filterModel, {
-                    skip: (paginationData.currentPage - 1) * this.state.filterModel.limit + (paginationData.currentPage - 1 === 0 ? 0 : 1),
-                    paginate: paginationData
-                })
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPage'] -= 1
+                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit + 
+                                           (paginationData['currentPage'] - 1 === 0 ? 0 : 1) 
+                filterModelData['paginate'] = paginationData
                 this.setState({
                     filterModel : filterModelData
                 })
@@ -234,12 +234,11 @@ export class CruxComponentCreator {
             }
 
             nextPage() {
-                const paginationData = Object.assign({}, ...this.state.filterModel.paginate, { 
-                    currentPage: this.state.filterModel.paginate.currentPage + 1 })
-                const filterModelData = Object.assign({}, ...this.state.filterModel, { 
-                    skip: this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1,
-                    paginate: paginationData
-                })
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPage'] += 1
+                filterModelData['skip'] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
+                filterModelData['paginate'] = paginationData
                 this.setState({
                     filterModel : filterModelData
                 })
@@ -247,8 +246,13 @@ export class CruxComponentCreator {
             }
 
             paginate(pageSize: number) {
-                const paginationData = Object.assign({}, ...this.state.filterModel.paginate, { currentPageSize: pageSize, currentPage: 1 })
-                const filterModelData = Object.assign({}, ...this.state.filterModel, { paginate: paginationData, skip: 0, limit: pageSize })
+                const filterModelData = Object.assign({}, this.state.filterModel)
+                const paginationData = Object.assign({}, this.state.filterModel.paginate)
+                paginationData['currentPageSize'] = pageSize
+                paginationData['currentPage'] = 1
+                filterModelData['paginate'] = paginationData
+                filterModelData['skip'] = 0
+                filterModelData['limit'] = pageSize
                 this.setState({filterModel : filterModelData})
                 this.props.filter(constants.modelName, filterModelData)
             }
