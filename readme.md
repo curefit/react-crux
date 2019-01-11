@@ -153,7 +153,6 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
     }
 }
 
-// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 // Above example assumes that /model/mediaTypes returns a response like
 [
@@ -183,7 +182,6 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
     }
 }
 ```
-// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### Nested Fields
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
@@ -266,7 +264,6 @@ This is to support boolean fields. If the field is not present in the object, th
   "type": "checkbox"
 }
 ```
-// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### Datepickers
 Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors.
@@ -281,7 +278,6 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
   "type": "datepicker"
 }
 ```
-// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### File/Image upload
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
@@ -296,7 +292,6 @@ This is to support fields that require a image/file upload. When _type_ is _imag
     type: "imageUpload"
 },
 ```
-// Add readonly attribute with boolean value, to make it disabled (readonly : true)
 
 ### Custom Components
 ### Default Models
@@ -381,21 +376,69 @@ const schema = {
             representative: true,
             display: true, // We want to display it in table
             editable: true, // We want to be able to edit it
-            readonly: true // We want to be able to disable it
         },
         {
             title: "Age",
             field: "age",
             display: false, // We _dont_ want to display it in table
             editable: true, // We want to be able to edit it
-            readonly: true // We want to be able to disable it
         },
         {
             title: "Email Address", 
             field: "emailAddress",
             display: true, // We want to display it in table
             editable: true, // We want to be able to edit it
+        }
+    ]
+}
+
+const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema)
+export { Employees }
+```
+
+#### Table + Basic form with Readonly inputs for create/modify/delete
+Lets say we want to show a table of employees with 4 fields (name, joiningDate, isPartTime, nicknames) with a functionality to create, modify and delete employees. Readonly attribute is applicable for all the components.
+
+```
+const schema = {
+    modelName: "employees", // http call to /model/employees
+    title: "Employees", // Title for the table
+    creationTitle: "Employee", // Create button will show "+ New Employee"
+    createModal: true, // Enable creation of new employees through modal 
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [ // We have 4 fields - name, joiningDate, isPartTime, nicknames
+        {
+            title: "Name",
+            field: "name",
+            representative: true,
+            display: true, // We want to display it in table
             readonly: true // We want to be able to disable it
+        },
+        {
+            "title": "Date Of Joining",
+            "readonly": true,
+            "display": true,
+            "field": "joiningDate",
+            "type": "datepicker"
+        },
+        {
+            "title": "Is Part Time ?",
+            "readonly": true,
+            "display": true,
+            "field": "isPartTime",
+            "type": "checkbox"
+        },
+        {
+            title: "Nicknames",
+            field: "nicknames",
+            type: "iterable",
+            readonly: true,
+            iterabletype: {
+                type: "text",
+                title: "Name"
+            }
         }
     ]
 }
@@ -468,9 +511,51 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
     }
 }
 ```
+#### Pagination (Server Side Pagination)
+Lets say we want to show a table of employees with 3 fields (name, age, emailAddress) with a functionality to create, modify and delete employees with server
+side pagination. (i.e. server call will be pointed to /filter rather than /fetch)
+
+```
+const schema = {
+    modelName: "employees", // http call to /model/employees
+    title: "Employees", // Title for the table
+    creationTitle: "Employee", // Create button will show "+ New Employee"
+    createModal: true, // Enable creation of new employees through modal 
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    paginate: {
+        defaultPageSize : 10,
+        allowedPageSizes : [10, 50, 100, 500, 1000]
+    },
+    fields: [ // We have 3 fields - name, age, emailAddress
+        {
+            title: "Name",
+            field: "name",
+            representative: true,
+            display: true, // We want to display it in table
+            editable: true, // We want to be able to edit it
+        },
+        {
+            title: "Age",
+            field: "age",
+            display: false, // We _dont_ want to display it in table
+            editable: true, // We want to be able to edit it
+        },
+        {
+            title: "Email Address", 
+            field: "emailAddress",
+            display: true, // We want to display it in table
+            editable: true, // We want to be able to edit it
+        }
+    ]
+}
+
+const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema)
+export { Employees }
+```
 
 # TBD
-- Pagination support
 - Typings for schema
 - Refactoring of schema into (displayOptions, editOptions, createOptions, deleteOptions)
 - Defragment style options into one uniform way of specifying styles
