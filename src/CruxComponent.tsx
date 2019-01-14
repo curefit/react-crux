@@ -1,6 +1,7 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal } from "./Actions"
+import { createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
+        searchFetchModel } from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
@@ -71,6 +72,9 @@ export class CruxComponentCreator {
                 },
                 failureCustomModal: (err: any, model: string, type: string) => {
                     dispatch(failureCustomModal(type, err, model))
+                },
+                searchFieldFetch: (model: string, id: string, success: any) => {
+                    dispatch(searchFetchModel(model, id, success))
                 }
             }
         }
@@ -98,9 +102,33 @@ export class CruxComponentCreator {
 
             fetchServerData(modelName: string) {
                 if (modelName === constants.modelName) {
-                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }) : this.props.fetch(modelName)
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchById) : this.props.fetch(modelName, this.searchById)
                 } else {
                     this.props.fetch(modelName)
+                }
+            }
+
+            searchById(data: any) {
+                const params = new URLSearchParams(this.props.location.search)
+                const searchId = params.get("id")
+                const searchField = params.get("field")
+                if(!_.isEmpty(searchId) && !_.isEmpty(searchField)){
+                    const searchData = data.filter((x: any) => x[searchField] === searchId);
+                    if (searchData.length) {
+                        this.setState({
+                            showEditModal: true,
+                            model: searchData[0]
+                        })
+                    } else {
+                        this.props.searchFieldFetch(constants.modelName, searchId, (searchModel: any) => {
+                            if(searchModel){
+                                this.setState({
+                                    showEditModal: true,
+                                    model: searchModel
+                                })
+                            }
+                        })
+                    }
                 }
             }
 
