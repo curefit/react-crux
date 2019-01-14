@@ -66,7 +66,7 @@ export class CruxComponentCreator {
                 deleteModel: (model: string, item: any, success: any, error: any) => {
                     dispatch(deleteModel(model, item, success, error))
                 },
-                successCustomModal: (data: any, type: string, model: string ) => {
+                successCustomModal: (data: any, type: string, model: string) => {
                     dispatch(successCustomModal(data, type, model))
                 },
                 failureCustomModal: (err: any, model: string, type: string) => {
@@ -89,16 +89,16 @@ export class CruxComponentCreator {
             }
 
             checkAdditionalModel(modelName: string) {
-                if((modelName === constants.modelName && constants.paginate) || 
-                    !Array.isArray(this.props.additionalModels[modelName])){
+                if ((modelName === constants.modelName && constants.paginate) ||
+                    !Array.isArray(this.props.additionalModels[modelName])) {
                     return true
                 }
                 return _.isEmpty(this.props.additionalModels[modelName])
             }
 
             fetchServerData(modelName: string) {
-                if(modelName === constants.modelName){
-                    this.getDefaultPageSize() ? this.props.filter(modelName, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(modelName)
+                if (modelName === constants.modelName) {
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }) : this.props.fetch(modelName)
                 } else {
                     this.props.fetch(modelName)
                 }
@@ -150,7 +150,7 @@ export class CruxComponentCreator {
             }
 
             showCustomModal = (model: any) => {
-                this.setState({ showCustomModal: true, model})
+                this.setState({ showCustomModal: true, model })
             }
 
             closeCustomModal = () => {
@@ -191,7 +191,12 @@ export class CruxComponentCreator {
             }
 
             handleFieldSearch = (field: string, searchQuery: any) => {
-                this.setState({ filterModel: Object.assign({}, this.state.filterModel, { [field]: searchQuery }) })
+                const filterModal = Object.assign({}, this.state.filterModel, { [field]: searchQuery })
+                if (searchQuery === "") {
+                    this.props.filter(constants.modelName, filterModal)
+                }
+                this.setState({ filterModel: filterModal })
+
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -219,16 +224,16 @@ export class CruxComponentCreator {
                 const CustomComponent = constants.customModalComponent(this.state.model, this.closeCustomModal, this.successCustomModalDispatch, this.failureCustomModalDispatch)
                 return <CustomComponent />
             }
-            
+
             previousPage() {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
                 paginationData['currentPage'] -= 1
-                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit + 
-                                           (paginationData['currentPage'] - 1 === 0 ? 0 : 1) 
+                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit +
+                    (paginationData['currentPage'] - 1 === 0 ? 0 : 1)
                 filterModelData['paginate'] = paginationData
                 this.setState({
-                    filterModel : filterModelData
+                    filterModel: filterModelData
                 })
                 this.props.filter(constants.modelName, filterModelData)
             }
@@ -240,7 +245,7 @@ export class CruxComponentCreator {
                 filterModelData['skip'] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
                 filterModelData['paginate'] = paginationData
                 this.setState({
-                    filterModel : filterModelData
+                    filterModel: filterModelData
                 })
                 this.props.filter(constants.modelName, filterModelData)
             }
@@ -253,7 +258,7 @@ export class CruxComponentCreator {
                 filterModelData['paginate'] = paginationData
                 filterModelData['skip'] = 0
                 filterModelData['limit'] = pageSize
-                this.setState({filterModel : filterModelData})
+                this.setState({ filterModel: filterModelData })
                 this.props.filter(constants.modelName, filterModelData)
             }
 
@@ -266,9 +271,11 @@ export class CruxComponentCreator {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
                 let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
-                _.forEach(_.filter(constants.fields, (field) => field.search && this.state.filterModel[field.search.key]), (field: any) => {
-                    filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
-                })
+                _.forEach(_.filter(constants.fields, (field) => field.search &&
+                    field.search.filterLocation !== "server" &&
+                    this.state.filterModel[field.search.key]), (field: any) => {
+                        filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
+                    })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
@@ -286,13 +293,13 @@ export class CruxComponentCreator {
                                 onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
                         {constants.paginate && this.props[constants.modelName] && this.props[constants.modelName].metadata &&
-                        <PaginationComponent 
-                            prev={this.previousPage}
-                            next={this.nextPage}
-                            paginate={this.paginate}
-                            metadata={this.props[constants.modelName].metadata}
-                            dataconstant={constants.paginate}
-                            item={this.state.filterModel}
+                            <PaginationComponent
+                                prev={this.previousPage}
+                                next={this.nextPage}
+                                paginate={this.paginate}
+                                metadata={this.props[constants.modelName].metadata}
+                                dataconstant={constants.paginate}
+                                item={this.state.filterModel}
                             />}
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
@@ -315,21 +322,23 @@ export class CruxComponentCreator {
                                     <tr key='searchRow'>
                                         {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
                                             <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                                <div>
-                                                    {field.search && field.search.key && <FormGroup>
-                                                        <FormControl type="text"
-                                                            value={(this.state.filterModel || {})[field.search.key]}
-                                                            onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
-                                                            onBlur={(e: any) => {
-                                                                if (field.search.filterLocation === "server") {
-                                                                    this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
-                                                                }
-                                                            }}
-                                                        />
-                                                    </FormGroup>}
-                                                </div>
+                                                {field.search && field.search.filterLocation === "server" &&
+                                                    <div>
+                                                        <div style={{ display: "inline-block", width: "80%" }}>
+                                                            <input type="text"
+                                                                style={{ width: "100%" }}
+                                                                value={(this.state.filterModel || {})[field.search.key]}
+                                                                onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <button style={{ marginLeft: "10px", color: "grey", height: 30 }} className="glyphicon glyphicon-search" aria-hidden="true" onClick={() => {
+                                                            this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
+                                                        }} />
+                                                    </div>}
                                             </td>
                                         ))}
+                                        {constants.editModal && <td></td>}
+                                        {constants.customModal && <td></td>}
                                     </tr>}
                                 {_.map(filteredRows, (model: any, index: number) => {
                                     const filtered = constants.fields.filter((field: any) => field.display === true)
@@ -354,7 +363,7 @@ export class CruxComponentCreator {
                                                 className="glyphicon glyphicon-duplicate"
                                                 aria-hidden="true" onClick={this.showCustomModal.bind(this, model)} />
                                             </td>}
-                                </tr>
+                                    </tr>
                                 })}
 
                             </tbody>
