@@ -57,7 +57,7 @@ export function fetchModel(model: string, success?: any, error?: any) {
     }
 }
 
-export function searchFetchModel(model: string, id: string, callback: any) {
+export function searchModel(model: string, id: string, callback: any) {
     return (dispatch: Dispatch<any>) => {
         fetch(`${apiServer}/model/${model}/${id}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
             if (callback) callback(data)

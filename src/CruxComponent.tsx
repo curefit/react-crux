@@ -1,7 +1,7 @@
 import * as React from "react"
 import { connect } from "react-redux"
 import { createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-        searchFetchModel } from "./Actions"
+        searchModel } from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
@@ -73,8 +73,8 @@ export class CruxComponentCreator {
                 failureCustomModal: (err: any, model: string, type: string) => {
                     dispatch(failureCustomModal(type, err, model))
                 },
-                searchFieldFetch: (model: string, id: string, success: any) => {
-                    dispatch(searchFetchModel(model, id, success))
+                searchModel: (model: string, id: string, success: any) => {
+                    dispatch(searchModel(model, id, success))
                 }
             }
         }
@@ -120,7 +120,7 @@ export class CruxComponentCreator {
                             model: searchData[0]
                         })
                     } else {
-                        this.props.searchFieldFetch(constants.modelName, searchId, (searchModel: any) => {
+                        this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
                             if(searchModel){
                                 this.setState({
                                     showEditModal: true,
