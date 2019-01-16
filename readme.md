@@ -169,6 +169,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
+Iterable Field will also have re-order buttons
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 ```
 {
@@ -180,6 +181,29 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
         type: "text",
         title: "Name"
     }
+}
+```
+
+### Iterable fields with Custom Button
+Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
+Iterable Field will also have re-order buttons
+[Example](https://curefit.github.io/react-crux-examples/#/iterable)
+```
+{
+    title: "Nicknames",
+    field: "nicknames",
+    type: "iterable",
+    editable: true,
+    customIterableButton: true,
+    customButtonAction: customIterableButtonAction,
+    iterabletype: {
+        type: "text",
+        title: "Name"
+    }
+}
+
+function customIterableButtonAction(data: any) {
+    // Custom Button Action will be captured here
 }
 ```
 
@@ -291,6 +315,57 @@ This is to support fields that require a image/file upload. When _type_ is _imag
     contentType: "image",
     type: "imageUpload"
 },
+```
+
+
+### Custom Modal
+This is to support that require a Custom Modal with Custom Button in Table. 
+
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+      "title": "Address",
+      "field": "address",
+      "editable": true,
+      "display": true
+    },
+  ],
+  "createModal": true
+  "customModal": true,
+  "customModalComponent": customModalComponent
+}
+
+// ModalComponent.tsx
+
+function customModalComponent(model: any, closeModal: any, sucessDispatch: any, failureDispatch: any) {
+    class CustomModalComponent extends React.Component<any, any> {
+        render() {
+            return (<ModalComponent 
+                constants={CustomModalConstants}
+                showModal={true}
+                closeModal={closeModal}
+                modalType={"CUSTOM"}
+                successButtonLabel={"CLONE"}
+                item={model}
+                createOrModify={this.customModalSuccess}
+                additionalModels={[]}
+            />)
+        }
+    }
+    return CustomModalComponent
+}
 ```
 
 ### Custom Components
