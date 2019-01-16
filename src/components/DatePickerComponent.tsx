@@ -32,6 +32,7 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
                     selected={this.state.dateTime}
                     onChange={this.handleChange}
                     className="autowidth"
+                    disabled={this.props.readonly}
                 />
             </div>
         )
