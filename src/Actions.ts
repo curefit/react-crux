@@ -57,6 +57,20 @@ export function fetchModel(model: string, success?: any, error?: any) {
     }
 }
 
+export function searchFetchModel(model: string, id: string, callback: any) {
+    return (dispatch: Dispatch<any>) => {
+        fetch(`${apiServer}/model/${model}/${id}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
+            if (callback) callback(data)
+        }).catch((err: any) => {
+            if (err.name === "AuthError") {
+                dispatch({ type: "AUTH_FAILED" })
+                return
+            }
+            if (callback) callback(null)
+        })
+    }
+}
+
 export function createOrModify(model: string, item: any, edit: boolean, success?: any, error?: any) {
     return (dispatch: Dispatch<any>) => {
         const word = edit ? "MODIFY" : "CREATE"
