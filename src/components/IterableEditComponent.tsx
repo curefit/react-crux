@@ -35,27 +35,27 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     iterableButtons(index: number, totalLength: number) {
         if (this.props.field.iterabletype.readonly !== true && !this.props.readonly) {
-            const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer"}
+            const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer" }
             return (
                 <>
                     <span style={iterableButtonStyle}
                         className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                         onClick={this.remove.bind(this, index)} />
-                    <span style={iterableButtonStyle} 
-                        className="glyphicon glyphicon-plus" aria-hidden="true" 
+                    <span style={iterableButtonStyle}
+                        className="glyphicon glyphicon-plus" aria-hidden="true"
                         onClick={this.addAtIndex.bind(this, index)} />
-                    {index != 0 && 
-                        <span style={iterableButtonStyle} 
-                            className="glyphicon glyphicon-arrow-up" aria-hidden="true" 
+                    {index != 0 &&
+                        <span style={iterableButtonStyle}
+                            className="glyphicon glyphicon-arrow-up" aria-hidden="true"
                             onClick={this.reorder.bind(this, index, 0)} />}
-                    {index != totalLength - 1 && 
-                        <span style={iterableButtonStyle} 
-                            className="glyphicon glyphicon-arrow-down" aria-hidden="true" 
+                    {index != totalLength - 1 &&
+                        <span style={iterableButtonStyle}
+                            className="glyphicon glyphicon-arrow-down" aria-hidden="true"
                             onClick={this.reorder.bind(this, index, 1)} />}
                     {this.props.field.customIterableButton &&
-                        <span style={iterableButtonStyle} 
-                        className="glyphicon glyphicon-eye-open" aria-hidden="true" 
-                        onClick={this.props.field.customButtonAction.bind(this, this.state.model[index])} />}
+                        <span style={iterableButtonStyle}
+                            className="glyphicon glyphicon-eye-open" aria-hidden="true"
+                            onClick={this.props.field.customButtonAction.bind(this, this.state.model[index])} />}
                 </>)
         }
         return null
@@ -317,26 +317,24 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const clone = _.cloneDeep(this.state.model)
         if (this.props.field.iterabletype.type === "nested") {
             clone.splice(index, 0, {});
-            this.props.modelChanged(clone)
         } else {
             clone.splice(index, 0, "");
-            this.props.modelChanged(clone)
         }
+        this.props.modelChanged(clone)
     }
 
     reorder(index: any, flag: number) {
         const clone = _.cloneDeep(this.state.model)
+        let tempArr
         if (flag === 0) {
-            const tempArr = clone[index - 1]
+            tempArr = clone[index - 1]
             clone[index - 1] = clone[index]
-            clone[index] = tempArr
-            this.props.modelChanged(clone)
         }
-        if (flag === 1) {
-            const tempArr = clone[index + 1]
+        else if (flag === 1) {
+            tempArr = clone[index + 1]
             clone[index + 1] = clone[index]
-            clone[index] = tempArr
-            this.props.modelChanged(clone)
         }
+        clone[index] = tempArr
+        this.props.modelChanged(clone)
     }
 }
