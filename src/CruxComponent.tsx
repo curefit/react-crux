@@ -1,7 +1,9 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-        searchModel } from "./Actions"
+import {
+    createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
+    searchModel
+} from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
@@ -112,7 +114,7 @@ export class CruxComponentCreator {
                 const params = new URLSearchParams(this.props.location.search)
                 const searchId = params.get("id")
                 const searchField = params.get("field")
-                if(!_.isEmpty(searchId) && !_.isEmpty(searchField)){
+                if (searchId && searchField) {
                     const searchData = data.filter((x: any) => x[searchField] === searchId);
                     if (searchData.length) {
                         this.setState({
@@ -121,7 +123,7 @@ export class CruxComponentCreator {
                         })
                     } else {
                         this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
-                            if(searchModel){
+                            if (searchModel) {
                                 this.setState({
                                     showEditModal: true,
                                     model: searchModel
