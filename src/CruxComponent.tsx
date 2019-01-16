@@ -138,7 +138,6 @@ export class CruxComponentCreator {
                     showCreateModal: false,
                     showFilterModal: false,
                     model: {},
-                    cloneModel: {},
                     showCustomModal: false,
                     filterModel: {
                         paginate: {
