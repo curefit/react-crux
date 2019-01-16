@@ -164,7 +164,7 @@ export class CruxComponentCreator {
             createOrEditSuccess = (data?: any) => {
                 this.closeEditModal()
                 this.closeCreateModal()
-                if (constants.filterModal || (this.state.filterModel && this.state.filterModel.paginate))
+                if (constants.filterModal || constants.paginate)
                     this.props.filter(constants.modelName, this.state.filterModel)
                 else
                     this.fetchModel(constants.modelName)

@@ -534,19 +534,19 @@ const schema = {
             field: "name",
             representative: true,
             display: true, // We want to display it in table
-            editable: true, // We want to be able to edit it
+            editable: true // We want to be able to edit it
         },
         {
             title: "Age",
             field: "age",
             display: false, // We _dont_ want to display it in table
-            editable: true, // We want to be able to edit it
+            editable: true // We want to be able to edit it
         },
         {
             title: "Email Address", 
             field: "emailAddress",
             display: true, // We want to display it in table
-            editable: true, // We want to be able to edit it
+            editable: true // We want to be able to edit it
         }
     ]
 }
