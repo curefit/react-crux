@@ -41,21 +41,28 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     <span style={iterableButtonStyle}
                         className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                         onClick={this.remove.bind(this, index)} />
-                    <span style={iterableButtonStyle}
-                        className="glyphicon glyphicon-plus" aria-hidden="true"
-                        onClick={this.addAtIndex.bind(this, index)} />
-                    {index != 0 &&
-                        <span style={iterableButtonStyle}
-                            className="glyphicon glyphicon-arrow-up" aria-hidden="true"
-                            onClick={this.reorder.bind(this, index, 0)} />}
-                    {index != totalLength - 1 &&
-                        <span style={iterableButtonStyle}
-                            className="glyphicon glyphicon-arrow-down" aria-hidden="true"
-                            onClick={this.reorder.bind(this, index, 1)} />}
-                    {this.props.field.customIterableButton &&
-                        <span style={iterableButtonStyle}
-                            className="glyphicon glyphicon-eye-open" aria-hidden="true"
-                            onClick={this.props.field.customButtonAction.bind(this, this.state.model[index])} />}
+                    {
+                        this.props.field.additionalButtons &&
+                        <>
+                            {this.props.field.additionalButtons.addAtIndex &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-plus" aria-hidden="true"
+                                    onClick={this.addAtIndex.bind(this, index)} />}
+                            {this.props.field.additionalButtons.reorder && index != 0 &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-arrow-up" aria-hidden="true"
+                                    onClick={this.reorder.bind(this, index, 0)} />}
+                            {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-arrow-down" aria-hidden="true"
+                                    onClick={this.reorder.bind(this, index, 1)} />}
+                            {this.props.field.additionalButtons.customButton &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-eye-open" aria-hidden="true"
+                                    onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
+                        </>
+                    }
+
                 </>)
         }
         return null

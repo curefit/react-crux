@@ -169,7 +169,6 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
-Iterable Field will also have re-order buttons
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 ```
 {
@@ -177,6 +176,44 @@ Iterable Field will also have re-order buttons
     field: "nicknames",
     type: "iterable",
     editable: true,
+    iterabletype: {
+        type: "text",
+        title: "Name"
+    }
+}
+```
+
+### Iterable fields with Reorder Buttons
+Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have re-order button
+[Example](https://curefit.github.io/react-crux-examples/#/iterable)
+```
+{
+    title: "Nicknames",
+    field: "nicknames",
+    type: "iterable",
+    editable: true,
+    additionalButtons: {
+        reorder: true
+    },
+    iterabletype: {
+        type: "text",
+        title: "Name"
+    }
+}
+```
+
+### Iterable fields with Add At Index Buttons
+Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have Add At Index Button
+[Example](https://curefit.github.io/react-crux-examples/#/iterable)
+```
+{
+    title: "Nicknames",
+    field: "nicknames",
+    type: "iterable",
+    editable: true,
+    additionalButtons: {
+        addAtIndex: true
+    },
     iterabletype: {
         type: "text",
         title: "Name"
@@ -194,8 +231,10 @@ Iterable Field will also have re-order buttons
     field: "nicknames",
     type: "iterable",
     editable: true,
-    customIterableButton: true,
-    customButtonAction: customIterableButtonAction,
+    additionalButtons: {
+        customButton: true,
+        customButtonAction: customButtonAction,
+    },
     iterabletype: {
         type: "text",
         title: "Name"
