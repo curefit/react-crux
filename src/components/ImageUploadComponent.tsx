@@ -2,7 +2,10 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import * as upload from "superagent"
 import { InlineComponentProps } from "../CruxComponent"
-const Dropzone = require("react-dropzone")
+let Dropzone = require("react-dropzone")
+if ("default" in Dropzone) {
+    Dropzone = Dropzone.default
+}
 
 @autobind
 export class ImageUploadComponent extends React.Component<InlineComponentProps, any> {
