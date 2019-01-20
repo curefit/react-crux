@@ -200,12 +200,21 @@ export class CruxComponentCreator {
             }
 
             resetFilter() {
-                this.setState({ filterModel: {} })
+                const baseFilterModal = {
+                    paginate: {
+                        currentPage: 1,
+                        currentPageSize: this.getDefaultPageSize()
+                    },
+                    limit: this.getDefaultPageSize(),
+                    skip: 0
+                }
+                this.setState({ filterModel: baseFilterModal })
                 this.fetchModel(constants.modelName)
             }
 
             fetchModel(modelName: string) {
-                modelName && this.props.fetch(modelName)
+                modelName &&
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchById) : this.props.fetch(modelName, this.searchById)
             }
 
             filterSuccess(data: any) {
@@ -225,7 +234,15 @@ export class CruxComponentCreator {
                     this.props.filter(constants.modelName, filterModal)
                 }
                 this.setState({ filterModel: filterModal })
+            }
 
+            fetchSearchResults = () => {
+                const newFilterModel = Object.assign({}, this.state.filterModel,
+                    { skip: 0, paginate: Object.assign({}, this.state.filterModel.paginate, { currentPage: 1 }) })
+                this.setState({
+                    filterModel: newFilterModel
+                })
+                this.props.filter(constants.modelName, newFilterModel)
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -352,7 +369,7 @@ export class CruxComponentCreator {
                                         {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
                                             <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 {field.search && field.search.filterLocation === "server" &&
-                                                    <div>
+                                                    <div style={{ display: "flex" }}>
                                                         <div style={{ display: "inline-block", width: "80%" }}>
                                                             <input type="text"
                                                                 style={{ width: "100%" }}
@@ -360,9 +377,10 @@ export class CruxComponentCreator {
                                                                 onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
                                                             />
                                                         </div>
-                                                        <button style={{ marginLeft: "10px", color: "grey", height: 30 }} className="glyphicon glyphicon-search" aria-hidden="true" onClick={() => {
-                                                            this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
-                                                        }} />
+                                                        <button style={{ marginLeft: "10px", color: "grey", height: 30 }}
+                                                            className="glyphicon glyphicon-search"
+                                                            aria-hidden="true"
+                                                            onClick={this.fetchSearchResults} />
                                                     </div>}
                                             </td>
                                         ))}

@@ -49,9 +49,12 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
             if (modalType === "FILTER") {
+                const newItem = Object.assign({}, this.state.item, 
+                    {skip: 0, paginate: Object.assign({}, this.state.item.paginate, {currentPage: 1})})
+
                 // Copies the filter items to persist the preference
-                Object.assign(this.props.item, this.state.item)
-                this.props.filter(this.props.constants.modelName, this.state.item, this.filterSuccess, this.filterError)
+                Object.assign(this.props.item, newItem)
+                this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError)
             }
@@ -136,11 +139,11 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     </Alert>
                 }
                 <NestedEditComponent field={this.props.constants} modalType={this.props.modalType}
-                                     readonly={this.props.constants.readonly === true}
-                                     additionalModels={this.props.additionalModels} fetch={this.props.fetch}
-                                     modelChanged={this.modelChanged} currentModel={this.state.item}
-                                     showTitle={false}
-                                     parentModel={{}}
+                    readonly={this.props.constants.readonly === true}
+                    additionalModels={this.props.additionalModels} fetch={this.props.fetch}
+                    modelChanged={this.modelChanged} currentModel={this.state.item}
+                    showTitle={false}
+                    parentModel={{}}
                 />
             </Modal.Body>
             <Modal.Footer>
