@@ -23,7 +23,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     constructor(props: any) {
         super(props)
         this.state = {
-            model: _.isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel))
+            model: _.isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel)),
+            checkIterableButton: undefined
         }
     }
 
@@ -33,7 +34,65 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         }
     }
 
+    iterableButtons(index: number, totalLength: number) {
+        if (this.props.field.iterabletype.readonly !== true && !this.props.readonly) {
+            const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer" }
+            const visibility = this.state.checkIterableButton && this.state.checkIterableButton[index] ? "visible" : "hidden"
+            return (
+                <span style={{visibility}}>
+                    {
+                        this.props.field.additionalButtons &&
+                        <>
+                            {this.props.field.additionalButtons.addAtIndex &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-plus" aria-hidden="true"
+                                    onClick={this.addAtIndex.bind(this, index)} />}
+                            {this.props.field.additionalButtons.reorder && index != 0 &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-chevron-up" aria-hidden="true"
+                                    onClick={this.reorder.bind(this, index, 0)} />}
+                            {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-chevron-down" aria-hidden="true"
+                                    onClick={this.reorder.bind(this, index, 1)} />}
+                            {this.props.field.additionalButtons.customButton &&
+                                <span style={iterableButtonStyle}
+                                    className="glyphicon glyphicon-eye-open" aria-hidden="true"
+                                    onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
+                        </>
+                    }
+                    <span style={iterableButtonStyle}
+                        className="glyphicon glyphicon-remove-circle" aria-hidden="true"
+                        onClick={this.remove.bind(this, index)} />
+                </span>)
+        }
+        return null
+    }
+
+    showIterableButtons(index: number) {
+        let checkIterableButton = this.state.checkIterableButton
+        if (!checkIterableButton) {
+            checkIterableButton = []
+        }
+        checkIterableButton[index] = true
+        this.setState({
+            checkIterableButton
+        })
+    }
+
+    hideIterableButtons(index: number) {
+        let checkIterableButton = this.state.checkIterableButton
+        if (!checkIterableButton) {
+            checkIterableButton = []
+        }
+        checkIterableButton[index] = false
+        this.setState({
+            checkIterableButton
+        })
+    }
+
     render() {
+        let totalLength = this.state.model.length
         // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
         if (!this.props.field.iterabletype) {
             console.error("Did you forget to add a iterabletype to the field ? Possible culprit:", this.props.field)
@@ -45,10 +104,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
         return <div>
             {!(this.props.field.style && this.props.field.style.hideLabel) &&
-            <label onClick={this.collapseToggle} style={{
-                fontSize: "10px",
-                marginRight: "10px"
-            }}>{this.props.field.title.toUpperCase()}</label>}
+                <label onClick={this.collapseToggle} style={{
+                    fontSize: "10px",
+                    marginRight: "10px"
+                }}>{this.props.field.title.toUpperCase()}</label>}
             <div
                 style={this.state.collapsed ? { display: "none" } : (!_.isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                 {
@@ -59,11 +118,13 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
                             return <div key={index}
-                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                            padding: "5px 0px",
-                                            display: "inline-block",
-                                            marginRight: "30px"
-                                        } : { padding: "5px 0px" }}>
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <SelectComponent
                                         key={index}
@@ -75,22 +136,21 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         modelChanged={this.fieldChanged(index)}
                                         showTitle={false}
                                         parentModel={parentModel}
-                                />
+                                    />
                                 </div>
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                      className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                      onClick={this.remove.bind(this, index)} />}
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
                             return <div key={index}
-                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                            padding: "5px 0px",
-                                            display: "inline-block",
-                                            marginRight: "30px"
-                                        } : { padding: "5px 0px" }}>
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <ImageUploadComponent
                                         constants={this.props.constants}
@@ -100,22 +160,21 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         currentModel={this.state.model[index]} field={this.props.field.iterabletype}
                                         additionalModels={this.props.additionalModels} modelChanged={this.fieldChanged(index)}
                                         showTitle={false} parentModel={parentModel}
-                                />
+                                    />
                                 </div>
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                      className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                      onClick={this.remove.bind(this, index)} />}
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datepicker") {
                             return <div key={index}
-                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                            padding: "5px 0px",
-                                            display: "inline-block",
-                                            marginRight: "30px"
-                                        } : { padding: "5px 0px" }}>
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <DatePickerComponent
                                         key={index}
@@ -127,23 +186,21 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         showTitle={false}
                                         parentModel={parentModel}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                />
+                                    />
                                 </div>
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                      className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                      onClick={this.remove.bind(this, index)} />
-                                }
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
                             return <div key={index}
-                                        style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                            padding: "5px 0px",
-                                            display: "inline-block",
-                                            marginRight: "30px"
-                                        } : { padding: "5px 0px" }}>
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <TypeaheadComponent
                                         key={index}
@@ -158,22 +215,20 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         parentModel={parentModel}
                                     />
                                 </div>
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <span style={{ marginLeft: "10px", color: "grey" }}
-                                      className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                      onClick={this.remove.bind(this, index)} />}
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
                             return <div key={index}
-                                        style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                                            border: "1px solid #EEE",
-                                            padding: "10px"
-                                        }}>
+                                style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
+                                    border: "1px solid #EEE",
+                                    padding: "10px"
+                                }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <NestedEditComponent
-                                        key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         currentModel={this.state.model[index]}
                                         fetch={this.props.fetch}
@@ -186,99 +241,91 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         parentModel={parentModel}
                                     />
                                 </div>
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                     onClick={this.remove.bind(this, index)} />}
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
-                            return <div key={index} style={{ border: "1px solid #EEE", padding: "10px" }}>
+                            return <div key={index} style={{ border: "1px solid #EEE", padding: "10px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <NestedEditComponent key={index} currentModel={this.state.model[index]}
-                                                     readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                                     fetch={this.props.fetch}
-                                                     field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
-                                                     additionalModels={this.props.additionalModels}
-                                                     modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                                     showTitle={true} indent={true}
-                                                     modalType={this.props.modalType}
-                                                     parentModel={parentModel} />
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                     onClick={this.remove.bind(this, index)} />}
+                                    readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                    fetch={this.props.fetch}
+                                    field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
+                                    additionalModels={this.props.additionalModels}
+                                    modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                    showTitle={true} indent={true}
+                                    modalType={this.props.modalType}
+                                    parentModel={parentModel} />
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "checkbox") {
-                            return <div style={{ display: "inline-block" }}>
+                            return <div style={{ display: "inline-block" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <CheckboxComponent key={index}
-                                                   readonly={this.props.field.iterable.readonly === true || this.props.readonly} 
-                                                   currentModel={this.state.model[index]}
-                                                   field={this.props.field.iterabletype}
-                                                   additionalModels={this.props.additionalModels}
-                                                   modelChanged={this.fieldChanged(index)} showTitle={false}
-                                                   parentModel={parentModel} />
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                     onClick={this.remove.bind(this, index)} />}
+                                    readonly={this.props.field.iterable.readonly === true || this.props.readonly}
+                                    currentModel={this.state.model[index]}
+                                    field={this.props.field.iterabletype}
+                                    additionalModels={this.props.additionalModels}
+                                    modelChanged={this.fieldChanged(index)} showTitle={false}
+                                    parentModel={parentModel} />
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "bigtext") {
-                            return <div key={index}>
-                                        <textarea 
-                                        key={index}
-                                        disabled={this.props.field.iterabletype.readonly === true || this.props.readonly} 
-                                        value={datum}
-                                        onChange={this.handleChange.bind(this, index)} style={{ width: 250 }} />
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                     onClick={this.remove.bind(this, index)} />}
+                            return <div key={index}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <textarea
+                                    key={index}
+                                    disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                    value={datum}
+                                    onChange={this.handleChange.bind(this, index)} style={{ width: 250 }} />
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
-                            return <div key={index}>
+                            return <div key={index}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <input key={index}
-                                       disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                       type="number"
-                                       value={datum}
-                                       onChange={this.handleChange.bind(this, index)}
-                                       style={{ width: 200, paddingTop: 5 }}
+                                    disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                    type="number"
+                                    value={datum}
+                                    onChange={this.handleChange.bind(this, index)}
+                                    style={{ width: 200, paddingTop: 5 }}
                                 />
-                                {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                                <div style={{ marginLeft: "10px", color: "grey" }}
-                                     className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                     onClick={this.remove.bind(this, index)} />}
+                                {this.iterableButtons(index, totalLength)}
                             </div>
                         }
 
-                        return <div key={index}>
+                        return <div key={index}
+                            onMouseEnter={this.showIterableButtons.bind(this, index)}
+                            onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                             <input key={index}
-                                   disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                   type="text"
-                                   value={datum}
-                                   onChange={this.handleChange.bind(this, index)}
-                                   style={this.props.field.iterabletype === "tinyinput" ? {
-                                       width: 64,
-                                       paddingTop: 5
-                                   } : { width: 200, paddingTop: 5 }}
+                                disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                type="text"
+                                value={datum}
+                                onChange={this.handleChange.bind(this, index)}
+                                style={this.props.field.iterabletype === "tinyinput" ? {
+                                    width: 64,
+                                    paddingTop: 5
+                                } : { width: 200, paddingTop: 5 }}
                             />
-                            {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-                            <div style={{ marginLeft: "10px", color: "grey" }}
-                                 className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                                 onClick={this.remove.bind(this, index)} />}
+                            {this.iterableButtons(index, totalLength)}
                         </div>
                     }))
                 }
             </div>
             {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
-            <div className="btn btn-xs btn-passive" style={{ marginTop: "5px" }} onClick={this.createNew}>
-                +Add {this.props.field.iterabletype.title}</div>}
+                <div className="btn btn-xs btn-passive" style={{ marginTop: "5px" }} onClick={this.createNew}>
+                    +Add {this.props.field.iterabletype.title}</div>}
         </div>
     }
 
@@ -313,5 +360,30 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     collapseToggle = () => {
         this.setState(Object.assign({}, this.state, { collapsed: !this.state.collapsed }))
+    }
+
+    addAtIndex = (index: any) => {
+        const clone = _.cloneDeep(this.state.model)
+        if (this.props.field.iterabletype.type === "nested") {
+            clone.splice(index, 0, {});
+        } else {
+            clone.splice(index, 0, "");
+        }
+        this.props.modelChanged(clone)
+    }
+
+    reorder(index: any, flag: number) {
+        const clone = _.cloneDeep(this.state.model)
+        let tempArr
+        if (flag === 0) {
+            tempArr = clone[index - 1]
+            clone[index - 1] = clone[index]
+        }
+        else if (flag === 1) {
+            tempArr = clone[index + 1]
+            clone[index + 1] = clone[index]
+        }
+        clone[index] = tempArr
+        this.props.modelChanged(clone)
     }
 }

@@ -1,6 +1,9 @@
 import * as React from "react"
 import { connect } from "react-redux"
-import { createOrModify, deleteModel, fetchModel, filterModel } from "./Actions"
+import {
+    createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
+    searchModel
+} from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
@@ -9,7 +12,7 @@ import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
 import { PaginationComponent } from "./components/PaginationComponent"
 
-export type ModalType = "CREATE" | "EDIT" | "FILTER"
+export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CUSTOM"
 export interface InlineComponentProps {
     field: any,
     modelChanged: any,
@@ -31,6 +34,8 @@ export interface InlineComponentProps {
     anchors?: any,
     readonly?: boolean
 }
+
+export { ModalComponent } from './components/ModalComponent'
 
 export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
@@ -63,6 +68,15 @@ export class CruxComponentCreator {
                 },
                 deleteModel: (model: string, item: any, success: any, error: any) => {
                     dispatch(deleteModel(model, item, success, error))
+                },
+                successCustomModal: (data: any, type: string, model: string) => {
+                    dispatch(successCustomModal(data, type, model))
+                },
+                failureCustomModal: (err: any, model: string, type: string) => {
+                    dispatch(failureCustomModal(type, err, model))
+                },
+                searchModel: (model: string, id: string, success: any) => {
+                    dispatch(searchModel(model, id, success))
                 }
             }
         }
@@ -81,18 +95,42 @@ export class CruxComponentCreator {
             }
 
             checkAdditionalModel(modelName: string) {
-                if((modelName === constants.modelName && constants.paginate) || 
-                    !Array.isArray(this.props.additionalModels[modelName])){
+                if ((modelName === constants.modelName && constants.paginate) ||
+                    !Array.isArray(this.props.additionalModels[modelName])) {
                     return true
                 }
                 return _.isEmpty(this.props.additionalModels[modelName])
             }
 
             fetchServerData(modelName: string) {
-                if(modelName === constants.modelName){
-                    this.getDefaultPageSize() ? this.props.filter(modelName, {limit : constants.paginate.defaultPageSize}) : this.props.fetch(modelName)
+                if (modelName === constants.modelName) {
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
                 } else {
                     this.props.fetch(modelName)
+                }
+            }
+
+            searchByQueryParams(data: any) {
+                const params = new URLSearchParams(this.props.location.search)
+                const searchId = params.get("id")
+                const searchField = params.get("field")
+                if (searchId && searchField) {
+                    const searchData = data.filter((x: any) => x[searchField] === searchId);
+                    if (searchData.length) {
+                        this.setState({
+                            showEditModal: true,
+                            model: searchData[0]
+                        })
+                    } else {
+                        this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
+                            if (searchModel) {
+                                this.setState({
+                                    showEditModal: true,
+                                    model: searchModel
+                                })
+                            }
+                        })
+                    }
                 }
             }
 
@@ -102,6 +140,7 @@ export class CruxComponentCreator {
                     showCreateModal: false,
                     showFilterModal: false,
                     model: {},
+                    showCustomModal: false,
                     filterModel: {
                         paginate: {
                             currentPage: 1,
@@ -139,6 +178,14 @@ export class CruxComponentCreator {
                 }
             }
 
+            showCustomModal = (model: any) => {
+                this.setState({ showCustomModal: true, model })
+            }
+
+            closeCustomModal = () => {
+                this.setState({ showCustomModal: false, model: {} })
+            }
+
             closeEditModal = () => {
                 this.setState({ showEditModal: false, model: {} })
             }
@@ -153,12 +200,21 @@ export class CruxComponentCreator {
             }
 
             resetFilter() {
-                this.setState({ filterModel: {} })
+                const baseFilterModal = {
+                    paginate: {
+                        currentPage: 1,
+                        currentPageSize: this.getDefaultPageSize()
+                    },
+                    limit: this.getDefaultPageSize(),
+                    skip: 0
+                }
+                this.setState({ filterModel: baseFilterModal })
                 this.fetchModel(constants.modelName)
             }
 
             fetchModel(modelName: string) {
-                modelName && this.props.fetch(modelName)
+                modelName &&
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
             }
 
             filterSuccess(data: any) {
@@ -173,7 +229,20 @@ export class CruxComponentCreator {
             }
 
             handleFieldSearch = (field: string, searchQuery: any) => {
-                this.setState({ filterModel: Object.assign({}, this.state.filterModel, {[field]: searchQuery}) })
+                const filterModal = Object.assign({}, this.state.filterModel, { [field]: searchQuery })
+                if (searchQuery === "") {
+                    this.props.filter(constants.modelName, filterModal)
+                }
+                this.setState({ filterModel: filterModal })
+            }
+
+            fetchSearchResults = () => {
+                const newFilterModel = Object.assign({}, this.state.filterModel,
+                    { skip: 0, paginate: Object.assign({}, this.state.filterModel.paginate, { currentPage: 1 }) })
+                this.setState({
+                    filterModel: newFilterModel
+                })
+                this.props.filter(constants.modelName, newFilterModel)
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -189,15 +258,28 @@ export class CruxComponentCreator {
                 error(data)
             }
 
+            successCustomModalDispatch(data: any, type: string, model: string) {
+                this.props.successCustomModal(data, type, model)
+            }
+
+            failureCustomModalDispatch(err: any, modelName: string, type: string) {
+                this.props.failureCustomModal(err, modelName, type)
+            }
+
+            getCustomComponent() {
+                const CustomComponent = constants.customModalComponent(this.state.model, this.closeCustomModal, this.successCustomModalDispatch, this.failureCustomModalDispatch)
+                return <CustomComponent />
+            }
+
             previousPage() {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
                 paginationData['currentPage'] -= 1
-                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit + 
-                                           (paginationData['currentPage'] - 1 === 0 ? 0 : 1) 
+                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit +
+                    (paginationData['currentPage'] - 1 === 0 ? 0 : 1)
                 filterModelData['paginate'] = paginationData
                 this.setState({
-                    filterModel : filterModelData
+                    filterModel: filterModelData
                 })
                 this.props.filter(constants.modelName, filterModelData)
             }
@@ -209,7 +291,7 @@ export class CruxComponentCreator {
                 filterModelData['skip'] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
                 filterModelData['paginate'] = paginationData
                 this.setState({
-                    filterModel : filterModelData
+                    filterModel: filterModelData
                 })
                 this.props.filter(constants.modelName, filterModelData)
             }
@@ -222,7 +304,7 @@ export class CruxComponentCreator {
                 filterModelData['paginate'] = paginationData
                 filterModelData['skip'] = 0
                 filterModelData['limit'] = pageSize
-                this.setState({filterModel : filterModelData})
+                this.setState({ filterModel: filterModelData })
                 this.props.filter(constants.modelName, filterModelData)
             }
 
@@ -235,9 +317,11 @@ export class CruxComponentCreator {
                     return _.trim(doc[constants.orderby].toLowerCase())
                 })
                 let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
-                _.forEach(_.filter(constants.fields, (field) => field.search && this.state.filterModel[field.search.key]), (field: any) => {
-                    filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
-                })
+                _.forEach(_.filter(constants.fields, (field) => field.search &&
+                    field.search.filterLocation !== "server" &&
+                    this.state.filterModel[field.search.key]), (field: any) => {
+                        filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
+                    })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
                         <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
@@ -255,13 +339,13 @@ export class CruxComponentCreator {
                                 onClick={this.resetFilter}>{"Reset Filter "}</div>}
                         <div className="heading cf-container-header">{constants.title}</div>
                         {constants.paginate && this.props[constants.modelName] && this.props[constants.modelName].metadata &&
-                        <PaginationComponent 
-                            prev={this.previousPage}
-                            next={this.nextPage}
-                            paginate={this.paginate}
-                            metadata={this.props[constants.modelName].metadata}
-                            dataconstant={constants.paginate}
-                            item={this.state.filterModel}
+                            <PaginationComponent
+                                prev={this.previousPage}
+                                next={this.nextPage}
+                                paginate={this.paginate}
+                                metadata={this.props[constants.modelName].metadata}
+                                dataconstant={constants.paginate}
+                                item={this.state.filterModel}
                             />}
                         {constants.enableSearch && <div>
                             <FormGroup style={{ paddingTop: "10px" }}>
@@ -272,52 +356,62 @@ export class CruxComponentCreator {
 
                         <Table className="table table-striped cftable" striped bordered condensed hover>
                             <thead>
-                            <tr>
-                                {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
-                                    <th key={index}>{field.title}</th>)}
-                                {constants.editModal && <th></th>}
-                            </tr>
+                                <tr>
+                                    {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
+                                        <th key={index}>{field.title}</th>)}
+                                    {constants.editModal && <th></th>}
+                                    {constants.customModal && <th></th>}
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr key='searchRow'>
-                                {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
-                                    <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                        <div>
-                                            {field.search && field.search.key && <FormGroup>
-                                                <FormControl type="text"
-                                                             value={(this.state.filterModel || {})[field.search.key]}
-                                                             onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
-                                                             onBlur={(e: any) => {
-                                                                 if (field.search.filterLocation === "server") {
-                                                                     this.props.filter(constants.modelName, this.state.filterModel, this.filterSuccess)
-                                                                 }
-                                                             }}
-                                                />
-                                            </FormGroup>}
-                                        </div>
-                                    </td>
-                                ))}
-                            </tr>
-                            {_.map(filteredRows, (model: any, index: number) => {
-                                const filtered = constants.fields.filter((field: any) => field.display === true)
-                                return <tr key={index}>
-                                    {_.map(filtered, (field: any, i: number) => {
-                                        return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
-                                            <div style={{ marginTop: 8 }}>
-                                                <ListNestedComponent
-                                                    field={field} model={model}
-                                                    additionalModels={this.props.additionalModels}
-                                                    modelChanged={this.inlineEdit} />
-                                            </div>
-                                        </td>
-                                    })}
-                                    {constants.editModal &&
-                                    <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
-                                                      className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                      aria-hidden="true" onClick={this.showEditModal(model)} />
-                                    </td>}
-                                </tr>
-                            })}
+                                {constants.fields.some((field: any) => field.search) &&
+                                    <tr key='searchRow'>
+                                        {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
+                                            <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                {field.search && field.search.filterLocation === "server" &&
+                                                    <div style={{ display: "flex" }}>
+                                                        <div style={{ display: "inline-block", width: "80%" }}>
+                                                            <input type="text"
+                                                                style={{ width: "100%" }}
+                                                                value={(this.state.filterModel || {})[field.search.key]}
+                                                                onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <button style={{ marginLeft: "10px", color: "grey", height: 30 }}
+                                                            className="glyphicon glyphicon-search"
+                                                            aria-hidden="true"
+                                                            onClick={this.fetchSearchResults} />
+                                                    </div>}
+                                            </td>
+                                        ))}
+                                        {constants.editModal && <td></td>}
+                                        {constants.customModal && <td></td>}
+                                    </tr>}
+                                {_.map(filteredRows, (model: any, index: number) => {
+                                    const filtered = constants.fields.filter((field: any) => field.display === true)
+                                    return <tr key={index}>
+                                        {_.map(filtered, (field: any, i: number) => {
+                                            return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                                <div style={{ marginTop: 8 }}>
+                                                    <ListNestedComponent
+                                                        field={field} model={model}
+                                                        additionalModels={this.props.additionalModels}
+                                                        modelChanged={this.inlineEdit} />
+                                                </div>
+                                            </td>
+                                        })}
+                                        {constants.editModal &&
+                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-pencil fas fa-pencil-alt"
+                                                aria-hidden="true" onClick={this.showEditModal(model)} />
+                                            </td>}
+                                        {constants.customModal &&
+                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-duplicate"
+                                                aria-hidden="true" onClick={this.showCustomModal.bind(this, model)} />
+                                            </td>}
+                                    </tr>
+                                })}
 
                             </tbody>
                         </Table>
@@ -354,6 +448,9 @@ export class CruxComponentCreator {
                                 filterSuccess={this.filterSuccess}
                                 filter={this.props.filter}
                                 additionalModels={this.props.additionalModels} />
+                        }
+                        {constants.customModal && this.state.showCustomModal &&
+                            this.getCustomComponent()
                         }
                     </div>
                 )

@@ -2,7 +2,10 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import * as upload from "superagent"
 import { InlineComponentProps } from "../CruxComponent"
-import Dropzone from "react-dropzone"
+let Dropzone = require("react-dropzone")
+if ("default" in Dropzone) {
+    Dropzone = Dropzone.default
+}
 
 @autobind
 export class ImageUploadComponent extends React.Component<InlineComponentProps, any> {
@@ -51,10 +54,10 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                           }} multiple={true}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
-                    <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
+                        <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
-                    <div><a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> {this.props.contentType}
-                        Link </a></div>}
+                        <div><a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> {this.props.contentType}
+                            <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} /> </a></div>}
                 </Dropzone>
             </div>
         )

@@ -8,7 +8,7 @@ import { InlineComponentProps } from "../CruxComponent"
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = {}
+        this.state = { interval: 30 }
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -19,23 +19,32 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
 
     render() {
         return (
-            <div>
-                <label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}</label><br />
-                <DatePicker
-                    showTimeSelect={!!this.props.field.showTimeSelect}
-                    timeIntervals={30}
-                    dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
-                    timeFormat="HH:mm"
-                    selected={this.state.dateTime}
-                    onChange={this.handleChange}
-                    className="autowidth"
-                    disabled={this.props.readonly}
-                />
+            <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{this.props.field.title.toUpperCase()}</label>
+                    <DatePicker
+                        showTimeSelect={this.props.field.showTimeSelect}
+                        timeIntervals={this.state.interval}
+                        dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
+                        timeFormat="HH:mm"
+                        selected={this.state.dateTime}
+                        onChange={this.handleChange}
+                    />
+                </div>
+                { this.props.field.showTimeSelect &&
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label style={{ fontSize: "10px", marginRight: "10px" }}>Time Interval</label>
+                    <input type="number" value={this.state.interval} onChange={this.handleIntervalChange} min="0" max="59" />
+                </div>}
             </div>
         )
+    }
+
+    handleIntervalChange = (event: any) => {
+        this.setState({ interval: event.target.value })
     }
 
     handleChange(selected: any) {

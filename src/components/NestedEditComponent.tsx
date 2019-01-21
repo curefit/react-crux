@@ -25,7 +25,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return field.editable === true
         }
 
-        if (modalType === "EDIT") {
+        if (modalType === "EDIT" || modalType === "CUSTOM") {
             return field.editable === true || field.readonly === true
         }
 
@@ -46,11 +46,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
         let fields
 
-        if (this.props.modalType === "CREATE" || this.props.modalType === "EDIT") {
+        if (this.props.modalType === "CREATE" || this.props.modalType === "EDIT" || this.props.modalType === "CUSTOM") {
             fields = _.filter(this.props.field.fields, (field: any) => this.getEditable(field, this.props.modalType))
         } else if (this.props.modalType === "FILTER") {
             fields = _.filter(this.props.field.fields, (field: any) => field.filterParameter === true)
         }
+
         // Filter out the filed not matching specified conditional field
         fields = _.filter(fields, (field: any) => {
             if (field.conditionalField) {
