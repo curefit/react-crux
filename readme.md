@@ -187,16 +187,7 @@ Example:
 function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
     const cohortEventMetas = additionalModels[dataSource]
     let attributes
-    // const rootModel: any = {}
-    if (!_.isEmpty(parentModel) && parentModel.parentModel && parentModel.parentModel.parentModel &&  parentModel.parentModel.parentModel.data ) {
-     // if (!_.isEmpty(rootModel.queryMeta.events))  {
-         const eventId: string = parentModel.parentModel.parentModel.data.eventId
-        const filteredEvents = _.filter(cohortEventMetas, (event) => {
-             return event.eventId === eventId
-         })
-         attributes = _.isEmpty(filteredEvents) ? [] : filteredEvents[0].attributes
-     // }
-    }
+    // Filter Logic
     return attributes
 }
 ```
