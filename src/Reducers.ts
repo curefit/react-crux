@@ -12,6 +12,7 @@ export function CruxReducerFactory(defaultModels: any) {
                         return Object.assign({}, initialState, { fetchComplete: false })
                     }
                 }
+                // It can be used, when New Data Comes in. It will be concated with existing props
                 if (action.type.endsWith("_PUT_DATA")) {
                     const data = _.cloneDeep(initialState[action.model])
                     if(data.results){

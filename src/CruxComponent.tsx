@@ -104,13 +104,13 @@ export class CruxComponentCreator {
 
             fetchServerData(modelName: string) {
                 if (modelName === constants.modelName) {
-                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchById) : this.props.fetch(modelName, this.searchById)
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
                 } else {
                     this.props.fetch(modelName)
                 }
             }
 
-            searchById(data: any) {
+            searchByQueryParams(data: any) {
                 const params = new URLSearchParams(this.props.location.search)
                 const searchId = params.get("id")
                 const searchField = params.get("field")
@@ -214,7 +214,7 @@ export class CruxComponentCreator {
 
             fetchModel(modelName: string) {
                 modelName &&
-                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchById) : this.props.fetch(modelName, this.searchById)
+                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
             }
 
             filterSuccess(data: any) {

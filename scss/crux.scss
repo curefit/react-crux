@@ -1,4 +1,5 @@
 @import "~react-datepicker/src/stylesheets/datepicker";
+@import '~react-datepicker/dist/react-datepicker.css';
 
 .large-modal {
   width: 90%
@@ -31,4 +32,8 @@ mark {
 
 .rbt-input-main {
   padding-left: 10px !important;
+}
+
+.react-datepicker__time-list {
+  display: block !important;
 }

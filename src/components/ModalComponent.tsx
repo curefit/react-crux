@@ -49,8 +49,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
             if (modalType === "FILTER") {
-                const newItem = Object.assign({}, this.state.item, 
-                    {skip: 0, paginate: Object.assign({}, this.state.item.paginate, {currentPage: 1})})
+                const newItem = Object.assign({}, this.state.item,
+                    { skip: 0, paginate: Object.assign({}, this.state.item.paginate, { currentPage: 1 }) })
 
                 // Copies the filter items to persist the preference
                 Object.assign(this.props.item, newItem)
@@ -167,7 +167,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 {this.props.modalType === "EDIT" ?
                     <>
                         <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</div>
-                        <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</div>
+                        {this.props.constants.saveAsNew &&
+                            <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</div>}
                     </> : null}
                 {this.props.modalType === "CREATE" || this.props.modalType === "CUSTOM" ? (
                     <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>{this.props.successButtonLabel || "Create"}</div>

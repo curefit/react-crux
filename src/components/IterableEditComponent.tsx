@@ -37,9 +37,9 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     iterableButtons(index: number, totalLength: number) {
         if (this.props.field.iterabletype.readonly !== true && !this.props.readonly) {
             const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer" }
-
-            return (this.state.checkIterableButton && this.state.checkIterableButton[index] &&
-                <>
+            const visibility = this.state.checkIterableButton && this.state.checkIterableButton[index] ? "visible" : "hidden"
+            return (
+                <span style={{visibility}}>
                     {
                         this.props.field.additionalButtons &&
                         <>
@@ -64,7 +64,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     <span style={iterableButtonStyle}
                         className="glyphicon glyphicon-remove-circle" aria-hidden="true"
                         onClick={this.remove.bind(this, index)} />
-                </>)
+                </span>)
         }
         return null
     }

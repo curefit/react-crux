@@ -167,6 +167,40 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 ]
 ```
 
+###Select Field with Custom Filter
+Select Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
+```
+{
+   editable: true,
+   title: "Attribute Name",
+   type: "select",
+   field: "id",
+   foreign: {
+       modelName: "cohortEventMeta",
+       key: "id",
+       title: "name",
+       transform: customFilter
+   }
+}
+
+Example: 
+function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
+    const cohortEventMetas = additionalModels[dataSource]
+    let attributes
+    // const rootModel: any = {}
+    if (!_.isEmpty(parentModel) && parentModel.parentModel && parentModel.parentModel.parentModel &&  parentModel.parentModel.parentModel.data ) {
+     // if (!_.isEmpty(rootModel.queryMeta.events))  {
+         const eventId: string = parentModel.parentModel.parentModel.data.eventId
+        const filteredEvents = _.filter(cohortEventMetas, (event) => {
+             return event.eventId === eventId
+         })
+         attributes = _.isEmpty(filteredEvents) ? [] : filteredEvents[0].attributes
+     // }
+    }
+    return attributes
+}
+```
+
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
@@ -342,6 +376,21 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
 }
 ```
 
+### Datepickers With Time Select
+Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors. Datepicker will also time select option
+[Example](https://curefit.github.io/react-crux-examples/#/datepicker)
+
+```
+{
+  "title": "Date Of Joining",
+  "editable": true,
+  "display": true,
+  "field": "joiningDate",
+  "type": "datepicker",
+  "showTimeSelect": true
+}
+```
+
 ### File/Image upload
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
 ```
@@ -408,6 +457,41 @@ function customModalComponent(model: any, closeModal: any, sucessDispatch: any, 
 ```
 
 ### Custom Components
+This is to support Custom Components with our edit/create Modal. 
+
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+        title: "Address",
+        type: "custom",
+        customComponent: customComponentView
+    }
+  ],
+  "createModal": true
+}
+
+function customComponentView(model: model, additionalModels: any) {
+    class CustomComponent extends React.Component<{}, {}> {
+        render() {
+            return <p>{model.address}</p>
+        }
+    }
+    return CustomComponent
+}
+```
+
 ### Default Models
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
 ```
@@ -450,12 +534,171 @@ const store = createStore(
 )
 ```
 ### Filtering and Ordering
+Filtering and Ordering (Client Side) will be performed. Search Bar will shown above the Table. Based on search value, data will be loaded in Table
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "enableSearch": true
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+      "title": "Address",
+      "field": "address",
+      "editable": true,
+      "display": true
+    }
+  ],
+  "createModal": true
+}
+```
 
 ### Refreshing other models in creation / modification mode
 
 ### Dependent Dynamic Modelling
-
+The Field will have conditionalField and ConditionalValue as their Attributes. The Field will be rendered only when conditionalValue matched with Conditional
+Field Value
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+      "title": "Address",
+      "editable": true,
+      "display": true,
+      "field": "address",
+      "type": "nested",
+      "fields": [
+        {
+          "title": "Address Type",
+          "field": "type",
+          "display": true,
+          "editable": true,
+          "type": "select",
+          "foreign": {
+            "modelName": "addressTypes",
+            "key": "typeId",
+            "title": "displayName"
+          }
+        },
+        {
+          "title": "Address Line",
+          "field": "home",
+          "display": true,
+          "editable": true,
+          "conditionalField": "type",
+          "conditionalValue": "residential",
+        },
+        {
+          "title": "Address Line",
+          "field": "office",
+          "display": true,
+          "editable": true,
+          "conditionalField": "type",
+          "conditionalValue": "office",
+        },
+        {
+          "title": "City",
+          "field": "city",
+          "display": true,
+          "editable": true
+        },
+        {
+          "title": "ZipCode",
+          "field": "zipcode",
+          "display": true,
+          "editable": true,
+          "type": "tinyinput"
+        }
+      ]
+    }
+  ],
+  "createModal": true
+}
+```
 ### Styles
+Config Based Styles Can be Applied to Components. 
+
+#Hide Label
+{
+    title: "",
+    field: "units",
+    display: true,
+    editable: true,
+    type: "select",
+    style: {
+        hideLabel: true
+    },
+    foreign: {
+        modelName: "timeUnits",
+        key: "typeId",
+        title: "title"
+    }
+}
+
+#Border
+{
+    title: "",
+    field: "units",
+    display: true,
+    editable: true,
+    type: "iterable",
+    style: {
+        border: "none"
+    },
+    iterabletype: {
+        type: "nested",
+        title: "Scales",
+        fields: [
+            {
+                title: "Smiley Type",
+                editable: true,
+                display: false,
+                field: "smileyType",
+                type: "text"
+            }
+        ]
+    }
+}
+
+#Force Indent
+{
+    title: "",
+    field: "units",
+    display: true,
+    editable: true,
+    type: "nested",
+    style: {
+        forceIndent: true
+    },
+    fields: [
+        {
+            title: "Smiley Type",
+            editable: true,
+            display: false,
+            field: "smileyType",
+            type: "text"
+        }
+    ]
+}
 
 ### Fetching logic in CRUX
 A crux component when mounted does the following in order
@@ -481,6 +724,46 @@ const schema = {
     creationTitle: "Employee", // Create button will show "+ New Employee"
     createModal: true, // Enable creation of new employees through modal 
     editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [ // We have 3 fields - name, age, emailAddress
+        {
+            title: "Name",
+            field: "name",
+            representative: true,
+            display: true, // We want to display it in table
+            editable: true, // We want to be able to edit it
+        },
+        {
+            title: "Age",
+            field: "age",
+            display: false, // We _dont_ want to display it in table
+            editable: true, // We want to be able to edit it
+        },
+        {
+            title: "Email Address", 
+            field: "emailAddress",
+            display: true, // We want to display it in table
+            editable: true, // We want to be able to edit it
+        }
+    ]
+}
+
+const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema)
+export { Employees }
+```
+
+#### Table + Basic form with text inputs for create/modify/delete/Save As New
+Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify, save as new and delete employees 
+
+```
+const schema = {
+    modelName: "employees", // http call to /model/employees
+    title: "Employees", // Title for the table
+    creationTitle: "Employee", // Create button will show "+ New Employee"
+    createModal: true, // Enable creation of new employees through modal 
+    editModal: true,
+    saveAsNew: true,
     largeEdit: true,
     stateRoot: "none",
     fields: [ // We have 3 fields - name, age, emailAddress
