@@ -5,6 +5,7 @@ import { ListNestedComponent } from "./ListNestedComponent"
 import { ListForeignComponent } from "./ListForeignComponent"
 import { ListCheckboxComponent } from "./ListCheckboxComponent"
 import { InlineEditComponent } from "./InlineEditComponent"
+import { ListMultiSelectComponent } from "./ListMultiSelectComponent"
 
 @autobind
 export class ListIterableComponent extends React.Component<any, any> {
@@ -64,6 +65,15 @@ export class ListIterableComponent extends React.Component<any, any> {
                                     model={datum} field={field.iterabletype.foreign}
                                     additionalModels={this.props.additionalModels}
                                 />
+                            </div>
+                        }
+
+                        if (field.iterabletype.type === "multiselect") {
+                            return <div key={index}>
+                                <ListMultiSelectComponent
+                                    model={datum}
+                                    field={field.foreign}
+                                    additionalModels={this.props.additionalModels} />
                             </div>
                         }
 
