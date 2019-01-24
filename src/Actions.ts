@@ -32,7 +32,7 @@ export function filterModel(model: string, item: any, success?: any, error?: any
         if (queryParams) {
             queryString = getQueryString(queryParams)
         }
-        fetch(apiServer + "/model/" + model + "/filter" + queryString && `?${queryString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
+        fetch(apiServer + "/model/" + model + "/filter" + `?${queryString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "FETCH_" + model + "_COMPLETED", data: {results : data.results ? data.results : data, metadata: data.metadata}, model: model})
             if (success) success(data.results ? data.results : data)
         }).catch((err: any) => {
@@ -54,7 +54,7 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
         if (queryParams) {
             queryString = getQueryString(queryParams)
         }
-        fetch(apiServer + "/model/" + model + queryString && `?${queryString}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
+        fetch(apiServer + "/model/" + model + `?${queryString}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "FETCH_" + model + "_COMPLETED", data : data.results ? data.results : data, model: model})
             if (success) success(data)
         }).catch((err: any) => {
@@ -91,7 +91,7 @@ export function createOrModify(model: string, item: any, edit: boolean, success?
         if (queryParams) {
             queryString = getQueryString(queryParams)
         }
-        fetch(apiServer + "/model/" + model + queryString && `?${queryString}`, edit ? FetchUtil.put(item) : FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
+        fetch(apiServer + "/model/" + model + `?${queryString}`, edit ? FetchUtil.put(item) : FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: word + "_" + model + "_COMPLETED", data: data, model: model })
             if (success) success(data)
         }).catch((err: any) => {
@@ -113,7 +113,7 @@ export function deleteModel(model: string, item: any, success?: any, error?: any
         if (queryParams) {
             queryString = getQueryString(queryParams)
         }
-        fetch(apiServer + "/model/" + model + queryString && `?${queryString}`, FetchUtil.delete(item)).then(FetchUtil.parseResponse).then((data: any) => {
+        fetch(apiServer + "/model/" + model + `?${queryString}`, FetchUtil.delete(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "DELETE_" + model + "_COMPLETED", data: data, model: model })
             if (success) success(data)
         }).catch((err: any) => {
