@@ -167,6 +167,24 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 ]
 ```
 
+###MultiSelect Field
+This helps us to select multiple values in List. 
+
+```
+{
+    title: "Media Type",
+    field: "mediaType",
+    display: true,
+    editable: true,
+    type: "multiselect",
+    foreign: {
+        modelName: "mediaTypes",
+        key: "typeId", // typeId is what will be stored while storing mediaType for the object
+        title: "title" // title is what will be used to show in the dropdown
+    }
+}
+```
+
 ###Select Field with Custom Filter
 Select Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
 ```

@@ -26,7 +26,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         }
 
         optionsData = optionsData.map((modelData: any) => {
-            return { label: modelData.title, value: modelData[this.props.field.foreign.key] }
+            return { label: modelData[this.props.field.foreign.title], value: modelData[this.props.field.foreign.key] }
         })
 
         const placeholderText = !hideLabel ? "Choose " + this.props.field.title : "Choose"
