@@ -41,7 +41,7 @@ export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
         let anchors: any = {}
 
-        function mapStateToProps(state: any): any {
+        function mapStateToProps(state: any, ownProps: any): any {
             const additionalModels = getAdditionalModels(constants)
             const stateRoot = !constants.stateRoot ? "crux" : (constants.stateRoot === "none" ? undefined : constants.stateRoot)
             const additionalModelValues = _.map(additionalModels, (model: any) => {
@@ -51,23 +51,24 @@ export class CruxComponentCreator {
                 [constants.modelName]: stateRoot ? state[stateRoot][constants.modelName] : state[constants.modelName],
                 additionalModels: _.reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
-                }, {})
+                }, {}),
+                queryParams: ownProps ? ownProps.queryParams : undefined
             })
         }
 
         const mapDispatchToProps = (dispatch: any) => {
             return {
-                fetch: (model: string) => {
-                    dispatch(fetchModel(model))
+                fetch: (model: string, success: any, error: any, queryParams: any) => {
+                    dispatch(fetchModel(model, success, error, queryParams))
                 },
-                filter: (model: string, item: any, success: any, error: any) => {
-                    dispatch(filterModel(model, item, success, error))
+                filter: (model: string, item: any, success: any, error: any, queryParams: any) => {
+                    dispatch(filterModel(model, item, success, error, queryParams))
                 },
-                createOrModify: (model: string, item: any, edit: boolean, success: any, error: any) => {
-                    dispatch(createOrModify(model, item, edit, success, error))
+                createOrModify: (model: string, item: any, edit: boolean, success: any, error: any, queryParams: any) => {
+                    dispatch(createOrModify(model, item, edit, success, error, queryParams))
                 },
-                deleteModel: (model: string, item: any, success: any, error: any) => {
-                    dispatch(deleteModel(model, item, success, error))
+                deleteModel: (model: string, item: any, success: any, error: any, queryParams: any) => {
+                    dispatch(deleteModel(model, item, success, error, queryParams))
                 },
                 successCustomModal: (data: any, type: string, model: string) => {
                     dispatch(successCustomModal(data, type, model))
@@ -85,13 +86,13 @@ export class CruxComponentCreator {
         class ListClass extends React.Component<any, any> {
 
             componentDidMount() {
-                this.fetchModels()
+                this.fetchModels(this.props)
                 anchors = getAnchors(constants)
             }
 
-            fetchModels = () => {
+            fetchModels = (props: any) => {
                 const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model))
-                additionalModels && additionalModels.forEach((model: string) => this.fetchServerData(model))
+                additionalModels && additionalModels.forEach((model: string) => this.fetchServerData(model, props))
             }
 
             checkAdditionalModel(modelName: string) {
@@ -102,11 +103,13 @@ export class CruxComponentCreator {
                 return _.isEmpty(this.props.additionalModels[modelName])
             }
 
-            fetchServerData(modelName: string) {
+            fetchServerData(modelName: string, props: any) {
                 if (modelName === constants.modelName) {
-                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
+                    this.getDefaultPageSize() ?
+                        props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams)
+                        : props.fetch(modelName, this.searchByQueryParams, undefined, props.queryParams)
                 } else {
-                    this.props.fetch(modelName)
+                    props.fetch(modelName)
                 }
             }
 
@@ -154,6 +157,14 @@ export class CruxComponentCreator {
 
             getDefaultPageSize = () => {
                 return constants.paginate && constants.paginate.defaultPageSize || ''
+            }
+
+            componentWillReceiveProps(nextProps: any) {
+                console.log("New props: ", nextProps, " ", this.props.queryParams)
+                if (!_.isEqual(this.props.queryParams, nextProps.queryParams)) {
+                    console.log("Fetching again : ", nextProps, this.props.queryParams)
+                    this.fetchModels(nextProps)
+                }
             }
 
             showCreateModal = () => {
@@ -214,7 +225,9 @@ export class CruxComponentCreator {
 
             fetchModel(modelName: string) {
                 modelName &&
-                    this.getDefaultPageSize() ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams) : this.props.fetch(modelName, this.searchByQueryParams)
+                    this.getDefaultPageSize() 
+                        ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams, undefined, this.props.queryParams) 
+                        : this.props.fetch(modelName, this.searchByQueryParams, undefined, this.props.queryParams)
             }
 
             filterSuccess(data: any) {
@@ -246,7 +259,7 @@ export class CruxComponentCreator {
             }
 
             inlineEdit(item: any, success: any, error: any) {
-                this.props.createOrModify(constants.modelName, item, true, this.inlineEditSuccess.bind(this, success), this.inlineEditError.bind(this, error))
+                this.props.createOrModify(constants.modelName, item, true, this.inlineEditSuccess.bind(this, success), this.inlineEditError.bind(this, error), this.props.queryParams)
             }
 
             inlineEditSuccess(success: any, data: any) {
@@ -423,7 +436,8 @@ export class CruxComponentCreator {
                                 modalType={"CREATE"}
                                 createOrModify={this.props.createOrModify}
                                 createOrEditSuccess={this.createOrEditSuccess}
-                                additionalModels={this.props.additionalModels} />
+                                additionalModels={this.props.additionalModels}
+                                queryParams={this.props.queryParams} />
                         }
                         {constants.editModal && this.state.showEditModal &&
                             <ModalComponent
@@ -436,7 +450,8 @@ export class CruxComponentCreator {
                                 createOrModify={this.props.createOrModify}
                                 createOrEditSuccess={this.createOrEditSuccess}
                                 deleteModel={this.props.deleteModel}
-                                additionalModels={this.props.additionalModels} />
+                                additionalModels={this.props.additionalModels}
+                                queryParams={this.props.queryParams} />
                         }
                         {constants.filterModal && this.state.showFilterModal &&
                             <ModalComponent
@@ -447,7 +462,8 @@ export class CruxComponentCreator {
                                 item={this.state.filterModel}
                                 filterSuccess={this.filterSuccess}
                                 filter={this.props.filter}
-                                additionalModels={this.props.additionalModels} />
+                                additionalModels={this.props.additionalModels}
+                                queryParams={this.props.queryParams} />
                         }
                         {constants.customModal && this.state.showCustomModal &&
                             this.getCustomComponent()
