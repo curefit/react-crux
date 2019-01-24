@@ -1,7 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import * as _ from "lodash"
-import { DropdownButton, MenuItem } from "react-bootstrap"
 import { InlineComponentProps } from "../CruxComponent"
 import Select from "react-select"
 

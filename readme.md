@@ -88,6 +88,7 @@ const store = createStore(
     "react-datepicker": "^1.6.0", // For datepicker
     "react-dropzone": "^5.0.1", // For file upload component
     "react-redux": "^5.0.7", // Duh
+    "react-select": "^2.3.0", // For Multi Select component
     "superagent": "^3.8.3" // For upload request
   }
 ```
@@ -110,6 +111,7 @@ const store = createStore(
    * _representative_ - Set to true if this field is representative of the parent object. Used to show in other select menus etc. Typically name/title fields are representative
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
         - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
+        - _multiselect_ - For dropdowns with multiple select option. Detailed explanation later.
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
