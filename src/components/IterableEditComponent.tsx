@@ -8,6 +8,7 @@ import { CheckboxComponent } from "./CheckboxComponent"
 import { DatePickerComponent } from "./DatePickerComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
+import { MultiSelectComponent } from "./MultiSelectComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -127,6 +128,32 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <SelectComponent
+                                        key={index}
+                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                        constants={this.props.constants}
+                                        currentModel={this.state.model[index]}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "multiselect") {
+                            return <div key={index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={{ display: "inline-block" }}>
+                                    <MultiSelectComponent
                                         key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}

@@ -8,6 +8,7 @@ import { DatePickerComponent } from "./DatePickerComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { IterableEditComponent } from "./IterableEditComponent"
 import { CheckboxComponent } from "./CheckboxComponent"
+import { MultiSelectComponent } from "./MultiSelectComponent";
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -100,6 +101,17 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                     {
                                         field.type === "select" &&
                                         <SelectComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.select}
+                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                                            showTitle={true}
+                                            parentModel={currentModelWithParent}
+                                        />
+                                    }
+                                    {
+                                        field.type === "multiselect" &&
+                                        <MultiSelectComponent field={field}
                                             readonly={field.readonly === true || this.props.readonly}
                                             additionalModels={this.props.additionalModels}
                                             modelChanged={this.select}
@@ -210,7 +222,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                         </div>
                                     }
                                     {
-                                        field.type !== "iterable" && field.type !== "select" && field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
+                                        field.type !== "iterable" && field.type !== "select" && field.type !== "multiselect" && 
+                                        field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
                                         field.type !== "datepicker" && field.type !== "imageUpload" && field.type !== "number" &&
                                         <div>
                                             {!_.isEmpty(field.title) && <span><label style={{
