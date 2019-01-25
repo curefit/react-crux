@@ -114,25 +114,27 @@ export class CruxComponentCreator {
             }
 
             searchByQueryParams(data: any) {
-                const params = new URLSearchParams(this.props.location.search)
-                const searchId = params.get("id")
-                const searchField = params.get("field")
-                if (searchId && searchField) {
-                    const searchData = data.filter((x: any) => x[searchField] === searchId);
-                    if (searchData.length) {
-                        this.setState({
-                            showEditModal: true,
-                            model: searchData[0]
-                        })
-                    } else {
-                        this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
-                            if (searchModel) {
-                                this.setState({
-                                    showEditModal: true,
-                                    model: searchModel
-                                })
-                            }
-                        })
+                if (this.props.location && this.props.location.search) {
+                    const params = new URLSearchParams(this.props.location.search)
+                    const searchId = params.get("id")
+                    const searchField = params.get("field")
+                    if (searchId && searchField) {
+                        const searchData = data.filter((x: any) => x[searchField] === searchId);
+                        if (searchData.length) {
+                            this.setState({
+                                showEditModal: true,
+                                model: searchData[0]
+                            })
+                        } else {
+                            this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
+                                if (searchModel) {
+                                    this.setState({
+                                        showEditModal: true,
+                                        model: searchModel
+                                    })
+                                }
+                            })
+                        }
                     }
                 }
             }
