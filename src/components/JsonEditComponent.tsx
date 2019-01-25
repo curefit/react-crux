@@ -19,7 +19,7 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
                 }}>{field.title.toUpperCase()}</label><br /></span>}
                 <ReactJson
                     style={{ borderWidth: "2px" }}
-                    name={field.title}
+                    name={field.field}
                     src={currentModel}
                     onAdd={this.handleAdd}
                     onEdit={this.handleEdit}
