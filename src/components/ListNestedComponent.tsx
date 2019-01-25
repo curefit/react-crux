@@ -6,6 +6,7 @@ import { ListDateComponent } from "./ListDateComponent"
 import { ListCheckboxComponent } from "./ListCheckboxComponent"
 import { ListForeignComponent } from "./ListForeignComponent"
 import { InlineEditComponent } from "./InlineEditComponent"
+import { ListMultiSelectComponent } from "./ListMultiSelectComponent"
 
 @autobind
 export class ListNestedComponent extends React.Component<any, any> {
@@ -67,6 +68,10 @@ export class ListNestedComponent extends React.Component<any, any> {
                         </span>
                     </div>
                 ))
+            }
+
+            if (field.type === "multiselect") {
+                return <ListMultiSelectComponent model={this.props.model[field.field]} field={field.foreign} additionalModels={this.props.additionalModels} />
             }
 
             if (!_.isEmpty(field.foreign)) {
