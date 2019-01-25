@@ -106,10 +106,10 @@ export class CruxComponentCreator {
             fetchServerData(modelName: string, props: any) {
                 if (modelName === constants.modelName) {
                     this.getDefaultPageSize() ?
-                        props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams)
+                        props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams, undefined, props.queryParams)
                         : props.fetch(modelName, this.searchByQueryParams, undefined, props.queryParams)
                 } else {
-                    props.fetch(modelName)
+                    props.fetch(modelName, undefined, undefined, props.queryParams)
                 }
             }
 
