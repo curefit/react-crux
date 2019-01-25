@@ -1,7 +1,5 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as moment from "moment"
-import DatePicker from "react-datepicker"
 import { InlineComponentProps } from "../CruxComponent"
 import ReactJson, { InteractionProps } from "react-json-view"
 
@@ -21,35 +19,25 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
                     style={{ borderWidth: "2px" }}
                     name={field.field}
                     src={currentModel}
-                    onAdd={this.handleAdd}
-                    onEdit={this.handleEdit}
-                    onDelete={this.handleDelete}
+                    onAdd={this.handleModify}
+                    onEdit={this.handleModify}
+                    onDelete={this.handleModify}
                 />
             </div>
         )
     }
 
-    handleEdit = (editPayload: InteractionProps) => {
+    handleModify = (addPayload: InteractionProps) => {
         if (this.props.readonly) {
             return false
         }
-        this.props.modelChanged(this.props.field, editPayload.updated_src)
-        return true
-    }
-
-    handleAdd = (addPayload: InteractionProps) => {
-        if (this.props.readonly) {
+        try {
+            JSON.stringify(addPayload.updated_src)
+        } catch (e) {
+            console.error(`Invalid JSON. Culprit: ${this.props.field}`)
             return false
         }
         this.props.modelChanged(this.props.field, addPayload.updated_src)
-        return true
-    }
-
-    handleDelete = (deletePayload: InteractionProps) => {
-        if (this.props.readonly) {
-            return false
-        }
-        this.props.modelChanged(this.props.field, deletePayload.updated_src)
         return true
     }
 
