@@ -96,8 +96,8 @@ export class CruxComponentCreator {
             }
 
             checkAdditionalModel(modelName: string, props: any) {
-                if ((modelName === constants.modelName && constants.paginate) ||
-                    !Array.isArray(props.additionalModels[modelName])) {
+                if ((modelName === constants.modelName && (constants.paginate || (!_.isEqual(this.props.queryParams, props.queryParams))) ||
+                    !Array.isArray(props.additionalModels[modelName]))) {
                     return true
                 }
                 return _.isEmpty(props.additionalModels[modelName])
