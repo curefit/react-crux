@@ -91,16 +91,16 @@ export class CruxComponentCreator {
             }
 
             fetchModels = (props: any) => {
-                const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model))
+                const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model, props))
                 additionalModels && additionalModels.forEach((model: string) => this.fetchServerData(model, props))
             }
 
-            checkAdditionalModel(modelName: string) {
+            checkAdditionalModel(modelName: string, props: any) {
                 if ((modelName === constants.modelName && constants.paginate) ||
-                    !Array.isArray(this.props.additionalModels[modelName])) {
+                    !Array.isArray(props.additionalModels[modelName])) {
                     return true
                 }
-                return _.isEmpty(this.props.additionalModels[modelName])
+                return _.isEmpty(props.additionalModels[modelName])
             }
 
             fetchServerData(modelName: string, props: any) {
