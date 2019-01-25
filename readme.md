@@ -711,6 +711,51 @@ Config Based Styles Can be Applied to Components.
     ]
 }
 
+### Query Param Support With React Crux
+We can give queryParams in config. It will append queryparams with every fetch call.
+
+```
+import * as React from "react"
+import { CruxComponentCreator } from "@curefit/react-crux"
+
+const constants = {
+    modelName: "serviceAccess",
+    title: "Service Access",
+    creationTitle: "Service Access",
+    createModal: true,
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [
+        {
+            title: "Service",
+            field: "serviceName",
+            representative: true,
+        },
+        {
+            title: "Users",
+            field: "users",
+            type: "iterable",
+            iterabletype: {
+                title: "User",
+                inlineEdit: true
+            }
+        }
+    ]
+}
+
+const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
+
+class ComponentWithQueryParams extends React.Component<{}, {}> {
+    render() {
+        return (<Forms {...this.props} queryParams={{data: "1", title: "check"}}/>)
+    }
+}
+
+export {ComponentWithQueryParams}
+```
+
+
 ### Fetching logic in CRUX
 A crux component when mounted does the following in order
 1. Parse the whole config.
