@@ -8,16 +8,6 @@ import ReactJson, { InteractionProps } from "react-json-view"
 
 @autobind
 export class JsonEditComponent extends React.Component<InlineComponentProps, any> {
-    constructor(props: any) {
-        super(props)
-        this.state = { interval: 30 }
-    }
-
-    componentWillReceiveProps(nextProps: any) {
-        if (nextProps.currentModel) {
-            this.setState({ ...this.state, dateTime: moment(nextProps.currentModel) })
-        }
-    }
 
     render() {
         const {field, currentModel} = this.props;
