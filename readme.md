@@ -69,7 +69,7 @@ const appReducer = combineReducers({crux: CruxReducerFactory({}), user: UserRedu
 ...
 
 const store = createStore(
-    rootReducer,
+    appReducer,
     applyMiddleware(thunk, createLogger())
 )
 ```
