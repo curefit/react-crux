@@ -748,7 +748,7 @@ const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, Servic
 
 class ComponentWithQueryParams extends React.Component<{}, {}> {
     render() {
-        return (<Forms {...this.props} queryParams={{data: "1", title: "check"}}/>)
+        return (<ServiceAccessComponent {...this.props} queryParams={{data: "1", title: "check"}}/>)
     }
 }
 
