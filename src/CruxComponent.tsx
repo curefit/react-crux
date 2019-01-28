@@ -52,7 +52,7 @@ export class CruxComponentCreator {
                 additionalModels: _.reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
-                queryParams: ownProps ? ownProps.queryParams : undefined
+                queryParams: ownProps ? (ownProps.options && ownProps.options.queryParams || undefined) : undefined
             })
         }
 
@@ -208,7 +208,7 @@ export class CruxComponentCreator {
                 this.closeEditModal()
                 this.closeCreateModal()
                 if (constants.filterModal || constants.paginate)
-                    this.props.filter(constants.modelName, this.state.filterModel)
+                    this.props.filter(constants.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
                 else
                     this.fetchModel(constants.modelName)
             }
@@ -247,7 +247,7 @@ export class CruxComponentCreator {
             handleFieldSearch = (field: string, searchQuery: any) => {
                 const filterModal = Object.assign({}, this.state.filterModel, { [field]: searchQuery })
                 if (searchQuery === "") {
-                    this.props.filter(constants.modelName, filterModal)
+                    this.props.filter(constants.modelName, filterModal, undefined, undefined, this.props.queryParams)
                 }
                 this.setState({ filterModel: filterModal })
             }
@@ -258,7 +258,7 @@ export class CruxComponentCreator {
                 this.setState({
                     filterModel: newFilterModel
                 })
-                this.props.filter(constants.modelName, newFilterModel)
+                this.props.filter(constants.modelName, newFilterModel, undefined, undefined, this.props.queryParams)
             }
 
             inlineEdit(item: any, success: any, error: any) {
@@ -297,7 +297,7 @@ export class CruxComponentCreator {
                 this.setState({
                     filterModel: filterModelData
                 })
-                this.props.filter(constants.modelName, filterModelData)
+                this.props.filter(constants.modelName, filterModelData, undefined, undefined, this.props.queryParams)
             }
 
             nextPage() {
@@ -309,7 +309,7 @@ export class CruxComponentCreator {
                 this.setState({
                     filterModel: filterModelData
                 })
-                this.props.filter(constants.modelName, filterModelData)
+                this.props.filter(constants.modelName, filterModelData, undefined, undefined, this.props.queryParams)
             }
 
             paginate(pageSize: number) {
@@ -321,7 +321,7 @@ export class CruxComponentCreator {
                 filterModelData['skip'] = 0
                 filterModelData['limit'] = pageSize
                 this.setState({ filterModel: filterModelData })
-                this.props.filter(constants.modelName, filterModelData)
+                this.props.filter(constants.modelName, filterModelData, undefined, undefined, this.props.queryParams)
             }
 
             getTableData() {
