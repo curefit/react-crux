@@ -252,6 +252,12 @@ export class CruxComponentCreator {
                 this.setState({ filterModel: filterModal })
             }
 
+            handleSearchKeyPress = (event: any) => {
+                if (event.charCode === 13) {
+                    this.fetchSearchResults()
+                }
+            }
+
             fetchSearchResults = () => {
                 const newFilterModel = Object.assign({}, this.state.filterModel,
                     { skip: 0, paginate: Object.assign({}, this.state.filterModel.paginate, { currentPage: 1 }) })
@@ -390,6 +396,7 @@ export class CruxComponentCreator {
                                                             <input type="text"
                                                                 style={{ width: "100%" }}
                                                                 value={(this.state.filterModel || {})[field.search.key]}
+                                                                onKeyPress={this.handleSearchKeyPress}
                                                                 onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
                                                             />
                                                         </div>
