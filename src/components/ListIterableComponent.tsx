@@ -59,7 +59,7 @@ export class ListIterableComponent extends React.Component<any, any> {
                             })
                         }
 
-                        if (field.iterabletype.type === "select" || field.iterabletype.type === "searcheableselect") {
+                        if (field.iterabletype.type === "select") {
                             return <div key={index}>
                                 <ListForeignComponent
                                     model={datum} field={field.iterabletype.foreign}
