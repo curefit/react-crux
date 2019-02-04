@@ -32,7 +32,8 @@ export interface InlineComponentProps {
     urlSuffix?: string
     constants?: any,
     anchors?: any,
-    readonly?: boolean
+    readonly?: boolean,
+    isMulti?: boolean
 }
 
 export { ModalComponent } from './components/ModalComponent'
