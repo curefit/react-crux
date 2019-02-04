@@ -111,6 +111,18 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                         />
                                     }
                                     {
+                                        field.type === "searcheableselect" &&
+                                        <MultiSelectComponent field={field}
+                                            readonly={field.readonly === true || this.props.readonly}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.select}
+                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                                            showTitle={true}
+                                            parentModel={currentModelWithParent}
+                                            isMulti={false}
+                                        />
+                                    }
+                                    {
                                         field.type === "multiselect" &&
                                         <MultiSelectComponent field={field}
                                             readonly={field.readonly === true || this.props.readonly}
@@ -119,6 +131,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                             currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
                                             showTitle={true}
                                             parentModel={currentModelWithParent}
+                                            isMulti={true}
                                         />
                                     }
                                     {

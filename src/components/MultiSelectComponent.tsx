@@ -25,12 +25,11 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         }
 
         optionsData = optionsData.map((modelData: any) => {
-            return { label: modelData[this.props.field.foreign.title], value: modelData[this.props.field.foreign.key] }
+            return { label: this.getTitle(modelData), value: this.getModalValue(modelData) }
         })
 
         const placeholderText = !hideLabel ? "Choose " + this.props.field.title : "Choose"
-        let foreignTitle: any = []
-        let multiSelectValue: any = []
+        let multiSelectValue: any
         if (this.props.field.foreign) {
             if (!this.props.field.foreign.key && !this.props.field.foreign.keys) {
                 console.error(`Did you forget to add a "key(s)" field in foreign. Possible culprit: ${this.props.field}`)
@@ -41,18 +40,34 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             if (!this.props.field.foreign.title) {
                 console.error(`Did you forget to add a "title" field in foreign . Possible culprit: ${this.props.field}`)
             }
-            if (!_.isEmpty(this.props.currentModel) && Array.isArray(this.props.currentModel)) {
-                multiSelectValue = _.map(this.props.currentModel, (value: string) => {
+            if (!_.isEmpty(this.props.currentModel)) {
+                let foreignTitle: any
+                if (this.props.isMulti && Array.isArray(this.props.currentModel)) {
+                    multiSelectValue = _.map(this.props.currentModel, (value: string) => {
+                        const foreignDoc = _.find(optionsData, (doc: any) => {
+                            return doc["value"] === value
+                        })
+                        if (_.isEmpty(foreignDoc)) {
+                            foreignTitle = { label: value + " Bad Value", value }
+                        } else {
+                            foreignTitle = foreignDoc
+                        }
+                        return foreignTitle
+                    })
+                } else {
                     const foreignDoc = _.find(optionsData, (doc: any) => {
-                        return doc["value"] === value
+                        if (this.props.field.foreign.keys) {
+                            return this.props.field.foreign.keys.every((key: any) => doc.value[key] === this.props.currentModel[key])
+                        }
+                        return doc.value === this.props.currentModel
                     })
                     if (_.isEmpty(foreignDoc)) {
-                        foreignTitle = { label: value + " Bad Value", value }
+                        foreignTitle = { label: this.props.currentModel + " Bad Value", value: this.props.currentModel }
                     } else {
                         foreignTitle = foreignDoc
                     }
-                    return foreignTitle
-                })
+                    multiSelectValue = foreignTitle
+                }
             }
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
@@ -65,10 +80,10 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                     marginRight: "10px"
                 }}>{this.props.field.title.toUpperCase()}</label><br /></div>
             }
-            <Select isMulti={true}
-                isClearable={true}
+            <Select isMulti={this.props.isMulti}
+                isClearable={this.props.isMulti}
                 isSearchable={true}
-                closeMenuOnSelect={false}
+                closeMenuOnSelect={!this.props.isMulti}
                 onChange={(eventKey: any) => this.select(this.props.field, eventKey)}
                 value={multiSelectValue}
                 options={optionsData}
@@ -77,11 +92,28 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         </div>
     }
 
-    select = (field: any, eventKey: any) => {
-        let fieldList = []
-        if (eventKey) {
-            fieldList = eventKey.map((event: any) => event.value)
+    getModalValue = (modelData: any) => {
+        if (this.props.field.foreign.keys && Array.isArray(this.props.field.foreign.keys)) {
+           let eventKey: any = {}
+            for (const key of this.props.field.foreign.keys) {
+                eventKey[key] = modelData[key]
+            }
+            return eventKey
         }
-        this.props.modelChanged(field, fieldList)
+        return modelData[this.props.field.foreign.key]
+    }
+
+    getTitle = (modelData: any) => {
+        return this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(modelData) : modelData[this.props.field.foreign.title]
+    }
+
+    select = (field: any, eventKey: any) => {
+        if (eventKey && this.props.isMulti) {
+            let fieldList = []
+            fieldList = eventKey.map((event: any) => event.value)
+            this.props.modelChanged(field, fieldList)
+        } else {
+            this.props.modelChanged(field, eventKey.value)
+        }
     }
 }
