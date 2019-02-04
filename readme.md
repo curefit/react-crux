@@ -112,6 +112,7 @@ const store = createStore(
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
         - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
         - _multiselect_ - For dropdowns with multiple select option. Detailed explanation later.
+        - _searcheableselect_ - For dropdowns with searcheable single select option. Detailed explanation later.
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
@@ -179,6 +180,24 @@ This helps us to select multiple values in List.
     display: true,
     editable: true,
     type: "multiselect",
+    foreign: {
+        modelName: "mediaTypes",
+        key: "typeId", // typeId is what will be stored while storing mediaType for the object
+        title: "title" // title is what will be used to show in the dropdown
+    }
+}
+```
+
+###Searcheable Select Field
+This helps us to select multiple values in List. 
+
+```
+{
+    title: "Media Type",
+    field: "mediaType",
+    display: true,
+    editable: true,
+    type: "searcheableselect",
     foreign: {
         modelName: "mediaTypes",
         key: "typeId", // typeId is what will be stored while storing mediaType for the object
