@@ -89,7 +89,8 @@ const store = createStore(
     "react-dropzone": "^5.0.1", // For file upload component
     "react-redux": "^5.0.7", // Duh
     "react-select": "^2.3.0", // For Multi Select component
-    "superagent": "^3.8.3" // For upload request
+    "superagent": "^3.8.3", // For upload request
+    "query-string": "^6.2.0" // For Query Params formation
   }
 ```
 # Specification
