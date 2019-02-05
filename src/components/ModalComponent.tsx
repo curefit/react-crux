@@ -98,7 +98,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     deleteModel = () => {
-        this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError)
+        this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
     }
 
     render() {
