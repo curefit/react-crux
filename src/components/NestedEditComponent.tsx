@@ -34,6 +34,174 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         return false
     }
 
+    getComponentForField(field: any, currentModelWithParent: any) {
+        if (field.type === "select") {
+            return (<SelectComponent field={field}
+                readonly={field.readonly === true || this.props.readonly}
+                additionalModels={this.props.additionalModels}
+                modelChanged={this.select}
+                currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                showTitle={true}
+                parentModel={currentModelWithParent}
+            />)
+        } else if (field.type === "searcheableselect") {
+            return (
+                <MultiSelectComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={false}
+                />
+            )
+        } else if (field.type === "multiselect") {
+            return (
+                <MultiSelectComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={true}
+                />
+            )
+        } else if (field.type === "imageUpload") {
+            return (
+                <ImageUploadComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    width={this.props.width}
+                    height={this.props.height}
+                    contentType={this.props.contentType}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "datepicker") {
+            return (
+                <DatePickerComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "typeahead") {
+            return (
+                <TypeaheadComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    fetch={this.props.fetch} modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "nested") {
+            return (
+                <NestedEditComponent field={field} modalType={this.props.modalType}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    fetch={this.props.fetch}
+                    modelChanged={this.select.bind(this, field)}
+                    indent={field.style ? (field.style.forceIndent ? true : false) : false}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "iterable") {
+            return (
+                <IterableEditComponent field={field} modalType={this.props.modalType}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    fetch={this.props.fetch}
+                    modelChanged={this.select.bind(this, field)}
+                    indent={true}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
+                    parentModel={currentModelWithParent} anchors={this.props.anchors}
+                />
+            )
+        } else if (field.type === "checkbox") {
+            return (
+                <CheckboxComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "bigtext") {
+            return (
+                <div>
+                    {!_.isEmpty(field.title) && <span><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    <textarea
+                        disabled={field.readonly === true || this.props.readonly}
+                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                        onChange={this.handleChange.bind(this, field)}
+                        style={{ width: 250 }} />
+                </div>
+            )
+        } else if (field.type === "json") {
+            return (
+                <JsonEditComponent
+                    field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "number") {
+            return (
+                <div>
+                    {!_.isEmpty(field.title) && <span><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    <input type="number"
+                        disabled={field.readonly === true || this.props.readonly}
+                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                        onChange={this.handleChange.bind(this, field)}
+                        style={{ width: 200, paddingTop: 5 }}
+                    />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {!_.isEmpty(field.title) && <span><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    <input type="text"
+                        disabled={field.readonly === true || this.props.readonly}
+                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                        onChange={this.handleChange.bind(this, field)}
+                        style={field.type === "tinyinput" ? {
+                            width: 64,
+                            paddingTop: 5
+                        } : { width: 200, paddingTop: 5 }}
+                    />
+                </div>
+            )
+        }
+    }
+
     render(): any {
         // console.log("nested", this.props.field.title, " Parent " ,this.props.parentModel)
         if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
@@ -99,174 +267,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                 verticalAlign: "top"
                             } : { marginBottom: "30px", marginRight: "10px" }}>
                                 <div>
-                                    {
-                                        field.type === "select" &&
-                                        <SelectComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "searcheableselect" &&
-                                        <MultiSelectComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                            isMulti={false}
-                                        />
-                                    }
-                                    {
-                                        field.type === "multiselect" &&
-                                        <MultiSelectComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                            isMulti={true}
-                                        />
-                                    }
-                                    {
-                                        field.type === "imageUpload" &&
-                                        <ImageUploadComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            width={this.props.width}
-                                            height={this.props.height}
-                                            contentType={this.props.contentType}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "datepicker" &&
-                                        <DatePickerComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "typeahead" &&
-                                        <TypeaheadComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            fetch={this.props.fetch} modelChanged={this.select}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "nested" &&
-                                        <NestedEditComponent field={field} modalType={this.props.modalType}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            fetch={this.props.fetch}
-                                            modelChanged={this.select.bind(this, field)}
-                                            indent={field.style ? (field.style.forceIndent ? true : false) : false}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "iterable" &&
-                                        <IterableEditComponent field={field} modalType={this.props.modalType}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            fetch={this.props.fetch}
-                                            modelChanged={this.select.bind(this, field)}
-                                            indent={true}
-                                            currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
-                                            parentModel={currentModelWithParent} anchors={this.props.anchors}
-                                        />
-                                    }
-                                    {
-                                        field.type === "checkbox" &&
-                                        <CheckboxComponent field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "bigtext" &&
-                                        <div>
-                                            {!_.isEmpty(field.title) && <span><label style={{
-                                                fontSize: "10px",
-                                                marginRight: "10px"
-                                            }}>{field.title.toUpperCase()}</label><br /></span>}
-                                            <textarea
-                                                disabled={field.readonly === true || this.props.readonly}
-                                                value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                                                onChange={this.handleChange.bind(this, field)}
-                                                style={{ width: 250 }} />
-                                        </div>
-                                    }
-                                    {
-                                        field.type === "json" &&
-                                        <JsonEditComponent
-                                            field={field}
-                                            readonly={field.readonly === true || this.props.readonly}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.select}
-                                            currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
-                                            showTitle={true}
-                                            parentModel={currentModelWithParent}
-                                        />
-                                    }
-                                    {
-                                        field.type === "number" &&
-                                        <div>
-                                            {!_.isEmpty(field.title) && <span><label style={{
-                                                fontSize: "10px",
-                                                marginRight: "10px"
-                                            }}>{field.title.toUpperCase()}</label><br /></span>}
-                                            <input type="number"
-                                                disabled={field.readonly === true || this.props.readonly}
-                                                value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                                                onChange={this.handleChange.bind(this, field)}
-                                                style={{ width: 200, paddingTop: 5 }}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        field.type !== "iterable" && field.type !== "select" && field.type !== "multiselect" && 
-                                        field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
-                                        field.type !== "datepicker" && field.type !== "imageUpload" && field.type !== "number" && field.type !== "json" &&
-                                        <div>
-                                            {!_.isEmpty(field.title) && <span><label style={{
-                                                fontSize: "10px",
-                                                marginRight: "10px"
-                                            }}>{field.title.toUpperCase()}</label><br /></span>}
-                                            <input type="text"
-                                                disabled={field.readonly === true || this.props.readonly}
-                                                value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                                                onChange={this.handleChange.bind(this, field)}
-                                                style={field.type === "tinyinput" ? {
-                                                    width: 64,
-                                                    paddingTop: 5
-                                                } : { width: 200, paddingTop: 5 }}
-                                            />
-                                        </div>
-                                    }
+                                    {this.getComponentForField(field, currentModelWithParent)}
                                 </div>
                             </div>
                         })
