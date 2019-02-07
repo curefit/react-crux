@@ -248,7 +248,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                         </div>
                                     }
                                     {
-                                        field.type !== "iterable" && field.type !== "select" && field.type !== "multiselect" && 
+                                        field.type !== "iterable" && field.type !== "select" && field.type !== "multiselect" && field.type !== "searcheableselect" &&
                                         field.type !== "typeahead" && field.type !== "nested" && field.type !== "bigtext" && field.type !== "checkbox" &&
                                         field.type !== "datepicker" && field.type !== "imageUpload" && field.type !== "number" && field.type !== "json" &&
                                         <div>
