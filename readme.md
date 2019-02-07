@@ -232,6 +232,31 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 }
 ```
 
+###Typeahead Field with Custom Filter
+Typeahead Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
+```
+{
+   editable: true,
+   title: "Attribute Name",
+   type: "typeahead",
+   field: "id",
+   foreign: {
+       modelName: "cohortEventMeta",
+       key: "id",
+       title: "name",
+       transform: customFilter
+   }
+}
+
+Example: 
+function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
+    const cohortEventMetas = additionalModels[dataSource]
+    let attributes
+    // Filter Logic
+    return attributes
+}
+```
+
 ### Iterable fields
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
