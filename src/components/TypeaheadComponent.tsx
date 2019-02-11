@@ -7,11 +7,23 @@ import { InlineComponentProps } from "../CruxComponent"
 @autobind
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
     render() {
-        const options = _.isEmpty(this.props.field.foreign.orderby)
-            ? this.props.additionalModels[this.props.field.foreign.modelName]
-            : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+        let optionsData = []
+        if (this.props.field.foreign.transform) {
+            if (typeof this.props.field.foreign.transform === "function") {
+                optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+            } else {
+                console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+            }
+        } else {
+            optionsData = _.isEmpty(this.props.field.foreign.orderby)
+                ? this.props.additionalModels[this.props.field.foreign.modelName]
+                : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+        }
 
-        const selected = _.find(options, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
+        let selected = _.find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
+        if (!selected && this.props.currentModel) {
+            selected = { title: this.props.currentModel + " - Bad Value", typeId: "" }
+        }
         return <div>
             {
                 this.props.showTitle &&
@@ -22,19 +34,19 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                         marginRight: "10px"
                     }}>{this.props.field.title.toUpperCase()}</label>
                     {this.props.field.showRefresh &&
-                    <span style={{float: "right", fontSize: "10px"}}>
-            <span style={{marginLeft: "20px", color: "grey"}}
-                  className="glyphicon glyphicon-refresh" aria-hidden="true"
-                  onClick={this.refreshMovements}/>
-        </span>}
+                        <span style={{ float: "right", fontSize: "10px" }}>
+                            <span style={{ marginLeft: "20px", color: "grey" }}
+                                className="glyphicon glyphicon-refresh" aria-hidden="true"
+                                onClick={this.refreshMovements} />
+                        </span>}
 
-                    <br/>
+                    <br />
                 </div>
             }
             <Typeahead labelKey={this.props.field.foreign.title}
-                       onChange={this.handleChange} options={options}
-                       disabled={this.props.readonly}
-                       selected={selected ? [selected] : undefined}/>
+                onChange={this.handleChange} options={optionsData}
+                disabled={this.props.readonly}
+                selected={selected ? [selected] : undefined} />
         </div>
     }
 
