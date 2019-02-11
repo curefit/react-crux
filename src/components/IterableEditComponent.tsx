@@ -96,6 +96,15 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         })
     }
 
+    getIterableNestedTitle(index: number) {
+        let subTitle = ""
+        if (this.props.field.iterabletype.subTitle && this.state.model[index] &&
+            this.state.model[index][this.props.field.iterabletype.subTitle]) {
+            subTitle = ` - ${this.state.model[index][this.props.field.iterabletype.subTitle]}`
+        }
+        return this.props.field.iterabletype.title.toUpperCase() + "  " + (index + 1) + subTitle
+    }
+
     render() {
         let totalLength = this.state.model.length
         // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
@@ -265,7 +274,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 {this.props.field.iterabletype.title &&
                                     <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
-                                        {this.props.field.iterabletype.title.toUpperCase() + "  " + (index + 1)}</div>}
+                                        {this.getIterableNestedTitle(index)}</div>}
                                 {!this.state.collapsedIndex[index] &&
                                     <div style={{ display: "inline-block" }}>
                                         <NestedEditComponent
