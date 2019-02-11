@@ -89,7 +89,8 @@ const store = createStore(
     "react-dropzone": "^5.0.1", // For file upload component
     "react-redux": "^5.0.7", // Duh
     "react-select": "^2.3.0", // For Multi Select component
-    "superagent": "^3.8.3" // For upload request
+    "superagent": "^3.8.3", // For upload request
+    "query-string": "^6.2.0" // For Query Params formation
   }
 ```
 # Specification
@@ -112,6 +113,7 @@ const store = createStore(
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
         - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
         - _multiselect_ - For dropdowns with multiple select option. Detailed explanation later.
+        - _searcheableselect_ - For dropdowns with searcheable single select option. Detailed explanation later.
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
@@ -187,6 +189,24 @@ This helps us to select multiple values in List.
 }
 ```
 
+###Searcheable Select Field
+This helps us to select multiple values in List. 
+
+```
+{
+    title: "Media Type",
+    field: "mediaType",
+    display: true,
+    editable: true,
+    type: "searcheableselect",
+    foreign: {
+        modelName: "mediaTypes",
+        key: "typeId", // typeId is what will be stored while storing mediaType for the object
+        title: "title" // title is what will be used to show in the dropdown
+    }
+}
+```
+
 ###Select Field with Custom Filter
 Select Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
 ```
@@ -194,6 +214,31 @@ Select Field with Customized Filter Option. Modal Values can be filtered in that
    editable: true,
    title: "Attribute Name",
    type: "select",
+   field: "id",
+   foreign: {
+       modelName: "cohortEventMeta",
+       key: "id",
+       title: "name",
+       transform: customFilter
+   }
+}
+
+Example: 
+function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
+    const cohortEventMetas = additionalModels[dataSource]
+    let attributes
+    // Filter Logic
+    return attributes
+}
+```
+
+###Typeahead Field with Custom Filter
+Typeahead Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
+```
+{
+   editable: true,
+   title: "Attribute Name",
+   type: "typeahead",
    field: "id",
    foreign: {
        modelName: "cohortEventMeta",
@@ -710,6 +755,51 @@ Config Based Styles Can be Applied to Components.
         }
     ]
 }
+
+### Query Param Support With React Crux
+We can give queryParams in config. It will append queryparams with every fetch call.
+
+```
+import * as React from "react"
+import { CruxComponentCreator } from "@curefit/react-crux"
+
+const constants = {
+    modelName: "serviceAccess",
+    title: "Service Access",
+    creationTitle: "Service Access",
+    createModal: true,
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [
+        {
+            title: "Service",
+            field: "serviceName",
+            representative: true,
+        },
+        {
+            title: "Users",
+            field: "users",
+            type: "iterable",
+            iterabletype: {
+                title: "User",
+                inlineEdit: true
+            }
+        }
+    ]
+}
+
+const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
+
+class ComponentWithQueryParams extends React.Component<{}, {}> {
+    render() {
+        return (<ServiceAccessComponent {...this.props} options={{ queryParams: { data: "1", title: "check" }}}/>)
+    }
+}
+
+export {ComponentWithQueryParams}
+```
+
 
 ### Fetching logic in CRUX
 A crux component when mounted does the following in order

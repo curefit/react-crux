@@ -18,7 +18,8 @@ interface ModalComponentProps {
     filterSuccess?: any,
     filter?: any,
     additionalModels: any[],
-    successButtonLabel?: string
+    successButtonLabel?: string,
+    queryParams: any
 }
 
 @autobind
@@ -56,7 +57,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 Object.assign(this.props.item, newItem)
                 this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
-                this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError)
+                this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
         }
     }
@@ -97,7 +98,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     deleteModel = () => {
-        this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError)
+        this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
     }
 
     render() {

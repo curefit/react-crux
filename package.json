@@ -1,6 +1,6 @@
 {
   "name": "react-crux",
-  "version": "0.0.39",
+  "version": "0.0.43",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,11 +14,13 @@
     "autobind-decorator": "2.1.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
+    "query-string": "^6.2.0",
     "react": "^16.4.2",
     "react-bootstrap": "^0.32.3",
     "react-bootstrap-typeahead": "^3.2.2",
     "react-datepicker": "^1.6.0",
     "react-dropzone": "^5.0.1",
+    "react-json-view": "^1.19.1",
     "react-redux": "^5.0.7",
     "react-select": "^2.3.0",
     "superagent": "^3.8.3"
@@ -49,6 +51,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-barrels": "rm -rf dist && barrelsby --delete -e node_modules/*",
     "build": "tsc",
+    "watch": "tsc --project tsconfig.json -w",
     "prepublish": "rm -rf dist && tsc",
     "postversion": "git push origin master && git push origin master --tags && npm publish"
   }
