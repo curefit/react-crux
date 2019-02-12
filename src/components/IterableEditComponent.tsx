@@ -98,6 +98,11 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getRepIterableField = (index: number) => {
         let subTitle = ""
+
+        if (!this.props.field.iterabletype.subTitle) {
+            return subTitle
+        }
+
         if (this.props.field.iterabletype.subTitle && this.state.model[index] &&
             this.state.model[index][this.props.field.iterabletype.subTitle]) {
             subTitle = this.state.model[index][this.props.field.iterabletype.subTitle]
@@ -106,6 +111,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
         if (!repField) {
             console.error("Did you forget to add the representative tag at the top level.")
+            return subTitle
         }
 
         if (!_.isEmpty(repField.foreign)) {
@@ -332,21 +338,20 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 {this.props.field.iterabletype.title &&
                                     <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
                                         {this.getIterableNestedTitle(index)}</div>}
-                                {!this.state.collapsedIndex[index] &&
-                                    <div style={{ display: "inline-block" }}>
-                                        <NestedEditComponent
-                                            readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                            currentModel={this.state.model[index]}
-                                            fetch={this.props.fetch}
-                                            field={this.props.field.iterabletype}
-                                            additionalModels={this.props.additionalModels}
-                                            modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                            showTitle={false}
-                                            indent={false}
-                                            modalType={this.props.modalType}
-                                            parentModel={parentModel}
-                                        />
-                                    </div>}
+                                <div style={this.state.collapsedIndex[index] ? { display: "none" } : { display: "inline-block" }}>
+                                    <NestedEditComponent
+                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                        currentModel={this.state.model[index]}
+                                        fetch={this.props.fetch}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                        showTitle={false}
+                                        indent={false}
+                                        modalType={this.props.modalType}
+                                        parentModel={parentModel}
+                                    />
+                                </div>
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
