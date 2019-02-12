@@ -48,16 +48,21 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         return (
             <div>
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
-                          disabled={this.props.readonly}
-                          onDrop={(data: any) => {
-                              this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
-                          }} multiple={true}>
+                    disabled={this.props.readonly}
+                    onDrop={(data: any) => {
+                        this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
+                    }} multiple={true}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
-                        <div><a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> {this.props.contentType}
-                            <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} /> </a></div>}
+                        <div>
+                            {/* <a target="_blank" style={{ color: "#4292f4" }} href={this.getUrl(this.props.currentModel, this.props.field)}> */}
+                            <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
+                                {this.props.contentType}
+                                <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
+                            </div>
+                        </div>}
                 </Dropzone>
             </div>
         )
@@ -65,5 +70,10 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
 
     getUrl(url: string, field: any) {
         return (field.urlPrefix ? field.urlPrefix : "") + url + (field.urlSuffix ? field.urlSuffix : "")
+    }
+
+    handleImageClick(event: any) {
+        event.stopPropagation()
+        window.open(this.getUrl(this.props.currentModel, this.props.field))
     }
 }

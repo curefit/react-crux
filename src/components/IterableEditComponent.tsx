@@ -96,13 +96,42 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         })
     }
 
-    getIterableNestedTitle(index: number) {
+    getRepIterableField = (index: number) => {
         let subTitle = ""
         if (this.props.field.iterabletype.subTitle && this.state.model[index] &&
             this.state.model[index][this.props.field.iterabletype.subTitle]) {
-            subTitle = ` - ${this.state.model[index][this.props.field.iterabletype.subTitle]}`
+            subTitle = this.state.model[index][this.props.field.iterabletype.subTitle]
         }
-        return this.props.field.iterabletype.title.toUpperCase() + "  " + (index + 1) + subTitle
+
+        const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
+        if (!repField) {
+            console.error("Did you forget to add the representative tag at the top level.")
+        }
+
+        if (!_.isEmpty(repField.foreign)) {
+            if (_.isEmpty(this.props.additionalModels)) {
+                return "Loading ....."
+            }
+
+            try {
+                if (_.isEmpty(subTitle) && !_.isNumber(subTitle)) {
+                    return ""
+                }
+                const foreignDoc = this.props.additionalModels[repField.foreign.modelName]
+                    .find((datum: any) => datum[repField.foreign.key] === subTitle)
+                return foreignDoc ? _.get(foreignDoc, repField.foreign.title) :
+                    subTitle + " - Bad Value"
+            } catch (err) {
+                return "Loading ...."
+            }
+        }
+
+        return subTitle
+    }
+
+    getIterableNestedTitle(index: number) {
+        const subTitle = this.getRepIterableField(index)
+        return this.props.field.iterabletype.title.toUpperCase() + "  " + (index + 1) + " - " +  subTitle
     }
 
     render() {
