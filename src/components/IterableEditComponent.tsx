@@ -332,7 +332,16 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
                                     <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
-                                        {this.getIterableNestedTitle(index)}</div>}
+                                        <div style={{ display: "inline-block", width: "90%"}}>
+                                            {this.getIterableNestedTitle(index)}
+                                        </div>
+                                        {!this.state.collapsedIndex[index] &&
+                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-chevron-up" aria-hidden="true"/>}
+                                        {this.state.collapsedIndex[index] &&
+                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-chevron-down" aria-hidden="true"/>}
+                                    </div>}
                                 <div style={this.state.collapsedIndex[index] ? { display: "none" } : { display: "inline-block" }}>
                                     <NestedEditComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
