@@ -1033,6 +1033,7 @@ Addition of Support for Collapsed Nested Iterable Component. Each Iterable compo
                 display: true,
                 editable: true,
                 type: "select",
+                iterableRepresentative: true,
                 foreign: {
                     modelName: "mediaTypes",
                     key: "typeId",
