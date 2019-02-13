@@ -29,7 +29,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.state = {
             model: modalValue,
             checkIterableButton: undefined,
-            collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.defaultCollapse ? true : false, 0)
+            collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.collapse ? props.field.iterabletype.collapse.default ? true : false : false, 0)
         }
     }
 
@@ -99,13 +99,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     getRepIterableField = (index: number) => {
         let subTitle = ""
 
-        if (!this.props.field.iterabletype.subTitle) {
+        if (_.isEmpty(this.state.model[index])) {
             return subTitle
-        }
-
-        if (this.props.field.iterabletype.subTitle && this.state.model[index] &&
-            this.state.model[index][this.props.field.iterabletype.subTitle]) {
-            subTitle = this.state.model[index][this.props.field.iterabletype.subTitle]
         }
 
         const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
@@ -120,16 +115,15 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             }
 
             try {
-                if (_.isEmpty(subTitle) && !_.isNumber(subTitle)) {
-                    return ""
-                }
                 const foreignDoc = this.props.additionalModels[repField.foreign.modelName]
-                    .find((datum: any) => datum[repField.foreign.key] === subTitle)
+                    .find((datum: any) => datum[repField.foreign.key] === this.state.model[index][repField.field])
                 return foreignDoc ? _.get(foreignDoc, repField.foreign.title) :
-                    subTitle + " - Bad Value"
+                    this.state.model[index][repField.field] + " - Bad Value"
             } catch (err) {
                 return "Loading ...."
             }
+        } else if (this.state.model[index][repField.field]) {
+            subTitle = this.state.model[index][repField.field]
         }
 
         return subTitle
@@ -137,7 +131,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getIterableNestedTitle(index: number) {
         const subTitle = this.getRepIterableField(index)
-        return this.props.field.iterabletype.title.toUpperCase() + "  " + (index + 1) + " - " +  subTitle
+        return this.props.field.iterabletype.collapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
 
     render() {
@@ -324,7 +318,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
                             const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black" }
-                            if (this.props.field.iterabletype.collapsable) {
+                            if (this.props.field.iterabletype.collapse) {
                                 titleStyle["cursor"] = "pointer"
                             }
                             return <div key={index}
@@ -335,7 +329,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                {this.props.field.iterabletype.title &&
+                                {this.props.field.iterabletype.collapse && this.props.field.iterabletype.collapse.title &&
                                     <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
                                         {this.getIterableNestedTitle(index)}</div>}
                                 <div style={this.state.collapsedIndex[index] ? { display: "none" } : { display: "inline-block" }}>
@@ -474,10 +468,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     collapseNestedToggle = (index: number) => {
-        if (this.props.field.iterabletype.collapsable) {
+        if (this.props.field.iterabletype.collapse) {
             let collapsedIndexArray: any = []
             collapsedIndexArray.length = this.state.model.length
-            collapsedIndexArray = collapsedIndexArray.fill(this.props.field.iterabletype.defaultCollapse ? true : false, 0)
+            collapsedIndexArray = collapsedIndexArray.fill(this.props.field.iterabletype.collapse.default ? true : false, 0)
             collapsedIndexArray[index] = !this.state.collapsedIndex[index]
             this.setState(Object.assign({}, this.state, { collapsedIndex: collapsedIndexArray }))
         }
