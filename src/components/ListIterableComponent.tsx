@@ -46,17 +46,19 @@ export class ListIterableComponent extends React.Component<any, any> {
 
                         if (field.iterabletype.type === "nested") {
                             const filtered = _.filter(field.iterabletype.fields, (f: any) => f.display && _.has(datum, f.field))
-                            return _.map(filtered, (f: any, index: number) => {
-                                return <div key={index}>
-                                    <div style={{ display: "inline-block" }}>{f.title + " : "}</div>
-                                    <div style={{ display: "inline-block" }}>
-                                        <ListNestedComponent
-                                            model={datum} additionalModels={this.props.additionalModels}
-                                            field={f} modelChanged={this.modelChanged.bind(this, index)}
-                                        />
+                            return <div>
+                                {_.map(filtered, (f: any, index: number) => {
+                                    return <div className="html-comma" style={{ display: "inline-block"}}>
+                                        <span style={{ display: "inline-block" }}>{f.title + ":" }&nbsp;</span>
+                                        <span style={{ display: "inline-block" }}>
+                                            <ListNestedComponent
+                                                model={datum} additionalModels={this.props.additionalModels}
+                                                field={f} modelChanged={this.modelChanged.bind(this, index)}
+                                            />
+                                        </span>
                                     </div>
-                                </div>
-                            })
+                                })}
+                            </div>
                         }
 
                         if (field.iterabletype.type === "select" || field.iterabletype.type === "searcheableselect") {
