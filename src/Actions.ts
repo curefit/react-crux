@@ -64,7 +64,6 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
 }
 
 export function bulkCreate(model: string, csvUrl: string, success?: any, error?: any) {
-    console.log("Action model:"+ model, "csvUrl", csvUrl)
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "BULK_CREATE_" + model + "_STARTED", model: model })
         fetch("/model/" + model + "/bulkCreate", FetchUtil.post({ csvUrl: csvUrl })).then(FetchUtil.parseResponse).then((data: any) => {
