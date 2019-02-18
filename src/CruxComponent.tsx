@@ -37,6 +37,7 @@ export interface InlineComponentProps {
 }
 
 export { ModalComponent } from './components/ModalComponent'
+export { NestedEditComponent } from './components/NestedEditComponent'
 
 export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
