@@ -11,6 +11,7 @@ import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
 import { PaginationComponent } from "./components/PaginationComponent"
+import { BulkCreateModal } from "./components/BulkCreatorModal"
 
 export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CUSTOM" | "BULK_CREATE"
 export interface InlineComponentProps {
@@ -468,15 +469,12 @@ export class CruxComponentCreator {
                         }
 
                         {constants.bulkCreateModal && this.state.showBulkCreateModal &&
-                        <ModalComponent
+                        <BulkCreateModal
                             constants={constants}
                             showModal={this.state.showBulkCreateModal}
                             closeModal={this.closeBulkCreateModal}
-                            modalType={"BULK_CREATE"}
                             createOrModify={this.props.bulkCreate}
                             createOrEditSuccess={this.createOrEditSuccess}
-                            additionalModels={this.props.additionalModels}
-                            queryParams={ this.props.queryParams }
                         />
                         }
 
