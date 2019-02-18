@@ -2,7 +2,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import {
     createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-    searchModel
+    searchModel, bulkCreate
 } from "./Actions"
 import * as _ from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
@@ -11,8 +11,9 @@ import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
 import { PaginationComponent } from "./components/PaginationComponent"
+import { BulkCreateModal } from "./components/BulkCreatorModal"
 
-export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CUSTOM"
+export type ModalType = "CREATE" | "EDIT" | "FILTER" | "CUSTOM" | "BULK_CREATE"
 export interface InlineComponentProps {
     field: any,
     modelChanged: any,
@@ -80,13 +81,15 @@ export class CruxComponentCreator {
                 },
                 searchModel: (model: string, id: string, success: any) => {
                     dispatch(searchModel(model, id, success))
+                },
+                bulkCreate: (model: string, csvUrl: string, success: any, error: any) => {
+                    dispatch(bulkCreate(model, csvUrl, success, error))
                 }
             }
         }
 
         @autobind
         class ListClass extends React.Component<any, any> {
-
             componentDidMount() {
                 this.fetchModels(this.props)
                 anchors = getAnchors(constants)
@@ -156,7 +159,8 @@ export class CruxComponentCreator {
                         },
                         limit: this.getDefaultPageSize(),
                         skip: 0
-                    }
+                    },
+                    showBulkCreateModal: false
                 }
             }
 
@@ -176,8 +180,17 @@ export class CruxComponentCreator {
                 this.setState({ showCreateModal: true })
             }
 
+
             closeCreateModal = () => {
                 this.setState({ showCreateModal: false })
+            }
+
+            showBulkCreateModal = () => {
+                this.setState({ showBulkCreateModal: true })
+            }
+
+            closeBulkCreateModal = () => {
+                this.setState({ showBulkCreateModal: false })
             }
 
             showFilterModal() {
@@ -209,6 +222,7 @@ export class CruxComponentCreator {
             createOrEditSuccess = (data?: any) => {
                 this.closeEditModal()
                 this.closeCreateModal()
+                this.closeBulkCreateModal()
                 if (constants.filterModal || constants.paginate)
                     this.props.filter(constants.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
                 else
@@ -355,6 +369,9 @@ export class CruxComponentCreator {
                     <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
                         {constants.createModal && <div className="pull-right btn btn-primary btn-xs"
                             onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
+
+                        {constants.bulkCreateModal && <div className="pull-right btn btn-primary btn-xs"
+                                                       onClick={this.showBulkCreateModal}>{"+ Bulk Create"}</div>}
                         {constants.filterModal &&
                             <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
                                 onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
@@ -451,6 +468,17 @@ export class CruxComponentCreator {
                                 additionalModels={this.props.additionalModels}
                                 queryParams={this.props.queryParams} />
                         }
+
+                        {constants.bulkCreateModal && this.state.showBulkCreateModal &&
+                        <BulkCreateModal
+                            constants={constants}
+                            showModal={this.state.showBulkCreateModal}
+                            closeModal={this.closeBulkCreateModal}
+                            createOrModify={this.props.bulkCreate}
+                            createOrEditSuccess={this.createOrEditSuccess}
+                        />
+                        }
+
                         {constants.editModal && this.state.showEditModal &&
                             <ModalComponent
                                 constants={constants}

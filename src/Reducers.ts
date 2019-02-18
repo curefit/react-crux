@@ -1,10 +1,15 @@
 import * as _ from "lodash"
 
 export function CruxReducerFactory(defaultModels: any) {
-    return function CruxReducer(initialState = defaultModels,
+        return function CruxReducer(initialState = defaultModels,
         action: any): any {
         if (action.model) {
             if (action.type.startsWith("FETCH_")) {
+                if(action.isFilters) {
+                    const modelFilters = [action.model]+"AppliedFilters"
+                    initialState = Object.assign({}, initialState, { [modelFilters]: action.item })
+                }
+
                 if (action.type.endsWith("_STARTED")) {
                     if (_.isEmpty((<any>initialState)[action.model])) {
                         return Object.assign({}, initialState, { [action.model]: [], fetchComplete: false })
@@ -12,6 +17,7 @@ export function CruxReducerFactory(defaultModels: any) {
                         return Object.assign({}, initialState, { fetchComplete: false })
                     }
                 }
+
                 // It can be used, when New Data Comes in. It will be concated with existing props
                 if (action.type.endsWith("_PUT_DATA")) {
                     const data = _.cloneDeep(initialState[action.model])

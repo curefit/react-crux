@@ -25,7 +25,7 @@ export function getMyDetails(success?: any, error?: any) {
 
 export function filterModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
-        dispatch({ type: "FETCH_" + model + "_STARTED", model: model })
+        dispatch({ type: "FETCH_" + model +  "_STARTED", model: model , item: item, isFilters: true})
         const modalQueryParams = queryString.parseUrl(model);
         let queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams));
         fetch(`${apiServer}/model/${modalQueryParams.url}/filter?${queryParamsString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
@@ -58,6 +58,22 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
             }
             console.log("Error while fetching" + model, err)
             dispatch({ type: "FETCH_" + model + "_FAILURE", err: err, model: model })
+            if (error) error(err)
+        })
+    }
+}
+
+export function bulkCreate(model: string, csvUrl: string, success?: any, error?: any) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ type: "BULK_CREATE_" + model + "_STARTED", model: model })
+        fetch("/model/" + model + "/bulkCreate", FetchUtil.post({ csvUrl: csvUrl })).then(FetchUtil.parseResponse).then((data: any) => {
+            dispatch({ type: "BULK_CREATE_" + model + "_COMPLETED", data: data, model: model })
+            if (success) success(data)
+        }).catch((err: any) => {
+            if (err.name === "AuthError") {
+                return dispatch({ type: "AUTH_FAILED" })
+            }
+            dispatch({ type: "BULK_CREATE_" + model + "_FAILURE", err: err, model: model })
             if (error) error(err)
         })
     }
