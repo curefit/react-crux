@@ -25,7 +25,7 @@ export function getMyDetails(success?: any, error?: any) {
 
 export function filterModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
-        dispatch({ type: "FETCH_" + model + "_FILTER", model: model , item: item})
+        dispatch({ type: "FETCH_" + model +  "_STARTED", model: model , item: item, isFilters: true})
         const modalQueryParams = queryString.parseUrl(model);
         let queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams));
         fetch(`${apiServer}/model/${modalQueryParams.url}/filter?${queryParamsString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
