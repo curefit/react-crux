@@ -37,3 +37,15 @@ mark {
 .react-datepicker__time-list {
   display: block !important;
 }
+
+.html-comma:not(:first-child) {
+  margin-left: -.3em;
+}
+
+.html-comma:empty {
+  display: none;
+}
+
+.html-comma:not(:first-child):before {
+  content: ", ";
+}
