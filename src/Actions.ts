@@ -63,6 +63,22 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
     }
 }
 
+export function bulkCreate(model: string, csvUrl: string, success?: any, error?: any) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ type: "BULK_CREATE_" + model + "_STARTED", model: model })
+        fetch("/model/" + model + "/bulkCreate", FetchUtil.post({ csvUrl: csvUrl })).then(FetchUtil.parseResponse).then((data: any) => {
+            dispatch({ type: "BULK_CREATE_" + model + "_COMPLETED", data: data, model: model })
+            if (success) success(data)
+        }).catch((err: any) => {
+            if (err.name === "AuthError") {
+                return dispatch({ type: "AUTH_FAILED" })
+            }
+            dispatch({ type: "BULK_CREATE_" + model + "_FAILURE", err: err, model: model })
+            if (error) error(err)
+        })
+    }
+}
+
 export function searchModel(model: string, id: string, callback: any) {
     return (dispatch: Dispatch<any>) => {
         fetch(`${apiServer}/model/${model}/${id}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
