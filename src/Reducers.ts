@@ -18,10 +18,6 @@ export function CruxReducerFactory(defaultModels: any) {
                     }
                 }
 
-                if(action.type.endsWith("_FILTER")){
-                    const modelFilters = [action.model]+"AppliedFilters"
-                    return Object.assign({}, initialState, { [modelFilters]: action.item })
-                }
                 // It can be used, when New Data Comes in. It will be concated with existing props
                 if (action.type.endsWith("_PUT_DATA")) {
                     const data = _.cloneDeep(initialState[action.model])
