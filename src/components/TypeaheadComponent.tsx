@@ -7,25 +7,28 @@ import { InlineComponentProps } from "../CruxComponent"
 @autobind
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
     render() {
+        let selected = undefined
         let optionsData = []
-        if (this.props.field.foreign.transform) {
-            if (typeof this.props.field.foreign.transform === "function") {
-                optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+        if (this.props.field.foreign) {
+            if (this.props.field.foreign.transform) {
+                if (typeof this.props.field.foreign.transform === "function") {
+                    optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+                } else {
+                    console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+                }
             } else {
-                console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+                optionsData = _.isEmpty(this.props.field.foreign.orderby)
+                    ? this.props.additionalModels[this.props.field.foreign.modelName]
+                    : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+            }
+            if (!_.isEmpty(this.props.currentModel)) {
+                selected = _.find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
+                if (!selected) {
+                    selected = { [this.props.field.foreign.title]: this.props.currentModel + " - Bad Value", [this.props.field.foreign.key]: "" }
+                }
             }
         } else {
-            optionsData = _.isEmpty(this.props.field.foreign.orderby)
-                ? this.props.additionalModels[this.props.field.foreign.modelName]
-                : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
-        }
-
-        let selected = undefined
-        if (!_.isEmpty(this.props.currentModel)) {
-            selected = _.find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
-            if (!selected) {
-                selected = { [this.props.field.foreign.title]: this.props.currentModel + " - Bad Value", [this.props.field.foreign.key]: "" }
-            }
+            console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
         return <div>
             {
