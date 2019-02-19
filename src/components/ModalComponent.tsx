@@ -27,7 +27,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     constructor(props: any) {
         super(props)
         this.state = {
-            item: this.props.modalType === "CREATE" ? {} : this.props.item,
+            item: this.props.item || {},
             deleteModal: false
         }
     }
