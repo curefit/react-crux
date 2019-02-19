@@ -24,7 +24,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
         if (!_.isEmpty(this.props.currentModel)) {
             selected = _.find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
             if (!selected) {
-                selected = { title: this.props.currentModel + " - Bad Value", typeId: "" }
+                selected = { [this.props.field.foreign.title]: this.props.currentModel + " - Bad Value", [this.props.field.foreign.key]: "" }
             }
         }
         return <div>
