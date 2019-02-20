@@ -91,6 +91,8 @@ const store = createStore(
     "react-select": "^2.3.0", // For Multi Select component
     "superagent": "^3.8.3", // For upload request
     "query-string": "^6.2.0" // For Query Params formation
+    "react-color": "^2.17.0" // For Color Pallete Component Addition
+    "reactcss": "^1.2.3" // Dynamic Css For Color Pallete
   }
 ```
 # Specification
@@ -113,6 +115,7 @@ const store = createStore(
    * _type_ - If not set, type is assumed to be a simple text field edited using an input text HTML element
         - _select_ - For dropdowns with single select option. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/select)
         - _multiselect_ - For dropdowns with multiple select option. Detailed explanation later.
+        - _colorpallete_ - For Selecting color from pallete. Detailed explanation later.
         - _searcheableselect_ - For dropdowns with searcheable single select option. Detailed explanation later.
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
@@ -189,8 +192,21 @@ This helps us to select multiple values in List.
 }
 ```
 
+###Color Pallete Field
+This helps us to select color in Color Pallete.
+
+```
+{
+    title: "Text Color",
+    field: "textColor",
+    display: true,
+    editable: true,
+    type: "colorpallete"
+}
+```
+
 ###Searcheable Select Field
-This helps us to select multiple values in List. 
+This helps us to select multiple values in List.
 
 ```
 {

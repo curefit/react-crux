@@ -9,6 +9,7 @@ import { DatePickerComponent } from "./DatePickerComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
+import { ColorPalleteComponent } from "./ColorPalleteComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -328,6 +329,21 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     additionalModels={this.props.additionalModels}
                                     modelChanged={this.fieldChanged(index)} showTitle={false}
                                     parentModel={parentModel} />
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "colorpallete") {
+                            return <div key={index}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <ColorPalleteComponent
+                                    field={this.props.field.iterabletype}
+                                    modelChanged={this.fieldChanged(index)}
+                                    additionalModels={this.props.additionalModels}
+                                    currentModel={this.state.model[index]}
+                                    parentModel={parentModel}
+                                />
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
