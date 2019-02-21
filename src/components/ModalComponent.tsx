@@ -85,8 +85,9 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     modelChanged = (value: any) => {
-        const newModel = { item: Object.assign({}, this.state.item, value) }
-        this.setState(Object.assign({}, this.state, newModel))
+        this.setState((prevState: any) => {
+            return { item: Object.assign({}, prevState.item, value)}
+        })
     }
 
     openDeleteModal = () => {
