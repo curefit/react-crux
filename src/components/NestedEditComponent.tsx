@@ -10,6 +10,7 @@ import { IterableEditComponent } from "./IterableEditComponent"
 import { CheckboxComponent } from "./CheckboxComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent";
 import { JsonEditComponent } from "./JsonEditComponent"
+import { ColorPalleteComponent } from "./ColorPalleteComponent";
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -153,6 +154,16 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         onChange={this.handleChange.bind(this, field)}
                         style={{ width: 250 }} />
                 </div>
+            )
+        } else if (field.type === "colorpallete") {
+            return (
+                <ColorPalleteComponent
+                    field={field}
+                    modelChanged={this.select}
+                    additionalModels={this.props.additionalModels}
+                    currentModel={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                    parentModel={currentModelWithParent}
+                />
             )
         } else if (field.type === "json") {
             return (
