@@ -24,9 +24,14 @@ export interface ImageUploadProps extends IterableEditComponentProps {
 export class IterableEditComponent extends React.Component<ImageUploadProps | IterableEditComponentProps, any> {
     constructor(props: any) {
         super(props)
+        const modalValue = _.isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel))
+        const collapsedIndexArray: any = []
+        collapsedIndexArray.length = modalValue.length
         this.state = {
-            model: _.isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel)),
-            checkIterableButton: undefined
+            model: modalValue,
+            checkIterableButton: undefined,
+            collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
+                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0)
         }
     }
 
@@ -41,7 +46,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer" }
             const visibility = this.state.checkIterableButton && this.state.checkIterableButton[index] ? "visible" : "hidden"
             return (
-                <span style={{visibility}}>
+                <span style={{ visibility }}>
                     {
                         this.props.field.additionalButtons &&
                         <>
@@ -91,6 +96,44 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.setState({
             checkIterableButton
         })
+    }
+
+    getRepIterableField = (index: number) => {
+        let subTitle = ""
+
+        if (_.isEmpty(this.state.model[index])) {
+            return subTitle
+        }
+
+        const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
+        if (!repField) {
+            console.error("Did you forget to add the representative tag at the top level.")
+            return subTitle
+        }
+
+        if (!_.isEmpty(repField.foreign)) {
+            if (_.isEmpty(this.props.additionalModels)) {
+                return "Loading ....."
+            }
+
+            try {
+                const foreignDoc = this.props.additionalModels[repField.foreign.modelName]
+                    .find((datum: any) => datum[repField.foreign.key] === this.state.model[index][repField.field])
+                return foreignDoc ? _.get(foreignDoc, repField.foreign.title) :
+                    this.state.model[index][repField.field] + " - Bad Value"
+            } catch (err) {
+                return "Loading ...."
+            }
+        } else if (this.state.model[index][repField.field]) {
+            subTitle = this.state.model[index][repField.field]
+        }
+
+        return subTitle
+    }
+
+    getIterableNestedTitle(index: number) {
+        const subTitle = this.getRepIterableField(index)
+        return this.props.field.iterabletype.nestedIterableCollapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
 
     render() {
@@ -276,14 +319,31 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
+                            const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black" }
+                            if (this.props.field.iterabletype.nestedIterableCollapse) {
+                                titleStyle["cursor"] = "pointer"
+                            }
                             return <div key={index}
                                 style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
                                     border: "1px solid #EEE",
-                                    padding: "10px"
+                                    padding: "10px",
+                                    marginTop: "10px"
                                 }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
+                                    <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
+                                        <div style={{ display: "inline-block", width: "90%"}}>
+                                            {this.getIterableNestedTitle(index)}
+                                        </div>
+                                        {!this.state.collapsedIndex[index] &&
+                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-chevron-up" aria-hidden="true"/>}
+                                        {this.state.collapsedIndex[index] &&
+                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                                                className="glyphicon glyphicon-chevron-down" aria-hidden="true"/>}
+                                    </div>}
+                                <div style={this.state.collapsedIndex[index] ? { display: "none" } : { display: "inline-block" }}>
                                     <NestedEditComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         currentModel={this.state.model[index]}
@@ -431,6 +491,16 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     collapseToggle = () => {
         this.setState(Object.assign({}, this.state, { collapsed: !this.state.collapsed }))
+    }
+
+    collapseNestedToggle = (index: number) => {
+        if (this.props.field.iterabletype.nestedIterableCollapse) {
+            let collapsedIndexArray: any = []
+            collapsedIndexArray.length = this.state.model.length
+            collapsedIndexArray = collapsedIndexArray.fill(this.props.field.iterabletype.nestedIterableCollapse.default ? true : false, 0)
+            collapsedIndexArray[index] = !this.state.collapsedIndex[index]
+            this.setState(Object.assign({}, this.state, { collapsedIndex: collapsedIndexArray }))
+        }
     }
 
     addAtIndex = (index: any) => {

@@ -1025,6 +1025,47 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
     }
 }
 ```
+#### Iterable of nested ( Collapse Support)
+Addition of Support for Collapsed Nested Iterable Component. Each Iterable component can be expanded based on necessity.
+
+```
+{
+    title: "Media",
+    field: "media",
+    display: false,
+    editable: true,
+    type: "iterable",
+    iterabletype: {
+        type: "nested",
+        title: "Media",
+        nestedIterableCollapse: {
+            default: true,
+            title: "Banner"
+        },
+        fields: [
+            {
+                title: "Media Type",
+                field: "type",
+                display: true,
+                editable: true,
+                type: "select",
+                iterableRepresentative: true,
+                foreign: {
+                    modelName: "mediaTypes",
+                    key: "typeId",
+                    title: "title"
+                }
+            },
+            {
+                title: "Media Url",
+                field: "url",
+                display: true,
+                editable: true,
+            }
+        ]
+    }
+}
+```
 #### Pagination (Server Side Pagination)
 Lets say we want to show a table of employees with 3 fields (name, age, emailAddress) with a functionality to create, modify and delete employees with server
 side pagination. (i.e. server call will be pointed to /filter rather than /fetch)
