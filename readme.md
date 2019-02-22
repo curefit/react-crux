@@ -175,7 +175,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 ```
 
 ###MultiSelect Field
-This helps us to select multiple values in List. 
+This helps us to select multiple values in List. multiClear will allow us to clear multi values
 
 ```
 {
@@ -184,6 +184,7 @@ This helps us to select multiple values in List.
     display: true,
     editable: true,
     type: "multiselect",
+    multiClear: true
     foreign: {
         modelName: "mediaTypes",
         key: "typeId", // typeId is what will be stored while storing mediaType for the object
