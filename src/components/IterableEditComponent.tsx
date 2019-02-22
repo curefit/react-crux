@@ -111,6 +111,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             return subTitle
         }
 
+        if (_.isEmpty(this.state.model[index][repField.field])) {
+            return subTitle
+        }
+
         if (!_.isEmpty(repField.foreign)) {
             if (_.isEmpty(this.props.additionalModels)) {
                 return "Loading ....."
@@ -319,7 +323,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
-                            const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black" }
+                            const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black", display: "flex" }
                             if (this.props.field.iterabletype.nestedIterableCollapse) {
                                 titleStyle["cursor"] = "pointer"
                             }
