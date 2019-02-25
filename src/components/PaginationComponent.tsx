@@ -16,6 +16,9 @@ interface PaginationComponentProps {
 export class PaginationComponent extends React.Component<PaginationComponentProps, any> {
 
     pageSelectField = {
+        style: {
+            hideLabel: true
+        },
         foreign : {
             modelName: "pageSizes",
             key: "typeId",

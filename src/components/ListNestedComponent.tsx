@@ -21,6 +21,10 @@ export class ListNestedComponent extends React.Component<any, any> {
     }
 
     render(): any {
+        if (this.props.field.conditionalField && this.props.field.conditionalValue !== this.props.model[this.props.field.conditionalField]) {
+            return <div />
+        }
+
         if (this.props.field.type === "custom") {
             const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels, this.props.parentModel)
             return <CustomComponent />

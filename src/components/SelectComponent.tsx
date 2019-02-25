@@ -44,7 +44,6 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                         return doc.id === this.props.currentModel.id
                     }
                     if (this.props.field.foreign.key) {
-                        console.warn(`deprecated usage of "key", use "keys" instead`)
                         return doc[this.props.field.foreign.key] === this.props.currentModel
                     }
                     console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
@@ -82,7 +81,6 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                                 eventKey[key] = doc[key]
                             }
                         } else if (this.props.field.foreign.key) {
-                            console.warn(`deprecated usage of "key", use "keys" instead`)
                             eventKey = doc[this.props.field.foreign.key]
                         } else {
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)

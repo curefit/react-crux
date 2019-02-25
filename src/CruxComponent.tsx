@@ -202,9 +202,7 @@ export class CruxComponentCreator {
             }
 
             showEditModal = (model: M) => {
-                return () => {
-                    this.setState({ showEditModal: true, model })
-                }
+                this.setState({ showEditModal: true, model })
             }
 
             showCustomModal = (model: any) => {
@@ -371,7 +369,7 @@ export class CruxComponentCreator {
                             onClick={this.showCreateModal}>{"+ New " + constants.creationTitle}</div>}
 
                         {constants.bulkCreateModal && <div className="pull-right btn btn-primary btn-xs"
-                                                       onClick={this.showBulkCreateModal}>{"+ Bulk Create"}</div>}
+                            onClick={this.showBulkCreateModal}>{"+ Bulk Create"}</div>}
                         {constants.filterModal &&
                             <div style={{ marginRight: 10 }} className="pull-right btn btn-primary btn-xs"
                                 onClick={this.showFilterModal}>{"Filter " + constants.creationTitle}</div>}
@@ -397,9 +395,9 @@ export class CruxComponentCreator {
 
                         <Table className="table table-striped cftable" striped bordered condensed hover>
                             <thead>
-                                <tr>
+                                <tr key="header">
                                     {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
-                                        <th key={index}>{field.title}</th>)}
+                                        <th key={field + index}>{field.title}</th>)}
                                     {constants.editModal && <th></th>}
                                     {constants.customModal && <th></th>}
                                 </tr>
@@ -408,7 +406,7 @@ export class CruxComponentCreator {
                                 {constants.fields.some((field: any) => field.search) &&
                                     <tr key='searchRow'>
                                         {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
-                                            <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                            <td key={"search" + field.field + i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 {field.search && field.search.filterLocation === "server" &&
                                                     <div style={{ display: "flex" }}>
                                                         <div style={{ display: "inline-block", width: "80%" }}>
@@ -431,9 +429,10 @@ export class CruxComponentCreator {
                                     </tr>}
                                 {_.map(filteredRows, (model: any, index: number) => {
                                     const filtered = constants.fields.filter((field: any) => field.display === true)
-                                    return <tr key={index}>
+                                    const rowKey = model._id || ""
+                                    return <tr key={rowKey + index}>
                                         {_.map(filtered, (field: any, i: number) => {
-                                            return <td key={i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
+                                            return <td key={rowKey + field.field + i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 <div style={{ marginTop: 8 }}>
                                                     <ListNestedComponent
                                                         field={field} model={model}
@@ -443,14 +442,14 @@ export class CruxComponentCreator {
                                             </td>
                                         })}
                                         {constants.editModal &&
-                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                            <td key={rowKey + "edit"}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
                                                 className="glyphicon glyphicon-pencil fas fa-pencil-alt"
-                                                aria-hidden="true" onClick={this.showEditModal(model)} />
+                                                aria-hidden="true" onClick={() => this.showEditModal(model)} />
                                             </td>}
                                         {constants.customModal &&
-                                            <td key={2}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
+                                            <td key={rowKey + "custom"}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
                                                 className="glyphicon glyphicon-duplicate"
-                                                aria-hidden="true" onClick={this.showCustomModal.bind(this, model)} />
+                                                aria-hidden="true" onClick={() => this.showCustomModal(model)} />
                                             </td>}
                                     </tr>
                                 })}
