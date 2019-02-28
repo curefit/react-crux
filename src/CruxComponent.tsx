@@ -34,7 +34,8 @@ export interface InlineComponentProps {
     constants?: any,
     anchors?: any,
     readonly?: boolean,
-    isMulti?: boolean
+    isMulti?: boolean,
+    index?: number
 }
 
 export { ModalComponent } from './components/ModalComponent'
