@@ -88,6 +88,13 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
   integrity sha512-lRnAtKnxMXcYYXqOiotTmJd74uawNWuPnsnPrrO7HiFuE3npE2iQhfABatbYDyxTNqZNuXzcKGhw37R7RjBFLg==
 
+"@types/moment-timezone@^0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.10.tgz#2b251ad454a46bdd4e3b5a5157d45059e5714799"
+  integrity sha512-sSFfubyYd0Z9C89/M5wZ+GJOWNTYTPhXAB2wrzmElJcQROyWTj0y1NCLSwYqovDYeFezlFE8+aopIyZTMsDVnA==
+  dependencies:
+    moment ">=2.14.0"
+
 "@types/node@*", "@types/node@^10.9.3":
   version "10.9.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.9.3.tgz#85f288502503ade0b3bfc049fe1777b05d0327d5"
@@ -2271,6 +2278,18 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   dependencies:
     minimist "0.0.8"
 
+moment-timezone@^0.5.23:
+  version "0.5.23"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.23.tgz#7cbb00db2c14c71b19303cb47b0fb0a6d8651463"
+  integrity sha512-WHFH85DkCfiNMDX5D3X7hpNH3/PUhjTGcD0U1SgfBGZxJ3qUmJh5FdvaFjcClxOvB3rzdfj4oRffbI38jEnC1w==
+  dependencies:
+    moment ">= 2.9.0"
+
+"moment@>= 2.9.0":
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+
 moment@>=2.14.0, moment@^2.22.2:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
@@ -3032,6 +3051,13 @@ react-textarea-autosize@^6.1.0:
   integrity sha512-F6bI1dgib6fSvG8so1HuArPUv+iVEfPliuLWusLF+gAKz0FbB4jLrWUrTAeq1afnPT2c9toEZYUdz/y1uKMy4A==
   dependencies:
     prop-types "^15.6.0"
+
+react-timezone@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-timezone/-/react-timezone-2.3.0.tgz#3dbc39bd737d541e70b92680515aaa207119cf81"
+  integrity sha512-0pdWAePPj4xlHFLSgPJuWQBaQBqwj2uIt194bMP0aJq7I5lnWdEdWIEeLaPauhxyQxn5vDVCqtTv4TmupF2TlA==
+  dependencies:
+    prop-types "^15.6.1"
 
 react-transition-group@^2.0.0, react-transition-group@^2.2.0:
   version "2.4.0"
