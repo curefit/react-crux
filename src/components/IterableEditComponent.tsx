@@ -10,6 +10,7 @@ import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
+import { IterableNestedComponent } from "./IterableNestedComponent";
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -166,7 +167,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             parentModel: this.props.parentModel
                         }
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -176,7 +177,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <SelectComponent
-                                        key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
@@ -192,7 +192,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "searcheableselect") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -202,7 +202,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <MultiSelectComponent
-                                        key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
@@ -219,7 +218,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "multiselect") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -229,7 +228,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <MultiSelectComponent
-                                        key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
@@ -246,7 +244,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -258,7 +256,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     <ImageUploadComponent
                                         constants={this.props.constants}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                        key={index} width={this.props.width}
+                                        width={this.props.width}
                                         height={this.props.height} contentType={this.props.contentType}
                                         currentModel={this.state.model[index]} field={this.props.field.iterabletype}
                                         additionalModels={this.props.additionalModels} modelChanged={this.fieldChanged(index)}
@@ -270,7 +268,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datepicker") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -280,7 +278,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <DatePickerComponent
-                                        key={index}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
                                         field={this.props.field.iterabletype}
@@ -296,7 +293,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -306,7 +303,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <div style={{ display: "inline-block" }}>
                                     <TypeaheadComponent
-                                        key={index}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
@@ -323,53 +319,35 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
-                            const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black", display: "flex" }
-                            if (this.props.field.iterabletype.nestedIterableCollapse) {
-                                titleStyle["cursor"] = "pointer"
-                            }
-                            return <div key={index}
-                                style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                                    border: "1px solid #EEE",
-                                    padding: "10px",
-                                    marginTop: "10px"
-                                }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
-                                    <div onClick={this.collapseNestedToggle.bind(this, index)} style={titleStyle}>
-                                        <div style={{ display: "inline-block", width: "90%"}}>
-                                            {this.getIterableNestedTitle(index)}
-                                        </div>
-                                        {!this.state.collapsedIndex[index] &&
-                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                                                className="glyphicon glyphicon-chevron-up" aria-hidden="true"/>}
-                                        {this.state.collapsedIndex[index] &&
-                                            <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                                                className="glyphicon glyphicon-chevron-down" aria-hidden="true"/>}
-                                    </div>}
-                                <div style={this.state.collapsedIndex[index] ? { display: "none" } : { display: "inline-block" }}>
-                                    <NestedEditComponent
-                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                        currentModel={this.state.model[index]}
-                                        fetch={this.props.fetch}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                        showTitle={false}
-                                        indent={false}
-                                        modalType={this.props.modalType}
-                                        parentModel={parentModel}
-                                    />
-                                </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
+                            return <IterableNestedComponent
+                                key={"iterable" + this.props.field.iterabletype.type + index}
+                                index={index}
+                                model={this.state.model[index]}
+                                readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                currentModel={this.state.model[index]}
+                                fetch={this.props.fetch}
+                                field={this.props.field}
+                                additionalModels={this.props.additionalModels}
+                                modelChanged={this.nestedFieldChanged}
+                                showTitle={false}
+                                indent={false}
+                                modalType={this.props.modalType}
+                                parentModel={parentModel}
+                                collapsable={this.state.collapsedIndex[index] || false}
+                                totalLength={totalLength}
+                                collapseNestedToggle={this.collapseNestedToggle}
+                                getIterableNestedTitle={this.getIterableNestedTitle}
+                                remove={this.remove}
+                                addAtIndex={this.addAtIndex}
+                                reorder={this.reorder} />
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
-                            return <div key={index} style={{ border: "1px solid #EEE", padding: "10px" }}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={{ border: "1px solid #EEE", padding: "10px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <NestedEditComponent key={index} currentModel={this.state.model[index]}
+                                <NestedEditComponent currentModel={this.state.model[index]}
                                     readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                     fetch={this.props.fetch}
                                     field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
@@ -383,10 +361,11 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "checkbox") {
-                            return <div style={{ display: "inline-block" }}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={{ display: "inline-block" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <CheckboxComponent key={index}
+                                <CheckboxComponent
                                     readonly={this.props.field.iterable.readonly === true || this.props.readonly}
                                     currentModel={this.state.model[index]}
                                     field={this.props.field.iterabletype}
@@ -398,7 +377,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "colorpallete") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <ColorPalleteComponent
@@ -413,11 +392,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "bigtext") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <textarea
-                                    key={index}
                                     disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                     value={datum}
                                     onChange={this.handleChange.bind(this, index)} style={{ width: 250 }} />
@@ -426,10 +404,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
-                            return <div key={index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <input key={index}
+                                <input
                                     disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                     type="number"
                                     value={datum}
@@ -440,10 +418,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             </div>
                         }
 
-                        return <div key={index}
+                        return <div key={"iterable" + this.props.field.iterabletype.type + index}
                             onMouseEnter={this.showIterableButtons.bind(this, index)}
                             onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                            <input key={index}
+                            <input
                                 disabled={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                 type="text"
                                 value={datum}
@@ -477,6 +455,12 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             modelCopy[index] = value
             self.props.modelChanged(modelCopy)
         }
+    }
+
+    nestedFieldChanged = (index: any, value: any) => {
+        const modelCopy = JSON.parse(JSON.stringify(this.state.model))
+        modelCopy[index] = value
+        this.props.modelChanged(modelCopy)
     }
 
     createNew = () => {
