@@ -195,6 +195,22 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     />
                 </div>
             )
+        } else if (field.type === "customedit") {
+            const CustomEditComponent = field.customEditComponent
+            return (
+                <div>
+                    {!_.isEmpty(field.title) && <span><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    <CustomEditComponent
+                        currentModel={this.props.currentModel}
+                        additionalModels={this.props.additionalModels}
+                        parentModel={this.props.parentModel}
+                        field={field}
+                        handleChange={this.select}/>
+                </div>
+            )
         } else {
             return (
                 <div>
@@ -218,7 +234,6 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     render(): any {
-        // console.log("nested", this.props.field.title, " Parent " ,this.props.parentModel)
         if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
             console.error("Nested component got empty field prop. Check the parent component. Props:", this.props)
             return <div />

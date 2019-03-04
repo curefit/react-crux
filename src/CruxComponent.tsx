@@ -125,6 +125,7 @@ export class CruxComponentCreator {
                     const params = new URLSearchParams(this.props.location.search)
                     const searchId = params.get("id")
                     const searchField = params.get("field")
+                    const mode = params.get("mode")
                     if (searchId && searchField) {
                         const searchData = data.filter((x: any) => x[searchField] === searchId);
                         if (searchData.length) {
@@ -142,6 +143,8 @@ export class CruxComponentCreator {
                                 }
                             })
                         }
+                    } else if (mode === "CREATE") {
+                        this.showCreateModal()
                     }
                 }
             }
@@ -170,9 +173,7 @@ export class CruxComponentCreator {
             }
 
             componentWillReceiveProps(nextProps: any) {
-                console.log("New props: ", nextProps, " ", this.props.queryParams)
                 if (!_.isEqual(this.props.queryParams, nextProps.queryParams)) {
-                    console.log("Fetching again : ", nextProps, this.props.queryParams)
                     this.fetchModels(nextProps)
                 }
             }
