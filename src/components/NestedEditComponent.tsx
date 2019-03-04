@@ -196,8 +196,6 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 </div>
             )
         } else if (field.type === "customedit") {
-            // const CustomEditComponent = field.customEditComponent({ currentModel: this.props.currentModel, additionalModels: this.props.additionalModels,
-            //     parentModel: this.props.parentModel, field })
             const CustomEditComponent = field.customEditComponent
             return (
                 <div>
@@ -210,8 +208,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         additionalModels={this.props.additionalModels}
                         parentModel={this.props.parentModel}
                         field={field}
-                        handleChange={this.select}
-                        model={this.props.currentModel}/>
+                        handleChange={this.select}/>
                 </div>
             )
         } else {
