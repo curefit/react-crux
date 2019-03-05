@@ -99,7 +99,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 <TypeaheadComponent field={field}
                     readonly={field.readonly === true || this.props.readonly}
                     additionalModels={this.props.additionalModels}
-                    fetch={this.props.fetch} modelChanged={this.select}
+                    fetch={this.props.fetch}
+                    modelChanged={this.select}
                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
                     showTitle={true}
                     parentModel={currentModelWithParent}
@@ -149,9 +150,10 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         marginRight: "10px"
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <textarea
+                        data-value={field.field}
                         disabled={field.readonly === true || this.props.readonly}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                        onChange={this.handleChange.bind(this, field)}
+                        onChange={this.handleFieldChange}
                         style={{ width: 250 }} />
                 </div>
             )
@@ -185,11 +187,28 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         marginRight: "10px"
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <input type="number"
+                        data-value={field.field}
                         disabled={field.readonly === true || this.props.readonly}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                        onChange={this.handleChange.bind(this, field)}
+                        onChange={this.handleFieldChange}
                         style={{ width: 200, paddingTop: 5 }}
                     />
+                </div>
+            )
+        } else if (field.type === "customedit") {
+            const CustomEditComponent = field.customEditComponent
+            return (
+                <div>
+                    {!_.isEmpty(field.title) && <span><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    <CustomEditComponent
+                        currentModel={this.props.currentModel}
+                        additionalModels={this.props.additionalModels}
+                        parentModel={this.props.parentModel}
+                        field={field}
+                        handleChange={this.select}/>
                 </div>
             )
         } else {
@@ -200,9 +219,10 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         marginRight: "10px"
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <input type="text"
+                        data-value={field.field}
                         disabled={field.readonly === true || this.props.readonly}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                        onChange={this.handleChange.bind(this, field)}
+                        onChange={this.handleFieldChange}
                         style={field.type === "tinyinput" ? {
                             width: 64,
                             paddingTop: 5
@@ -214,7 +234,6 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     render(): any {
-        // console.log("nested", this.props.field.title, " Parent " ,this.props.parentModel)
         if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
             console.error("Nested component got empty field prop. Check the parent component. Props:", this.props)
             return <div />
@@ -311,13 +330,31 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     select = (field: any, eventKey: any) => {
-        this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        if (this.props.index >= 0) {
+            this.props.modelChanged(this.props.index, Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        } else {
+            this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        }
     }
 
     handleChange = (field: any, event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
         const newModel = Object.assign({}, this.props.currentModel, { [field.field]: value })
-        this.props.modelChanged(newModel)
+        if (this.props.index >= 0) {
+            this.props.modelChanged(this.props.index, newModel)
+        } else {
+            this.props.modelChanged(newModel)
+        }
+    }
+
+    handleFieldChange = (event: any) => {
+        const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
+        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute('data-value')]: value })
+        if (this.props.index >= 0) {
+            this.props.modelChanged(this.props.index, newModel)
+        } else {
+            this.props.modelChanged(newModel)
+        }
     }
 
     collapseToggle = () => {

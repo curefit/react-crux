@@ -10,7 +10,8 @@ const TimezonePicker = require("react-timezone")
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { interval: 30, timezone: "Asia/Kolkata" }
+        this.state = { interval: 30,
+            dateTime: props.currentModel ? moment(props.currentModel) : undefined}
     }
 
     componentWillReceiveProps(nextProps: any) {

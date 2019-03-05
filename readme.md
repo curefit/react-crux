@@ -127,9 +127,11 @@ const store = createStore(
         - _datepicker_ - For fields that have dates. Detailed spec later. [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
+        - _customedit_ - For injecting your own custom Editable component to render this field. Requires another field called _customEditComponent_ (defined later)
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
     * _wysiwyg_ - If present and true, adds support to show a live preview will editing the object. Requires another field called _customComponent_
-    * _customComponent_ - Required for wysiwyg and for _type_ "custom". 
+    * _customComponent_ - Required for wysiwyg and for _type_ "custom".
+    * _customEditComponent_ - Required for _type_ "customedit".
 
 ### Select/Typeahead fields
 Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter. 
@@ -562,6 +564,60 @@ function customComponentView(model: model, additionalModels: any) {
         }
     }
     return CustomComponent
+}
+```
+
+### Custom Edit Components
+This is to support Custom Components with our edit/create Modal. This will allow us to create our own support with our own state.
+
+```
+{
+  "modelName": "employees",
+  "title": "Employees with list of free-form Tags",
+  "creationTitle": "Employee",
+  "editModal": true,
+  "fields": [
+    {
+      "title": "Name",
+      "field": "name",
+      "editable": true,
+      "representative": true,
+      "display": true
+    },
+    {
+        title: "Address",
+        field: "address",
+        type: "customedit",
+        editable: true,
+        customEditComponent: CustomEditComponent
+    }
+  ],
+  "createModal": true
+}
+
+// Props for this CustomEditComponent is currentModal, additionalModels, parentModel, field, handleChange
+
+export class CustomEditComponent extends React.Component<any, any> {
+
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            address = "India"
+        }
+    }
+
+    handleChange = () => {
+        this.setState({ address = "America" })
+        // React Crux change event props to be called here. To reflect changes in crux (redux)
+        this.props.handleChange(this.props.field, value)
+    }
+
+    render() {
+        return <div>
+            <p>{this.state.address}</p>
+            <button onClick={this.handleChange}>Change Address</button>
+        </div>
+    }
 }
 ```
 
