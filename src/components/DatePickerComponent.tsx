@@ -1,6 +1,5 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-// import * as moment from "moment"
 import * as moment from "moment-timezone"
 import DatePicker from "react-datepicker"
 import { InlineComponentProps } from "../CruxComponent"
@@ -10,15 +9,12 @@ const TimezonePicker = require("react-timezone")
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { interval: 30,
-            dateTime: props.currentModel ? moment(props.currentModel) : undefined}
-    }
-
-    componentWillReceiveProps(nextProps: any) {
-        if (nextProps.currentModel) {
-            moment.tz.setDefault(this.state.timezone)
-            this.setState({ ...this.state, dateTime: moment(nextProps.currentModel) })
+        this.state = {
+            interval: 30,
+            dateTime: props.currentModel ? moment(props.field.showTimezone ? props.currentModel.date : props.currentModel) : undefined,
+            timezone: props.currentModel && props.currentModel.timezone || "Asia/Kolkata"
         }
+        moment.tz.setDefault(this.state.timezone)
     }
 
     render() {
@@ -44,12 +40,12 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
                     <label style={{ fontSize: "10px", marginRight: "10px" }}>INTERVAL</label>
                     <input type="number" value={this.state.interval} onChange={this.handleIntervalChange} min="0" max="59" />
                 </div>}
-                { this.props.field.showTimeZone &&
+                { this.props.field.showTimezone &&
                 <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
                     <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
                     <TimezonePicker.default
                         value={this.state.timezone}
-                        onChange={(timezone: any) => this.handleTimezoneChange(timezone)}
+                        onChange={this.handleTimezoneChange}
                         inputProps={{
                             placeholder: 'Select Timezone...',
                             name: 'timezone',
@@ -70,6 +66,10 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleChange(selected: any) {
-        this.props.modelChanged(this.props.field, selected)
+        if (this.props.field.showTimezone) {
+            this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone})
+        } else {
+            this.props.modelChanged(this.props.field, selected)
+        }
     }
 }

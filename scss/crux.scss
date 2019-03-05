@@ -49,3 +49,7 @@ mark {
 .html-comma:not(:first-child):before {
   content: ", ";
 }
+
+.font-resize {
+  font: inherit !important;
+}
