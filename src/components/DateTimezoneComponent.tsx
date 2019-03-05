@@ -35,31 +35,26 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         inputProps={{ placeholder: 'Select ' + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
-                {this.props.field.showTimezone &&
-                    <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
-                        <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
-                        <TimezonePicker.default
-                            value={this.state.timezone}
-                            onChange={this.handleTimezoneChange}
-                            inputProps={{
-                                placeholder: 'Select Timezone...',
-                                name: 'timezone',
-                                className: "height-resize"
-                            }}
-                            className="font-resize"
-                        />
-                    </div>}
+                <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
+                    <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
+                    <TimezonePicker.default
+                        value={this.state.timezone}
+                        onChange={this.handleTimezoneChange}
+                        inputProps={{
+                            placeholder: 'Select Timezone...',
+                            name: 'timezone',
+                            className: "height-resize"
+                        }}
+                        className="font-resize"
+                    />
+                </div>
             </div>
         )
     }
 
     handleChange = (selected: any) => {
         this.setState({ dateTime: selected })
-        if (this.props.field.showTimezone) {
-            this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
-        } else {
-            this.props.modelChanged(this.props.field, selected)
-        }
+        this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
     }
 
     handleTimezoneChange = (timezone: string) => {
