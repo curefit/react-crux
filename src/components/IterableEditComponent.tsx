@@ -11,6 +11,7 @@ import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent";
+import { DateTimezoneComponent } from "./DateTimezoneComponent";
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -286,6 +287,29 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         showTitle={false}
                                         parentModel={parentModel}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datetimezonepicker") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={{ display: "inline-block" }}>
+                                    <DateTimezoneComponent field={this.props.field.iterabletype}
+                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        currentModel={this.state.model[index]}
+                                        showTitle={false}
+                                        parentModel={parentModel}
                                     />
                                 </div>
                                 {this.iterableButtons(index, totalLength)}
