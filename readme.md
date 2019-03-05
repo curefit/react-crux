@@ -82,10 +82,13 @@ const store = createStore(
     "autobind-decorator": "^2.1.0", // Because binding manually is so 2017
     "lodash": "^4.17.10", // Used heavily for all list/object manipulations
     "moment": "^2.22.2", // Used in date picker
+    "moment-timezone": "^0.5.23", // Used in date picker with timezone
     "react": "^16.4.2", // Duh
     "react-bootstrap": "^0.32.3", // Its pretty cool
     "react-bootstrap-typeahead": "^3.2.2", // For typeahead component
     "react-datepicker": "^1.6.0", // For datepicker
+    "react-datetime": "^2.16.3", // For datepicker with timezone
+    "react-timezone": "^2.3.0", // Used in datepicker with timezone
     "react-dropzone": "^5.0.1", // For file upload component
     "react-redux": "^5.0.7", // Duh
     "react-select": "^2.3.0", // For Multi Select component
@@ -125,6 +128,7 @@ const store = createStore(
         - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
         - _imageUpload_ - For triggering file uploads. Server side controller required to handle multipart requests. Detailed specification later in the document. [Example](https://curefit.github.io/react-crux-examples/#/file)
         - _datepicker_ - For fields that have dates. Detailed spec later. [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
+        - _datetimezonepicker_ - For fields that have object {with date and timezone }. Detailed spec later.
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
         - _customedit_ - For injecting your own custom Editable component to render this field. Requires another field called _customEditComponent_ (defined later)
@@ -463,6 +467,21 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
   "field": "joiningDate",
   "type": "datepicker",
   "showTimeSelect": true
+}
+```
+
+### Datepickers With Time Zone Selection and Time Selection
+Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datetime to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors. Datepicker will also time select option
+
+Here data will be stored as an object with ( date and timezone ) ex: joiningDate = { date: 2019-03-06 05:30:00.000Z, timezone: "Asia/Kolkata" }
+
+```
+{
+  "title": "Date Of Joining",
+  "editable": true,
+  "display": true,
+  "field": "joiningDate",
+  "type": "datetimezonepicker"
 }
 ```
 
