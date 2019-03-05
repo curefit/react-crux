@@ -64,6 +64,8 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
         if (!_.isEmpty(selected)) {
             const newObject = selected[0]
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
+        } else {
+            this.props.modelChanged(this.props.field, "")
         }
     }
 }
