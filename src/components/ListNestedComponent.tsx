@@ -7,6 +7,7 @@ import { ListCheckboxComponent } from "./ListCheckboxComponent"
 import { ListForeignComponent } from "./ListForeignComponent"
 import { InlineEditComponent } from "./InlineEditComponent"
 import { ListMultiSelectComponent } from "./ListMultiSelectComponent"
+import { ListDateTimezoneComponent } from "./ListDateTimezoneComponent"
 
 @autobind
 export class ListNestedComponent extends React.Component<any, any> {
@@ -59,6 +60,10 @@ export class ListNestedComponent extends React.Component<any, any> {
 
             if (field.type === "datepicker") {
                 return <ListDateComponent model={value} field={field} />
+            }
+
+            if (field.type === "datetimezonepicker") {
+                return <ListDateTimezoneComponent model={value} field={field} />
             }
 
             if (field.type === "checkbox") {
