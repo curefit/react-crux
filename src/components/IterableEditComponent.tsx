@@ -176,7 +176,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <SelectComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
@@ -201,7 +202,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
@@ -227,7 +229,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
@@ -253,7 +256,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <ImageUploadComponent
                                         constants={this.props.constants}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
@@ -277,7 +281,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DatePickerComponent
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}
@@ -302,7 +307,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DateTimezoneComponent field={this.props.field.iterabletype}
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         additionalModels={this.props.additionalModels}
@@ -317,7 +323,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index + this.state.model[index]}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
                                     padding: "5px 0px",
                                     display: "inline-block",
@@ -325,7 +331,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 } : { padding: "5px 0px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={{ display: "inline-block" }}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TypeaheadComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
