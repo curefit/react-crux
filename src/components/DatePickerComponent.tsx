@@ -15,6 +15,8 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.currentModel) {
             this.setState({ ...this.state, dateTime: moment(nextProps.currentModel) })
+        } else {
+            this.setState({ dateTime: undefined })
         }
     }
 
