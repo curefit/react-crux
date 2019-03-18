@@ -29,10 +29,10 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                     <Datetime
                         value={this.state.dateTime}
                         dateFormat={"LL"}
-                        viewDate={this.state.dateTime}
                         onChange={this.handleChange}
                         utc={false}
-                        inputProps={{ placeholder: 'Select ' + this.props.field.title, disabled: this.props.readonly }}
+                        timeFormat={"HH:mm"}
+                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
@@ -41,8 +41,8 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         value={this.state.timezone}
                         onChange={this.handleTimezoneChange}
                         inputProps={{
-                            placeholder: 'Select Timezone...',
-                            name: 'timezone',
+                            placeholder: "Select Timezone...",
+                            name: "timezone",
                             className: "height-resize"
                         }}
                         className="font-resize"
@@ -54,7 +54,11 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
 
     handleChange = (selected: any) => {
         this.setState({ dateTime: selected })
-        this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
+        if (moment(selected).isValid()) {
+            this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
+        } else {
+            this.props.modelChanged(this.props.field, undefined)
+        }
     }
 
     handleTimezoneChange = (timezone: string) => {
