@@ -13,6 +13,8 @@ import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 
+const uuid = require("uuid")
+
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -220,7 +222,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         additionalModels={this.props.additionalModels}
                         parentModel={this.props.parentModel}
                         field={field}
-                        handleChange={this.select}/>
+                        handleChange={this.select} />
                 </div>
             )
         } else {
@@ -243,6 +245,26 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 </div>
             )
         }
+    }
+
+    updateDefaultValue = (props: any) => {
+        const defaultValue: any = {}
+        _.map(props.field.fields, field => {
+            if (field.hasOwnProperty("defaultValue") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
+                defaultValue[field.field] = field.defaultValue === "uuid" ? uuid.v4() : field.defaultValue
+            }
+        })
+        if (!_.isEmpty(defaultValue)) {
+            props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+        }
+    }
+
+    componentDidMount() {
+        this.updateDefaultValue(this.props)
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.updateDefaultValue(nextProps)
     }
 
     render(): any {
