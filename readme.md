@@ -427,6 +427,34 @@ If the field is itself an object containing more fields, its _type_ should be "n
 }
 ```
 
+### Default Value Support for our components
+This is to support default values for our components. In each config, we can represent a defaultValue key. Custom Function will be called, when the
+component does not have value.
+
+```
+{
+    "title": "Text",
+    "editable": true,
+    "display": true,
+    "type": "text",
+    "defaultValue": () => "Initial Default Value"
+},
+{
+    "title": "Checkbox",
+    "editable": true,
+    "display": true,
+    "type": "checkbox",
+    "defaultValue": () => true
+},
+{
+    "title": "Number",
+    "editable": true,
+    "display": true,
+    "type": "number",
+    "defaultValue": () => 123
+}
+```
+
 ### Recursive fields (To be documented)
 ### Checkbox
 This is to support boolean fields. If the field is not present in the object, the edit modal shows it "unchecked" and saving does not set it. Otherwise that field is set as true or false (based on state). [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
