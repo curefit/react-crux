@@ -38,8 +38,8 @@ export interface InlineComponentProps {
     index?: number
 }
 
-export { ModalComponent } from './components/ModalComponent'
-export { NestedEditComponent } from './components/NestedEditComponent'
+export { ModalComponent } from "./components/ModalComponent"
+export { NestedEditComponent } from "./components/NestedEditComponent"
 
 export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
@@ -102,8 +102,8 @@ export class CruxComponentCreator {
             }
 
             checkAdditionalModel(modelName: string, props: any) {
-                if ((modelName === constants.modelName 
-                        && (constants.paginate || (!_.isEqual(this.props.queryParams, props.queryParams))) ||
+                if ((modelName === constants.modelName
+                    && (constants.paginate || (!_.isEqual(this.props.queryParams, props.queryParams))) ||
                     !Array.isArray(props.additionalModels[modelName]))) {
                     return true
                 }
@@ -127,7 +127,7 @@ export class CruxComponentCreator {
                     const searchField = params.get("field")
                     const mode = params.get("mode")
                     if (searchId && searchField) {
-                        const searchData = data.filter((x: any) => x[searchField] === searchId);
+                        const searchData = data.filter((x: any) => x[searchField] === searchId)
                         if (searchData.length) {
                             this.setState({
                                 showEditModal: true,
@@ -169,7 +169,7 @@ export class CruxComponentCreator {
             }
 
             getDefaultPageSize = () => {
-                return constants.paginate && constants.paginate.defaultPageSize || ''
+                return constants.paginate && constants.paginate.defaultPageSize || ""
             }
 
             componentWillReceiveProps(nextProps: any) {
@@ -244,9 +244,9 @@ export class CruxComponentCreator {
 
             fetchModel(modelName: string) {
                 modelName &&
-                    this.getDefaultPageSize() 
-                        ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams, undefined, this.props.queryParams) 
-                        : this.props.fetch(modelName, this.searchByQueryParams, undefined, this.props.queryParams)
+                    this.getDefaultPageSize()
+                    ? this.props.filter(modelName, { limit: constants.paginate.defaultPageSize }, this.searchByQueryParams, undefined, this.props.queryParams)
+                    : this.props.fetch(modelName, this.searchByQueryParams, undefined, this.props.queryParams)
             }
 
             filterSuccess(data: any) {
@@ -312,10 +312,10 @@ export class CruxComponentCreator {
             previousPage() {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
-                paginationData['currentPage'] -= 1
-                filterModelData['skip'] = (paginationData['currentPage'] - 1) * this.state.filterModel.limit +
-                    (paginationData['currentPage'] - 1 === 0 ? 0 : 1)
-                filterModelData['paginate'] = paginationData
+                paginationData["currentPage"] -= 1
+                filterModelData["skip"] = (paginationData["currentPage"] - 1) * this.state.filterModel.limit +
+                    (paginationData["currentPage"] - 1 === 0 ? 0 : 1)
+                filterModelData["paginate"] = paginationData
                 this.setState({
                     filterModel: filterModelData
                 })
@@ -325,9 +325,9 @@ export class CruxComponentCreator {
             nextPage() {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
-                paginationData['currentPage'] += 1
-                filterModelData['skip'] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
-                filterModelData['paginate'] = paginationData
+                paginationData["currentPage"] += 1
+                filterModelData["skip"] = this.state.filterModel.paginate.currentPage * this.state.filterModel.limit + 1
+                filterModelData["paginate"] = paginationData
                 this.setState({
                     filterModel: filterModelData
                 })
@@ -337,11 +337,11 @@ export class CruxComponentCreator {
             paginate(pageSize: number) {
                 const filterModelData = Object.assign({}, this.state.filterModel)
                 const paginationData = Object.assign({}, this.state.filterModel.paginate)
-                paginationData['currentPageSize'] = pageSize
-                paginationData['currentPage'] = 1
-                filterModelData['paginate'] = paginationData
-                filterModelData['skip'] = 0
-                filterModelData['limit'] = pageSize
+                paginationData["currentPageSize"] = pageSize
+                paginationData["currentPage"] = 1
+                filterModelData["paginate"] = paginationData
+                filterModelData["skip"] = 0
+                filterModelData["limit"] = pageSize
                 this.setState({ filterModel: filterModelData })
                 this.props.filter(constants.modelName, filterModelData, undefined, undefined, this.props.queryParams)
             }
@@ -395,7 +395,7 @@ export class CruxComponentCreator {
                         </div>}
                         <div style={{ marginTop: "10px" }} />
 
-                        <Table className="table table-striped cftable" striped bordered condensed hover>
+                        <Table className="table table-striped cftable" striped bordered condensed hover responsive>
                             <thead>
                                 <tr key="header">
                                     {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
@@ -406,7 +406,7 @@ export class CruxComponentCreator {
                             </thead>
                             <tbody>
                                 {constants.fields.some((field: any) => field.search) &&
-                                    <tr key='searchRow'>
+                                    <tr key="searchRow">
                                         {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
                                             <td key={"search" + field.field + i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 {field.search && field.search.filterLocation === "server" &&
@@ -471,13 +471,13 @@ export class CruxComponentCreator {
                         }
 
                         {constants.bulkCreateModal && this.state.showBulkCreateModal &&
-                        <BulkCreateModal
-                            constants={constants}
-                            showModal={this.state.showBulkCreateModal}
-                            closeModal={this.closeBulkCreateModal}
-                            createOrModify={this.props.bulkCreate}
-                            createOrEditSuccess={this.createOrEditSuccess}
-                        />
+                            <BulkCreateModal
+                                constants={constants}
+                                showModal={this.state.showBulkCreateModal}
+                                closeModal={this.closeBulkCreateModal}
+                                createOrModify={this.props.bulkCreate}
+                                createOrEditSuccess={this.createOrEditSuccess}
+                            />
                         }
 
                         {constants.editModal && this.state.showEditModal &&
