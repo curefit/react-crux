@@ -27,7 +27,7 @@ export class PaginationComponent extends React.Component<PaginationComponentProp
     }
 
     render() {
-        return <div className="pull-right" style={{ marginBottom: 10 }}>
+        return <div style={{ marginBottom: 10, textAlign: "right" }}>
             <button style={{ marginRight: 10 }}
                 className="btn btn-default btn-xs"
                 disabled={this.isPrevDisabled()}
