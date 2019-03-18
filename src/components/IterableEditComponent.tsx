@@ -13,8 +13,6 @@ import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 
-const uuid = require("uuid")
-
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
 }
@@ -532,14 +530,14 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
              const defaultValue: any = {}
              _.map(this.props.field.iterabletype.fields, field => {
                  if (field.hasOwnProperty("defaultValue")) {
-                    defaultValue[field.field] = field.defaultValue === "uuid" ? uuid.v4() : field.defaultValue
+                    defaultValue[field.field] = field.defaultValue()
                  }
              })
              return defaultValue
         } else {
             // Adding Default Value, while creating new Iterable
             if (iterableType.hasOwnProperty("defaultValue")) {
-                return iterableType.defaultValue !== "uuid" ? iterableType.defaultValue : uuid.v4()
+                return iterableType.defaultValue()
             }
             return ""
         }
