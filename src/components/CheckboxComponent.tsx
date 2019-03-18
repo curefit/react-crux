@@ -7,8 +7,8 @@ import { InlineComponentProps } from "../CruxComponent"
 export class CheckboxComponent extends React.Component<InlineComponentProps, any> {
 
     componentDidMount() {
-        if (!this.props.currentModel && this.props.field.defaultValue) {
-            this.props.modelChanged(this.props.field, this.props.currentModel || this.props.field.defaultValue)
+        if (!this.props.currentModel) {
+            this.props.modelChanged(this.props.field, this.props.currentModel || !!this.props.field.defaultValue)
         }
     }
 
