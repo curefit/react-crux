@@ -5,8 +5,6 @@ import { InlineComponentProps } from "../CruxComponent"
 
 @autobind
 export class CheckboxComponent extends React.Component<InlineComponentProps, any> {
-
-
     render() {
         return <div>
             <div>
