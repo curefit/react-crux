@@ -6,11 +6,6 @@ import { InlineComponentProps } from "../CruxComponent"
 @autobind
 export class CheckboxComponent extends React.Component<InlineComponentProps, any> {
 
-    componentDidMount() {
-        if (!this.props.currentModel) {
-            this.props.modelChanged(this.props.field, this.props.currentModel || !!this.props.field.defaultValue)
-        }
-    }
 
     render() {
         return <div>
