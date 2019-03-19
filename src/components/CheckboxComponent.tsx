@@ -10,9 +10,9 @@ export class CheckboxComponent extends React.Component<InlineComponentProps, any
             <div>
                 <label style={{fontSize: "10px", marginRight: "10px"}}>{this.props.field.title.toUpperCase()}</label><br />
             </div>
-            <Checkbox bsClass="custom-checkbox" 
+            <Checkbox bsClass="custom-checkbox"
                 disabled={this.props.readonly}
-                onChange={this.handleCheckbox} 
+                onChange={this.handleCheckbox}
                 checked={this.props.currentModel === true} />
         </div>
     }

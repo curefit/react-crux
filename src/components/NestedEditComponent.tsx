@@ -8,10 +8,10 @@ import { DatePickerComponent } from "./DatePickerComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { IterableEditComponent } from "./IterableEditComponent"
 import { CheckboxComponent } from "./CheckboxComponent"
-import { MultiSelectComponent } from "./MultiSelectComponent";
+import { MultiSelectComponent } from "./MultiSelectComponent"
 import { JsonEditComponent } from "./JsonEditComponent"
-import { ColorPalleteComponent } from "./ColorPalleteComponent";
-import { DateTimezoneComponent } from "./DateTimezoneComponent";
+import { ColorPalleteComponent } from "./ColorPalleteComponent"
+import { DateTimezoneComponent } from "./DateTimezoneComponent"
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -25,7 +25,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return field.creatable === true
         }
 
-        if (modalType === 'CREATE') {
+        if (modalType === "CREATE") {
             return field.editable === true
         }
 
@@ -220,7 +220,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         additionalModels={this.props.additionalModels}
                         parentModel={this.props.parentModel}
                         field={field}
-                        handleChange={this.select}/>
+                        handleChange={this.select} />
                 </div>
             )
         } else {
@@ -243,6 +243,26 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 </div>
             )
         }
+    }
+
+    updateDefaultValue = (props: any) => {
+        const defaultValue: any = {}
+        _.map(props.field.fields, field => {
+            if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
+                defaultValue[field.field] = field.defaultValueFn()
+            }
+        })
+        if (!_.isEmpty(defaultValue)) {
+            props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+        }
+    }
+
+    componentDidMount() {
+        this.updateDefaultValue(this.props)
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.updateDefaultValue(nextProps)
     }
 
     render(): any {
@@ -361,7 +381,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     handleFieldChange = (event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
-        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute('data-value')]: value })
+        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
         if (this.props.index >= 0) {
             this.props.modelChanged(this.props.index, newModel)
         } else {

@@ -10,8 +10,8 @@ import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
-import { IterableNestedComponent } from "./IterableNestedComponent";
-import { DateTimezoneComponent } from "./DateTimezoneComponent";
+import { IterableNestedComponent } from "./IterableNestedComponent"
+import { DateTimezoneComponent } from "./DateTimezoneComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -143,7 +143,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     render() {
-        let totalLength = this.state.model.length
+        const totalLength = this.state.model.length
         // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
         if (!this.props.field.iterabletype) {
             console.error("Did you forget to add a iterabletype to the field ? Possible culprit:", this.props.field)
@@ -495,11 +495,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     createNew = () => {
-        if (this.props.field.iterabletype.type === "nested") {
-            this.props.modelChanged(_.concat(this.state.model, {}))
-        } else {
-            this.props.modelChanged(_.concat(this.state.model, ""))
-        }
+        this.props.modelChanged(_.concat(this.state.model, this.getIterableDefaultValue(this.props.field.iterabletype)))
     }
 
     remove = (index: any) => {
@@ -524,12 +520,27 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     addAtIndex = (index: any) => {
         const clone = _.cloneDeep(this.state.model)
-        if (this.props.field.iterabletype.type === "nested") {
-            clone.splice(index, 0, {});
-        } else {
-            clone.splice(index, 0, "");
-        }
+        clone.splice(index, 0, this.getIterableDefaultValue(this.props.field.iterabletype))
         this.props.modelChanged(clone)
+    }
+
+    getIterableDefaultValue = (iterableType: any) => {
+        if (iterableType.type === "nested") {
+             // Adding Default Value, while creating new Iterable
+             const defaultValue: any = {}
+             _.map(this.props.field.iterabletype.fields, field => {
+                 if (field.hasOwnProperty("defaultValueFn")) {
+                    defaultValue[field.field] = field.defaultValueFn()
+                 }
+             })
+             return defaultValue
+        } else {
+            // Adding Default Value, while creating new Iterable
+            if (iterableType.hasOwnProperty("defaultValueFn")) {
+                return iterableType.defaultValueFn()
+            }
+            return ""
+        }
     }
 
     reorder(index: any, flag: number) {
