@@ -113,7 +113,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             return subTitle
         }
 
-        if (_.isEmpty(this.state.model[index][repField.field])) {
+        if (_.isEmpty(this.state.model[index][repField.field]) && typeof this.state.model[index][repField.field] !== "number") {
             return subTitle
         }
 
