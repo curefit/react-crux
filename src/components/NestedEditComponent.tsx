@@ -248,8 +248,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     updateDefaultValue = (props: any) => {
         const defaultValue: any = {}
         _.map(props.field.fields, field => {
-            if (field.hasOwnProperty("defaultValue") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
-                defaultValue[field.field] = field.defaultValue()
+            if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
+                defaultValue[field.field] = field.defaultValueFn()
             }
         })
         if (!_.isEmpty(defaultValue)) {

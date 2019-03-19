@@ -529,15 +529,15 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
              // Adding Default Value, while creating new Iterable
              const defaultValue: any = {}
              _.map(this.props.field.iterabletype.fields, field => {
-                 if (field.hasOwnProperty("defaultValue")) {
-                    defaultValue[field.field] = field.defaultValue()
+                 if (field.hasOwnProperty("defaultValueFn")) {
+                    defaultValue[field.field] = field.defaultValueFn()
                  }
              })
              return defaultValue
         } else {
             // Adding Default Value, while creating new Iterable
-            if (iterableType.hasOwnProperty("defaultValue")) {
-                return iterableType.defaultValue()
+            if (iterableType.hasOwnProperty("defaultValueFn")) {
+                return iterableType.defaultValueFn()
             }
             return ""
         }

@@ -428,7 +428,7 @@ If the field is itself an object containing more fields, its _type_ should be "n
 ```
 
 ### Default Value Support for our components
-This is to support default values for our components. In each config, we can represent a defaultValue key. Custom Function will be called, when the
+This is to support default values for our components. In each config, we can represent a defaultValueFn key. Custom Function will be called, when the
 component does not have value.
 
 ```
@@ -437,21 +437,21 @@ component does not have value.
     "editable": true,
     "display": true,
     "type": "text",
-    "defaultValue": () => "Initial Default Value"
+    "defaultValueFn": () => "Initial Default Value"
 },
 {
     "title": "Checkbox",
     "editable": true,
     "display": true,
     "type": "checkbox",
-    "defaultValue": () => true
+    "defaultValueFn": () => true
 },
 {
     "title": "Number",
     "editable": true,
     "display": true,
     "type": "number",
-    "defaultValue": () => 123
+    "defaultValueFn": () => 123
 }
 ```
 
