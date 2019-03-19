@@ -490,7 +490,7 @@ export class CruxComponentCreator {
                                 item={this.state.model}
                                 createOrModify={this.props.createOrModify}
                                 createOrEditSuccess={this.createOrEditSuccess}
-                                deleteModel={this.props.deleteModel}
+                                deleteModel={constants.deleteModal === false ? undefined : this.props.deleteModel}
                                 additionalModels={this.props.additionalModels}
                                 queryParams={this.props.queryParams} />
                         }

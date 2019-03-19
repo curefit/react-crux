@@ -109,6 +109,7 @@ const store = createStore(
 - **creationTitle**: Title for the create button. (+ New <creationTitle>)
 - **createModal**: If false, option to create new object wont come in the UI. Also note that disabling creation here is not sufficient. You should also make sure that your server does not support creation of this model.
 - **editModal**: If true, option to edit a row in the table appears in the last column. Also note that disabling edit here is not sufficient. You should also make sure that your server does not support modification of this model.
+- **deleteModal**: If false, option to delete button in edit modal will not appear.
 - **largeEdit**: (false by default) - If true, a large modal appears instead of a simple default bootstrap modal. This is helpful if your objects are pretty complex and large.
 - **stateRoot** - TBD
 - **fields** - An array of all the fields in the object. Each field needs to have the following
