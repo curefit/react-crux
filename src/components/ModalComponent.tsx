@@ -149,7 +149,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 />
             </Modal.Body>
             <Modal.Footer>
-                {this.props.modalType === "EDIT" &&
+                {this.props.deleteModel && this.props.modalType === "EDIT" &&
                 <div className="btn btn-danger" style={{ float: "left" }} onClick={this.openDeleteModal}>
                     Delete</div>}
                 {this.state.deleteModal &&
