@@ -454,7 +454,7 @@ export class CruxComponentCreator {
                                             </td>}
                                         {constants.customModal &&
                                             <td key={rowKey + "custom"}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
-                                                className="glyphicon glyphicon-duplicate"
+                                                className={constants.customModalIcon || "glyphicon glyphicon-duplicate"}
                                                 aria-hidden="true" onClick={() => this.showCustomModal(model)} />
                                             </td>}
                                     </tr>
