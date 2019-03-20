@@ -555,6 +555,7 @@ This is to support that require a Custom Modal with Custom Button in Table.
   ],
   "createModal": true
   "customModal": true,
+  "customModalIcon": "glyphicon glyphicon-trash",
   "customModalComponent": CustomModalComponent
 }
 
