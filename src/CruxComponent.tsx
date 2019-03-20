@@ -305,8 +305,12 @@ export class CruxComponentCreator {
             }
 
             getCustomComponent() {
-                const CustomComponent = constants.customModalComponent(this.state.model, this.closeCustomModal, this.successCustomModalDispatch, this.failureCustomModalDispatch)
-                return <CustomComponent />
+                const CustomComponent = constants.customModalComponent
+                return <CustomComponent
+                    model={this.state.model}
+                    closeModal={this.closeCustomModal}
+                    sucessDispatch={this.successCustomModalDispatch}
+                    failureDispatch={this.failureCustomModalDispatch} />
             }
 
             previousPage() {

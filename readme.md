@@ -555,27 +555,24 @@ This is to support that require a Custom Modal with Custom Button in Table.
   ],
   "createModal": true
   "customModal": true,
-  "customModalComponent": customModalComponent
+  "customModalComponent": CustomModalComponent
 }
 
 // ModalComponent.tsx
 
-function customModalComponent(model: any, closeModal: any, sucessDispatch: any, failureDispatch: any) {
-    class CustomModalComponent extends React.Component<any, any> {
-        render() {
-            return (<ModalComponent 
-                constants={CustomModalConstants}
-                showModal={true}
-                closeModal={closeModal}
-                modalType={"CUSTOM"}
-                successButtonLabel={"CLONE"}
-                item={model}
-                createOrModify={this.customModalSuccess}
-                additionalModels={[]}
-            />)
-        }
+class CustomModalComponent extends React.Component<any, any> {
+    render() {
+        return (<ModalComponent
+            constants={CustomModalConstants}
+            showModal={true}
+            closeModal={this.props.closeModal}
+            modalType={"CUSTOM"}
+            successButtonLabel={"CLONE"}
+            item={model}
+            createOrModify={this.props.customModalSuccess}
+            additionalModels={[]}
+        />)
     }
-    return CustomModalComponent
 }
 ```
 
