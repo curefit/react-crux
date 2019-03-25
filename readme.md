@@ -124,7 +124,7 @@ const store = createStore(
         - _iterable_ - For lists (of strings or objects or selects). Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/iterable)
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
-        - _dynamicTypeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Display in table is not supported.
+        - _dynamicTypeahead_ - For searching within dropdown. Specification is same as select. It is a server search. Display in table is not supported.
         - _tinyinput_ - For very small texts. [Example](http://localhost:3000/#/bigtext) 
         - _bigtext_ - For large blobs of text. [Example](http://localhost:3000/#/bigtext)
         - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
