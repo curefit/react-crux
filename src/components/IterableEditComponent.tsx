@@ -12,6 +12,7 @@ import { MultiSelectComponent } from "./MultiSelectComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
+import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -334,6 +335,33 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TypeaheadComponent
+                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                        constants={this.props.constants}
+                                        currentModel={this.state.model[index]}
+                                        fetch={this.props.fetch}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index + this.state.model[index]}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <DynamicTypeaheadComponent
                                         readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={this.state.model[index]}

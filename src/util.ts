@@ -22,6 +22,7 @@ export function getAnchors(field: any): any {
 }
 
 export function getAdditionalModelsSingle(field: any): string[] {
+    if (field.type === "dynamicTypeahead") return []
     if (field.modelName) return [field.modelName]
     if (field.additionalModelsOverride) return field.additionalModelsOverride
     if (field.foreign && field.foreign.modelName) return [field.foreign.modelName]

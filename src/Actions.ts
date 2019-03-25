@@ -145,3 +145,13 @@ export function failureCustomModal(err: any, model: string, type: string) {
         dispatch({ type, err, model })
     }
 }
+
+export const fetchDynamicTypeaheadResults = async (model: string, item: any) => {
+    try {
+        const response = await fetch(`/model/${model}/filter`, FetchUtil.post(item))
+        return FetchUtil.parseResponse(response)
+    }
+    catch (err) {
+        throw new Error(err.message)
+    }
+}
