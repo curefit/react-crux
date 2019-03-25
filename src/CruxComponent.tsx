@@ -305,8 +305,12 @@ export class CruxComponentCreator {
             }
 
             getCustomComponent() {
-                const CustomComponent = constants.customModalComponent(this.state.model, this.closeCustomModal, this.successCustomModalDispatch, this.failureCustomModalDispatch)
-                return <CustomComponent />
+                const CustomComponent = constants.customModalComponent
+                return <CustomComponent
+                    model={this.state.model}
+                    closeModal={this.closeCustomModal}
+                    sucessDispatch={this.successCustomModalDispatch}
+                    failureDispatch={this.failureCustomModalDispatch} />
             }
 
             previousPage() {
@@ -450,7 +454,7 @@ export class CruxComponentCreator {
                                             </td>}
                                         {constants.customModal &&
                                             <td key={rowKey + "custom"}><span style={{ margin: 8, color: "grey", cursor: "pointer" }}
-                                                className="glyphicon glyphicon-duplicate"
+                                                className={constants.customModalIcon || "glyphicon glyphicon-duplicate"}
                                                 aria-hidden="true" onClick={() => this.showCustomModal(model)} />
                                             </td>}
                                     </tr>
