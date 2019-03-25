@@ -94,7 +94,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
 
     getModalValue = (modelData: any) => {
         if (this.props.field.foreign.keys && Array.isArray(this.props.field.foreign.keys)) {
-            let eventKey: any = {}
+            const eventKey: any = {}
             for (const key of this.props.field.foreign.keys) {
                 eventKey[key] = modelData[key]
             }

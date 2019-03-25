@@ -12,6 +12,7 @@ import { MultiSelectComponent } from "./MultiSelectComponent"
 import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
+import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -109,6 +110,18 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         } else if (field.type === "typeahead") {
             return (
                 <TypeaheadComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    fetch={this.props.fetch}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "dynamicTypeahead") {
+            return (
+                <DynamicTypeaheadComponent field={field}
                     readonly={field.readonly === true || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
