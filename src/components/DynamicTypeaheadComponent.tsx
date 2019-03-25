@@ -40,14 +40,6 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
             }).catch((error: any) => {
                 console.log("Error while fetching " + this.props.field.foreign.modelName, error)
             })
-            fetch(`/model/${this.props.field.foreign.modelName}/filter`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
-                this.setState({
-                    isLoading: false,
-                    options: data.results,
-                })
-            }).catch((err: any) => {
-                console.log("Error while fetching widgets", err)
-            })
         }
     }
 
