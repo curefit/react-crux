@@ -1,28 +1,27 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import * as _ from "lodash"
-import { NestedEditComponent, InlineComponentProps } from "../CruxComponent"
+import { InlineComponentProps } from "../CruxComponent"
+import { TypeaheadComponent } from "./TypeaheadComponent"
 
-interface IterableNestedComponentProps extends InlineComponentProps {
+interface IterableComponentProps extends InlineComponentProps {
     model: any
-    collapsable: boolean
     totalLength: number
-    collapseNestedToggle: Function
-    getIterableNestedTitle: Function
     remove: Function
     addAtIndex: Function
     reorder: Function
 }
+
 @autobind
-export class IterableNestedComponent extends React.Component<IterableNestedComponentProps, any> {
+export class IterableComponent extends React.Component<IterableComponentProps, any> {
 
     constructor(props: any) {
         super(props)
         this.state = { showIterableButton: false }
     }
 
-    collapseNestedToggle = () => {
-        this.props.collapseNestedToggle(this.props.index)
+    handleFieldChange = (field: any, value: any) => {
+        this.props.modelChanged(this.props.index, value)
     }
 
     showIterableButtons = () => {
@@ -87,48 +86,29 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
     }
 
     render() {
-        const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black", display: "flex" }
-        if (this.props.field.iterabletype.nestedIterableCollapse) {
-            titleStyle["cursor"] = "pointer"
-        }
-        return <div key={this.props.index}
-            style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                border: "1px solid #EEE",
-                padding: "10px",
-                marginTop: "10px"
-            }}
+        return <div key={"iterable" + this.props.field.iterabletype.type + this.props.index + this.props.model}
+            style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                padding: "5px 0px",
+                display: "inline-block",
+                marginRight: "30px"
+            } : { padding: "5px 0px" }}
             onMouseEnter={this.showIterableButtons}
             onMouseLeave={this.hideIterableButtons}>
-            {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
-                <div onClick={this.collapseNestedToggle} style={titleStyle}>
-                    <div style={{ display: "inline-block", width: "90%" }}>
-                        {this.props.getIterableNestedTitle(this.props.index)}
-                    </div>
-                    {!this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-up" aria-hidden="true" />}
-                    {this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-down" aria-hidden="true" />}
-                </div>}
-            <div style={{ display: "inline-block" }}>
-                {!this.props.collapsable &&
-                    <NestedEditComponent
-                        index={this.props.index}
-                        readonly={this.props.readonly}
-                        currentModel={this.props.model}
-                        fetch={this.props.fetch}
-                        field={this.props.field.iterabletype}
-                        additionalModels={this.props.additionalModels}
-                        modelChanged={this.props.modelChanged}
-                        showTitle={false}
-                        indent={false}
-                        modalType={this.props.modalType}
-                        parentModel={this.props.parentModel}
-                    />}
+            <div style={this.props.field.iterabletype.style ?
+                Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                <TypeaheadComponent
+                    readonly={this.props.readonly}
+                    constants={this.props.constants}
+                    currentModel={this.props.model}
+                    fetch={this.props.fetch}
+                    field={this.props.field.iterabletype}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.handleFieldChange}
+                    showTitle={false}
+                    parentModel={this.props.parentModel}
+                />
             </div>
             {this.iterableButtons()}
         </div>
     }
 }
-

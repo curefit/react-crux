@@ -135,7 +135,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     {
                         <div>
                             {errorType && <b>{errorType}</b>}
-                            {errorMessage && <div>{errorMessage}</div>}
+                            {errorMessage && <div className="wordBreak">{errorMessage}</div>}
                         </div>
                     }
                 </Alert>

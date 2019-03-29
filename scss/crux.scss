@@ -50,3 +50,7 @@ mark {
 .html-comma:not(:first-child):before {
   content: ", ";
 }
+
+.wordBreak {
+  word-break: break-word
+}

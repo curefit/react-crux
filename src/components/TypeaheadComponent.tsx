@@ -5,7 +5,7 @@ import { Typeahead } from "react-bootstrap-typeahead"
 import { InlineComponentProps } from "../CruxComponent"
 
 @autobind
-export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
+export class TypeaheadComponent extends React.PureComponent<InlineComponentProps, any> {
     render() {
         let selected = undefined
         let optionsData = []

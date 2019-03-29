@@ -330,47 +330,49 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}><label
                     style={{ fontSize: "10px", marginRight: "10px" }}>{this.props.field.title.toUpperCase()}</label>
                 </div>}
-            <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
-                <div style={{ display: "inline-block" }}>
-                    {
-                        _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
-                            const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
-                            return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
-                                display: "inline-block",
-                                marginRight: "10px",
-                                marginBottom: "30px",
-                                verticalAlign: "top"
-                            } : { marginBottom: "30px", marginRight: "10px" }}>
-                                <div>
-                                    {this.getComponentForField(field, currentModelWithParent)}
-                                </div>
-                            </div>
-                        })
-                    }
-                </div>
-                {
-                    !_.isEmpty(wysiwygFields) &&
-                    <div style={{
-                        display: "inline-block",
-                        marginLeft: "50px",
-                        maxWidth: "300px",
-                        verticalAlign: "top"
-                    }}>
+            {!this.state.collapsed &&
+                <>
+                    <div style={{ display: "inline-block" }}>
                         {
-                            _.map(wysiwygFields, (field: any, index: number) => {
-                                const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel)
-                                return <div key={index}>
-                                    <label style={{
-                                        fontSize: "10px",
-                                        marginRight: "10px"
-                                    }}>{field.title.toUpperCase()}</label>
-                                    <CustomComponent key={index} />
+                            _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
+                                const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
+                                return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
+                                    display: "inline-block",
+                                    marginRight: "10px",
+                                    marginBottom: "30px",
+                                    verticalAlign: "top"
+                                } : { marginBottom: "30px", marginRight: "10px" }}>
+                                    <div>
+                                        {this.getComponentForField(field, currentModelWithParent)}
+                                    </div>
                                 </div>
                             })
                         }
                     </div>
-                }
-            </div>
+                    {
+                        !_.isEmpty(wysiwygFields) &&
+                        <div style={{
+                            display: "inline-block",
+                            marginLeft: "50px",
+                            maxWidth: "300px",
+                            verticalAlign: "top"
+                        }}>
+                            {
+                                _.map(wysiwygFields, (field: any, index: number) => {
+                                    const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+                                    return <div key={index}>
+                                        <label style={{
+                                            fontSize: "10px",
+                                            marginRight: "10px"
+                                        }}>{field.title.toUpperCase()}</label>
+                                        <CustomComponent key={index} />
+                                    </div>
+                                })
+                            }
+                        </div>
+                    }
+                </>
+            }
         </div>
     }
 
