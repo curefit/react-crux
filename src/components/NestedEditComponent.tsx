@@ -13,6 +13,7 @@ import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
+import { TimezoneComponent } from "./TimezoneComponent"
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -104,6 +105,16 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     modelChanged={this.select}
                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
                     showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        } else if (field.type === "timezone") {
+            return (
+                <TimezoneComponent field={field}
+                    readonly={field.readonly === true || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
                     parentModel={currentModelWithParent}
                 />
             )

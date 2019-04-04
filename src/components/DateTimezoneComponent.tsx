@@ -3,7 +3,7 @@ import * as React from "react"
 import * as moment from "moment-timezone"
 import * as Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
-const TimezonePicker = require("react-timezone")
+import { TimezoneComponent } from "./TimezoneComponent"
 
 @autobind
 export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {
@@ -35,19 +35,13 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
-                    <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
-                    <TimezonePicker.default
-                        value={this.state.timezone}
-                        onChange={this.handleTimezoneChange}
-                        inputProps={{
-                            placeholder: "Select Timezone...",
-                            name: "timezone",
-                            className: "height-resize"
-                        }}
-                        className="font-resize"
-                    />
-                </div>
+                <TimezoneComponent
+                    currentModel={this.state.timezone}
+                    modelChanged={this.handleTimezoneChange}
+                    field={this.props.field}
+                    additionalModels={this.props.additionalModels}
+                    parentModel={this.props.parentModel}
+                />
             </div>
         )
     }
@@ -61,7 +55,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         }
     }
 
-    handleTimezoneChange = (timezone: string) => {
+    handleTimezoneChange = (field: any, timezone: string) => {
         this.setState({ timezone, dateTime: moment(this.state.dateTime).tz(timezone) })
         this.props.modelChanged(this.props.field, { date: this.state.dateTime, timezone })
     }
