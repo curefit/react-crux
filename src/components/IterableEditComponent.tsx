@@ -13,6 +13,7 @@ import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
+import { TimezoneComponent } from "./TimezoneComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -299,6 +300,30 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             </div>
                         }
 
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timezone") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <TimezoneComponent
+                                        field={this.props.field.iterabletype}
+                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        currentModel={this.state.model[index]}
+                                        parentModel={parentModel}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datetimezonepicker") {
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
@@ -554,14 +579,14 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getIterableDefaultValue = (iterableType: any) => {
         if (iterableType.type === "nested") {
-             // Adding Default Value, while creating new Iterable
-             const defaultValue: any = {}
-             _.map(this.props.field.iterabletype.fields, field => {
-                 if (field.hasOwnProperty("defaultValueFn")) {
+            // Adding Default Value, while creating new Iterable
+            const defaultValue: any = {}
+            _.map(this.props.field.iterabletype.fields, field => {
+                if (field.hasOwnProperty("defaultValueFn")) {
                     defaultValue[field.field] = field.defaultValueFn()
-                 }
-             })
-             return defaultValue
+                }
+            })
+            return defaultValue
         } else {
             // Adding Default Value, while creating new Iterable
             if (iterableType.hasOwnProperty("defaultValueFn")) {
