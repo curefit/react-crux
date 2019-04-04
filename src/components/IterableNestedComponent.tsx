@@ -38,7 +38,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
     }
 
     reorder = (event: any) => {
-        this.props.reorder(this.props.index, Number(event.target.getAttribute('data-value')))
+        this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
     }
 
     remove = () => {

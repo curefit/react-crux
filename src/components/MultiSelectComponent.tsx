@@ -45,7 +45,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 if (this.props.isMulti && Array.isArray(this.props.currentModel)) {
                     multiSelectValue = _.map(this.props.currentModel, (value: string) => {
                         const foreignDoc = _.find(optionsData, (doc: any) => {
-                            return doc["value"] === value
+                            return doc["value"] == value
                         })
                         if (_.isEmpty(foreignDoc)) {
                             foreignTitle = { label: value + " Bad Value", value }
@@ -57,9 +57,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 } else {
                     const foreignDoc = _.find(optionsData, (doc: any) => {
                         if (this.props.field.foreign.keys) {
-                            return this.props.field.foreign.keys.every((key: any) => doc.value[key] === this.props.currentModel[key])
+                            return this.props.field.foreign.keys.every((key: any) => doc.value[key] == this.props.currentModel[key])
                         }
-                        return doc.value === this.props.currentModel
+                        return doc.value == this.props.currentModel
                     })
                     if (_.isEmpty(foreignDoc)) {
                         foreignTitle = { label: this.props.currentModel + " Bad Value", value: this.props.currentModel }
