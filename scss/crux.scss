@@ -50,3 +50,8 @@ mark {
 .html-comma:not(:first-child):before {
   content: ", ";
 }
+
+.font-resize>.open {
+  z-index: 999 !important;
+  background-color: white !important;
+}

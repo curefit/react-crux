@@ -71,7 +71,7 @@ export class ListNestedComponent extends React.Component<any, any> {
             }
 
             if (field.type === "nested") {
-                return _.map(_.filter(field.fields, (f: any) => f.display && !_.isEmpty(value[f.field])), (f: any, index: number) => (
+                return _.map(_.filter(field.fields, (f: any) => f.display && (typeof value[f.field] === "number" || !_.isEmpty(value[f.field]))), (f: any, index: number) => (
                     <div key={index}>
                         <span>{f.title + " : "}</span>
                         <span>
