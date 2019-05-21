@@ -14,6 +14,7 @@ import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
+import { IterableComponent } from "./IterableComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -348,31 +349,52 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             </div>
                         }
 
+                        // if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
+                        //     return <div key={"iterable" + this.props.field.iterabletype.type + index + this.state.model[index]}
+                        //         style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                        //             padding: "5px 0px",
+                        //             display: "inline-block",
+                        //             marginRight: "30px"
+                        //         } : { padding: "5px 0px" }}
+                        //         onMouseEnter={this.showIterableButtons.bind(this, index)}
+                        //         onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                        //         <div style={this.props.field.iterabletype.style ?
+                        //             Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                        //             <TypeaheadComponent
+                        //                 readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                        //                 constants={this.props.constants}
+                        //                 currentModel={this.state.model[index]}
+                        //                 fetch={this.props.fetch}
+                        //                 field={this.props.field.iterabletype}
+                        //                 additionalModels={this.props.additionalModels}
+                        //                 modelChanged={this.fieldChanged(index)}
+                        //                 showTitle={false}
+                        //                 parentModel={parentModel}
+                        //             />
+                        //         </div>
+                        //         {this.iterableButtons(index, totalLength)}
+                        //     </div>
+                        // }
+
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index + this.state.model[index]}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <TypeaheadComponent
-                                        readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
-                                        constants={this.props.constants}
-                                        currentModel={this.state.model[index]}
-                                        fetch={this.props.fetch}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                    />
-                                </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
+                            return <IterableComponent
+                                key={"iterable" + this.props.field.iterabletype.type + index}
+                                index={index}
+                                readonly={this.props.field.iterabletype.readonly === true || this.props.readonly}
+                                currentModel={this.state.model[index]}
+                                fetch={this.props.fetch}
+                                field={this.props.field}
+                                additionalModels={this.props.additionalModels}
+                                modelChanged={this.nestedFieldChanged}
+                                showTitle={false}
+                                indent={false}
+                                modalType={this.props.modalType}
+                                parentModel={parentModel}
+                                totalLength={totalLength}
+                                remove={this.remove}
+                                addAtIndex={this.addAtIndex}
+                                reorder={this.reorder}
+                                constants={this.props.constants} />
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
