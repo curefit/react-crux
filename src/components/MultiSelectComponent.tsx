@@ -2,7 +2,13 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import * as _ from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
-import Select from "react-select"
+import Select, { components } from "react-select"
+
+const MultiValueLabel = (props: any) => {
+    return (
+        <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title : props.data.label})} />
+    )
+}
 
 @autobind
 export class MultiSelectComponent extends React.Component<InlineComponentProps, any> {
@@ -83,6 +89,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             <Select isMulti={this.props.isMulti}
                 isClearable={this.props.field.multiClear || false}
                 isSearchable={true}
+                components={{ MultiValueLabel }}
                 closeMenuOnSelect={!this.props.isMulti}
                 onChange={(eventKey: any) => this.select(this.props.field, eventKey)}
                 value={multiSelectValue}
