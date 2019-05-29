@@ -36,6 +36,7 @@ export interface InlineComponentProps {
     readonly?: boolean,
     isMulti?: boolean,
     index?: number
+    style?: any
 }
 
 export { ModalComponent } from "./components/ModalComponent"

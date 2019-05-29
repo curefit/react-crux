@@ -127,6 +127,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     modelChanged={this.select}
                     currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
                     showTitle={true}
+                    style={field.style}
                     parentModel={currentModelWithParent}
                 />
             )

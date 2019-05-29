@@ -30,7 +30,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
-        return <div>
+        return <div style={this.props.style}>
             {
                 this.props.showTitle &&
                 !(this.props.field.style && this.props.field.style.hideLabel) &&
