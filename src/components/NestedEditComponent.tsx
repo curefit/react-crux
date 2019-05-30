@@ -14,6 +14,7 @@ import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
+import { getReadOnly } from "../util"
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -40,146 +41,159 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     getComponentForField(field: any, currentModelWithParent: any) {
         if (field.type === "select") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (<SelectComponent field={field}
-                readonly={field.readonly === true || this.props.readonly}
+                readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                 additionalModels={this.props.additionalModels}
                 modelChanged={this.select}
-                currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                currentModel={currentModel}
                 showTitle={true}
                 parentModel={currentModelWithParent}
             />)
         } else if (field.type === "searcheableselect") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <MultiSelectComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                     isMulti={false}
                 />
             )
         } else if (field.type === "multiselect") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <MultiSelectComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                     isMulti={true}
                 />
             )
         } else if (field.type === "imageUpload") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <ImageUploadComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     width={this.props.width}
                     height={this.props.height}
                     contentType={this.props.contentType}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "datepicker") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <DatePickerComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "datetimezonepicker") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <DateTimezoneComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "timezone") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <TimezoneComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined}
+                    currentModel={currentModel}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "typeahead") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <TypeaheadComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     style={field.style}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "dynamicTypeahead") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <DynamicTypeaheadComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "nested") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <NestedEditComponent field={field} modalType={this.props.modalType}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select.bind(this, field)}
                     indent={field.style ? (field.style.forceIndent ? true : false) : false}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "iterable") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []
             return (
                 <IterableEditComponent field={field} modalType={this.props.modalType}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select.bind(this, field)}
                     indent={true}
-                    currentModel={(this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []}
+                    currentModel={currentModel}
                     parentModel={currentModelWithParent} anchors={this.props.anchors}
                 />
             )
         } else if (field.type === "checkbox") {
+            const currentModel = (this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}
             return (
                 <CheckboxComponent field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "bigtext") {
+            const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
                     {!_.isEmpty(field.title) && <span><label style={{
@@ -188,8 +202,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <textarea
                         data-value={field.field}
-                        disabled={field.readonly === true || this.props.readonly}
-                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                        value={currentModel}
                         onChange={this.handleFieldChange}
                         style={{ width: 250 }} />
                 </div>
@@ -205,18 +219,20 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 />
             )
         } else if (field.type === "json") {
+            const currentModel = (this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}
             return (
                 <JsonEditComponent
                     field={field}
-                    readonly={field.readonly === true || this.props.readonly}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
-                    currentModel={(this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}}
+                    currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                 />
             )
         } else if (field.type === "number") {
+            const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
                     {!_.isEmpty(field.title) && <span><label style={{
@@ -225,8 +241,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <input type="number"
                         data-value={field.field}
-                        disabled={field.readonly === true || this.props.readonly}
-                        value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
+                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                        value={currentModel}
                         onChange={this.handleFieldChange}
                         style={{ width: 200, paddingTop: 5 }}
                     />
@@ -249,6 +265,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 </div>
             )
         } else {
+            const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
                     {!_.isEmpty(field.title) && <span><label style={{
@@ -257,7 +274,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }}>{field.title.toUpperCase()}</label><br /></span>}
                     <input type="text"
                         data-value={field.field}
-                        disabled={field.readonly === true || this.props.readonly}
+                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                         onChange={this.handleFieldChange}
                         style={field.type === "tinyinput" ? {
