@@ -37,6 +37,8 @@ export interface InlineComponentProps {
     isMulti?: boolean,
     index?: number
     style?: any
+    iterableNested?: boolean
+    nestedIterableModelChanged?: any
 }
 
 export { ModalComponent } from "./components/ModalComponent"
