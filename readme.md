@@ -9,7 +9,7 @@ Since its a client side library, it is completely agnostic to server side tech s
 If you use CRUX, you would not have to write HTML/JSX/TSX code. Essentially it converts a config in JSON to a UI that creates a table with all objects and a model to create new objects or modify existing objects in a user friendly manner.
 
 ### Quick Setup
-- yarn add @curefit/react-crux
+- yarn add react-crux
 - yarn add react-bootstrap bootstrap-sass
 - Add react crux css and bootstrap to your app.scss
 ```
