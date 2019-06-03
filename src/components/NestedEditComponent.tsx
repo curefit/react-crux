@@ -278,7 +278,11 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             }
         })
         if (!_.isEmpty(defaultValue)) {
-            props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+            if (props.index >= 0) {
+                props.modelChanged(props.index, Object.assign({}, props.currentModel, defaultValue))
+            } else {
+                props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+            }
         }
     }
 
