@@ -120,9 +120,11 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                         fetch={this.props.fetch}
                         field={this.props.field.iterabletype}
                         additionalModels={this.props.additionalModels}
+                        nestedIterableModelChanged={this.props.modelChanged}
                         modelChanged={this.props.modelChanged}
                         showTitle={false}
                         indent={false}
+                        iterableNested={true}
                         modalType={this.props.modalType}
                         parentModel={this.props.parentModel}
                     />}
