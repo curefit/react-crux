@@ -19,28 +19,59 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
     }
 
     componentDidMount() {
-        if (_.isEmpty(this.state.options)) {
-            const item: any = {
-                limit: 10
-            }
-            if (!_.isEmpty(this.state.selected)) {
-                if (this.props.field.foreign.keys) {
-                    for (const key of this.props.field.foreign.keys) {
-                        item[key] = this.state.selected[key]
+        if (this.props.field.foreign) {
+            const options = this.props.additionalModels[this.props.field.foreign.modelName]
+            if (options) {
+                const finalOptions = options.results || options
+                if (!_.isEmpty(this.state.selected)) {
+                    const selectedRecordExist = finalOptions.find((data: any) => data[this.props.field.foreign.key] === this.state.selected)
+                    if (selectedRecordExist) {
+                        this.setState({
+                            isLoading: false,
+                            options: finalOptions
+                        })
+                    } else {
+                        this.fetchResults(finalOptions)
                     }
                 } else {
-                    item[this.props.field.foreign.key] = this.state.selected
+                    this.setState({
+                        isLoading: false,
+                        options: finalOptions
+                    })
                 }
+            } else {
+                this.fetchResults()
             }
-            fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
-                this.setState({
-                    isLoading: false,
-                    options: data.results,
-                })
-            }).catch((error: any) => {
-                console.log("Error while fetching " + this.props.field.foreign.modelName, error)
-            })
+        } else {
+            console.error("Did you forget to add a \"foreign\" field with a type: \"dynamictypeahead\". Possible culprit: ", this.props.field)
         }
+    }
+
+    fetchResults = (options?: any) => {
+        const item: any = {
+            limit: 10
+        }
+        if (!_.isEmpty(this.state.selected)) {
+            if (this.props.field.foreign.keys) {
+                for (const key of this.props.field.foreign.keys) {
+                    item[key] = this.state.selected[key]
+                }
+            } else {
+                item[this.props.field.foreign.key] = this.state.selected
+            }
+        }
+        fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
+            let dataResults: any = data.results
+            if (options) {
+                dataResults = _.uniq(options.concat(data.results))
+            }
+            this.setState({
+                isLoading: false,
+                options: dataResults,
+            })
+        }).catch((error: any) => {
+            console.log("Error while fetching " + this.props.field.foreign.modelName, error)
+        })
     }
 
     handleSearch = (query: string) => {
@@ -49,9 +80,13 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
             [this.props.field.foreign.title]: query, limit: 10
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
+            let dataResults: any = data.results
+            if (_.isEmpty(this.state.options)) {
+                dataResults = _.uniq(data.results.concat(this.state.options))
+            }
             this.setState({
                 isLoading: false,
-                options: data.results,
+                options: dataResults,
             })
         }).catch((error: any) => {
             console.log("Error while fetching " + this.props.field.foreign.modelName, error)
@@ -107,6 +142,13 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
         }
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
+                {
+                    this.props.showTitle && !_.isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
+                    <div><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{this.props.field.title.toUpperCase()}</label><br /></div>
+                }
                 <AsyncTypeahead
                     labelKey={"label"}
                     minLength={0}
