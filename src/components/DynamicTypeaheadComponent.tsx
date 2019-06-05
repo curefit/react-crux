@@ -107,6 +107,13 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
         }
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
+                {
+                    this.props.showTitle && !_.isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
+                    <div><label style={{
+                        fontSize: "10px",
+                        marginRight: "10px"
+                    }}>{this.props.field.title.toUpperCase()}</label><br /></div>
+                }
                 <AsyncTypeahead
                     labelKey={"label"}
                     minLength={0}
