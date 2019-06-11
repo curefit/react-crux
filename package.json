@@ -51,6 +51,7 @@
     "@types/react-select": "^2.0.11",
     "@types/reactcss": "^1.2.3",
     "@types/superagent": "^3.8.4",
+    "babel-plugin-macros": "2.5.1",
     "barrelsby": "^1.0.2",
     "typescript": "^3.0.1",
     "webpack": "^4.28.3"

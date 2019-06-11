@@ -81,7 +81,7 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
             {this.state.displayColorPicker ?
             <div style={styles.popover}>
                 <div onClick={this.handleClose} style={styles.cover} />
-                <SketchPicker color={this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}
+                <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}}
                     onChange={this.handleColorChange} />
             </div> : null}
         </div>
