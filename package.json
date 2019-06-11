@@ -25,7 +25,7 @@
     "react-dropzone": "^5.0.1",
     "react-json-view": "^1.19.1",
     "react-redux": "^5.0.7",
-    "react-select": "^2.3.0",
+    "react-select": "^3.0.4",
     "react-timezone": "^2.3.0",
     "reactcss": "^1.2.3",
     "superagent": "^3.8.3"
@@ -51,7 +51,6 @@
     "@types/react-select": "^2.0.11",
     "@types/reactcss": "^1.2.3",
     "@types/superagent": "^3.8.4",
-    "babel-plugin-macros": "2.5.1",
     "barrelsby": "^1.0.2",
     "typescript": "^3.0.1",
     "webpack": "^4.28.3"
