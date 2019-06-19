@@ -1082,6 +1082,27 @@ const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema
 export { Employees }
 ```
 
+
+#### Dynamic Readonly based on the data
+Readonly attribute is applicable for all the components. Readonly value can either be boolean or Function. For Example. You can write your own
+function to dynamic set readonly for a particular input. Return of that function has to be boolean
+
+```
+ {
+     title: "Name",
+     field: "name",
+     representative: true,
+     readonly: setReadOnly
+ }
+
+ function setReadOnly(data): boolean {
+     if (data.status === true) {
+         return true
+     }
+     return false
+ }
+```
+
 #### Multiple CRUX components on same page
 Since components created using CRUX are actual react components, you can render as many CRUX components on a page or inside another component. Since they are all backed by same Redux store, they also share all the models and dont make redundant http requests if some of the underlying models are same.
 

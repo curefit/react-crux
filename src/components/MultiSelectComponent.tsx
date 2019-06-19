@@ -94,6 +94,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 onChange={(eventKey: any) => this.select(this.props.field, eventKey)}
                 value={multiSelectValue}
                 options={optionsData}
+                isDisabled={this.props.readonly}
                 placeholder={placeholderText}
             />
         </div>

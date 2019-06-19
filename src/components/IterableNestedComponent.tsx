@@ -4,7 +4,6 @@ import * as _ from "lodash"
 import { NestedEditComponent, InlineComponentProps } from "../CruxComponent"
 
 interface IterableNestedComponentProps extends InlineComponentProps {
-    model: any
     collapsable: boolean
     totalLength: number
     collapseNestedToggle: Function
@@ -46,7 +45,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
     }
 
     customButtonAction = () => {
-        this.props.field.additionalButtons.customButtonAction(this.props.model)
+        this.props.field.additionalButtons.customButtonAction(this.props.currentModel)
     }
 
     iterableButtons = () => {
@@ -116,7 +115,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                     <NestedEditComponent
                         index={this.props.index}
                         readonly={this.props.readonly}
-                        currentModel={this.props.model}
+                        currentModel={this.props.currentModel}
                         fetch={this.props.fetch}
                         field={this.props.field.iterabletype}
                         additionalModels={this.props.additionalModels}

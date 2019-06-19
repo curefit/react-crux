@@ -36,3 +36,10 @@ export function getAdditionalModels(parent: any): string[] {
     const filtered = _.filter(result, (model: string) => model && model !== "" && !_.isEmpty(model))
     return _.uniq((parent.modelName) ? _.concat(filtered, parent.modelName) : filtered)
 }
+
+export function getReadOnly(readonly: boolean | Function, currentModel: any): boolean {
+    if (typeof readonly === "function") {
+        return readonly(currentModel) === true
+    }
+    return readonly === true
+}
