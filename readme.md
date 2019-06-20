@@ -110,6 +110,7 @@ const store = createStore(
 - **createModal**: If false, option to create new object wont come in the UI. Also note that disabling creation here is not sufficient. You should also make sure that your server does not support creation of this model.
 - **editModal**: If true, option to edit a row in the table appears in the last column. Also note that disabling edit here is not sufficient. You should also make sure that your server does not support modification of this model.
 - **deleteModal**: If false, option to delete button in edit modal will not appear.
+- **filterModal**: If true, option to filter rows in the table appears as the button on top of the table. The fields with filterParameter=true will be displayed in filter Modal. It is a server side filtering
 - **largeEdit**: (false by default) - If true, a large modal appears instead of a simple default bootstrap modal. This is helpful if your objects are pretty complex and large.
 - **stateRoot** - TBD
 - **fields** - An array of all the fields in the object. Each field needs to have the following
@@ -138,6 +139,43 @@ const store = createStore(
     * _wysiwyg_ - If present and true, adds support to show a live preview will editing the object. Requires another field called _customComponent_
     * _customComponent_ - Required for wysiwyg and for _type_ "custom".
     * _customEditComponent_ - Required for _type_ "customedit".
+
+
+### Filter Modal (Server Side Filtering)
+This helps us to filter records from the table. The fields with filterParameter=true will be displayed inside filter modal.
+
+```
+const constants = {
+    modelName: "serviceAccess",
+    title: "Service Access",
+    creationTitle: "Service Access",
+    createModal: true,
+    editModal: true,
+    filterModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [
+        {
+            title: "Service",
+            field: "serviceName",
+            representative: true,
+            filterParameter: true
+        },
+        {
+            title: "Users",
+            field: "users",
+            type: "iterable",
+            iterabletype: {
+                title: "User",
+                inlineEdit: true
+            }
+        }
+    ]
+}
+
+const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
+export {ServiceAccessComponent}
+```
 
 ### Select/Typeahead fields
 Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter. 
