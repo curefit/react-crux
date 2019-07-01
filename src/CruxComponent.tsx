@@ -292,11 +292,11 @@ export class CruxComponentCreator {
 
             inlineEditSuccess(success: any, data: any) {
                 this.createOrEditSuccess(data)
-                success(data)
+                success && success(data)
             }
 
             inlineEditError(error: any, data: any) {
-                error(data)
+                error && error(data)
             }
 
             successCustomModalDispatch(data: any, type: string, model: string) {
