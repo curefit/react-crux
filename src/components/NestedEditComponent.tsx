@@ -83,7 +83,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     width={this.props.width}
                     height={this.props.height}
-                    contentType={this.props.contentType}
+                    contentType={field.contentType}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}

@@ -44,6 +44,13 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
             })
     }
 
+    previewUpload = () => {
+        if (this.props.contentType === "video") {
+            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)}/>
+        }
+        return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
+    }
+
     render() {
         return (
             <div>
@@ -57,8 +64,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
                         <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
-                            {this.props.contentType}
-                            <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
+                            {this.previewUpload()}
                         </div>}
                 </Dropzone>
             </div>

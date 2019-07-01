@@ -266,7 +266,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         constants={this.props.constants}
                                         readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
                                         width={this.props.width}
-                                        height={this.props.height} contentType={this.props.contentType}
+                                        height={this.props.height} contentType={this.props.field.contentType}
                                         currentModel={currentModel} field={this.props.field.iterabletype}
                                         additionalModels={this.props.additionalModels} modelChanged={this.fieldChanged(index)}
                                         showTitle={false} parentModel={parentModel}
