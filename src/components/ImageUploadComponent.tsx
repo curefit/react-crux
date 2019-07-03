@@ -2,6 +2,7 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import * as upload from "superagent"
 import { InlineComponentProps } from "../CruxComponent"
+import { FetchUtil } from "./../../src/FetchUtil"
 let Dropzone = require("react-dropzone")
 if ("default" in Dropzone) {
     Dropzone = Dropzone.default
@@ -44,9 +45,19 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
             })
     }
 
+    removeFile = () => {
+        this.setState({ inProgress: true })
+        fetch(`/content/${this.props.field.contentType}`, FetchUtil.delete({ url: this.props.currentModel, contentType: this.props.field.contentType })).then(FetchUtil.parseResponse).then((data: any) => {
+            this.setState({ inProgress: false })
+            this.props.modelChanged(this.props.field, undefined)
+        }).catch((err: any) => {
+            alert("Error: " + err.message)
+        })
+    }
+
     previewUpload = () => {
         if (this.props.contentType === "video") {
-            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)}/>
+            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)} />
         }
         return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
     }
@@ -63,10 +74,14 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
-                        <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
-                            {this.previewUpload()}
-                        </div>}
+                        <>
+                            <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
+                                {this.previewUpload()}
+                            </div>
+                        </>
+                    }
                 </Dropzone>
+                <a onClick={this.removeFile} style={{ color: "#0000EE" }}>Remove</a>
             </div>
         )
     }
