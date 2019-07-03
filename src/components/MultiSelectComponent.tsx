@@ -120,7 +120,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             let fieldList = []
             fieldList = eventKey.map((event: any) => event.value)
             this.props.modelChanged(field, fieldList)
-        } else {
+        } else if (this.props.isMulti) {
+            this.props.modelChanged(field, [])
+        } else  {
             this.props.modelChanged(field, eventKey.value)
         }
     }
