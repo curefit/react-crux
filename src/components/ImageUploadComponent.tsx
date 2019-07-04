@@ -46,18 +46,12 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
     }
 
     removeFile = () => {
-        this.setState({ inProgress: true })
-        fetch(`/content/${this.props.field.contentType}`, FetchUtil.delete({ url: this.props.currentModel, contentType: this.props.field.contentType })).then(FetchUtil.parseResponse).then((data: any) => {
-            this.setState({ inProgress: false })
-            this.props.modelChanged(this.props.field, undefined)
-        }).catch((err: any) => {
-            alert("Error: " + err.message)
-        })
+        this.props.modelChanged(this.props.field, undefined)
     }
 
     previewUpload = () => {
         if (this.props.contentType === "video") {
-            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)} />
+            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)}/>
         }
         return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
     }
