@@ -44,6 +44,10 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
             })
     }
 
+    removeFile = () => {
+        this.props.modelChanged(this.props.field, undefined)
+    }
+
     previewUpload = () => {
         if (this.props.contentType === "video") {
             return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)}/>
@@ -63,10 +67,12 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
-                        <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
-                            {this.previewUpload()}
-                        </div>}
+                            <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
+                                {this.previewUpload()}
+                            </div>}
                 </Dropzone>
+                {this.props.currentModel &&
+                    <a onClick={this.removeFile} style={{ color: "#0000EE" }}>Remove</a>}
             </div>
         )
     }
