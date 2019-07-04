@@ -2,7 +2,6 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import * as upload from "superagent"
 import { InlineComponentProps } from "../CruxComponent"
-import { FetchUtil } from "./../../src/FetchUtil"
 let Dropzone = require("react-dropzone")
 if ("default" in Dropzone) {
     Dropzone = Dropzone.default
