@@ -68,11 +68,9 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                     {this.props.currentModel &&
-                        <>
                             <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
                                 {this.previewUpload()}
                             </div>
-                        </>
                     }
                 </Dropzone>
                 {this.props.currentModel &&
