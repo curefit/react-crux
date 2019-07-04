@@ -70,8 +70,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.props.currentModel &&
                             <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
                                 {this.previewUpload()}
-                            </div>
-                    }
+                            </div>}
                 </Dropzone>
                 {this.props.currentModel &&
                     <a onClick={this.removeFile} style={{ color: "#0000EE" }}>Remove</a>}
