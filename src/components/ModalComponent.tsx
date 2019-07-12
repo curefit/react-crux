@@ -34,7 +34,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
             item: this.props.item || {},
             deleteModal: false
         }
-        this.modalBodyRef = React.createRef()
     }
 
     getRepField = () => {
