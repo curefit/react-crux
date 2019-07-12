@@ -4,6 +4,7 @@ import * as _ from "lodash"
 import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
+import * as ReactDOM from "react-dom"
 
 interface ModalComponentProps {
     constants: any,
@@ -24,12 +25,16 @@ interface ModalComponentProps {
 
 @autobind
 export class ModalComponent extends React.Component<ModalComponentProps, any> {
+
+    private modalBodyRef: any
+
     constructor(props: any) {
         super(props)
         this.state = {
             item: this.props.item || {},
             deleteModal: false
         }
+        this.modalBodyRef = React.createRef()
     }
 
     getRepField = () => {
@@ -77,6 +82,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     createOrEditError = (err: any) => {
         this.setState(Object.assign({}, this.state, { error: err }))
         this.closeDeleteModal()
+        this.modalBodyRef.scrollTop = 0
     }
 
     closeModal = () => {
@@ -129,7 +135,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 {this.props.modalType === "CUSTOM" &&
                 <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-body">
                 {this.state.error &&
                 <Alert bsStyle="danger">
                     {

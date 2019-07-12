@@ -55,3 +55,8 @@ mark {
   z-index: 999 !important;
   background-color: white !important;
 }
+
+.modal-body {
+  height: 75vh !important;
+  overflow: scroll;
+}
