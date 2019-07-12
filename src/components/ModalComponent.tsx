@@ -119,12 +119,13 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 errorMessage = this.state.error.message
             }
         }
+        const errorClassName = this.state.error ? "error-animate" : ""
         return <Modal
             show={this.props.showModal}
             onHide={this.closeModal}
             container={this}
             aria-labelledby="contained-modal-title"
-            dialogClassName={this.props.constants.largeEdit ? "large-modal" : ""}>
+            dialogClassName={this.props.constants.largeEdit ? `${errorClassName} large-modal` : `${errorClassName}`}>
             <Modal.Header closeButton>
                 {this.props.modalType === "CREATE" &&
                 <Modal.Title id="contained-modal-title">{"+ New " + this.props.constants.creationTitle}</Modal.Title>}
