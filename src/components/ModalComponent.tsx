@@ -4,6 +4,7 @@ import * as _ from "lodash"
 import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
+import * as ReactDOM from "react-dom"
 
 interface ModalComponentProps {
     constants: any,
@@ -24,6 +25,9 @@ interface ModalComponentProps {
 
 @autobind
 export class ModalComponent extends React.Component<ModalComponentProps, any> {
+
+    private modalBodyRef: any
+
     constructor(props: any) {
         super(props)
         this.state = {
@@ -77,6 +81,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     createOrEditError = (err: any) => {
         this.setState(Object.assign({}, this.state, { error: err }))
         this.closeDeleteModal()
+        this.modalBodyRef.scrollTop = 0
     }
 
     closeModal = () => {
@@ -113,12 +118,13 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 errorMessage = this.state.error.message
             }
         }
+        const errorClassName = this.state.error ? "error-animate" : ""
         return <Modal
             show={this.props.showModal}
             onHide={this.closeModal}
             container={this}
             aria-labelledby="contained-modal-title"
-            dialogClassName={this.props.constants.largeEdit ? "large-modal" : ""}>
+            dialogClassName={this.props.constants.largeEdit ? `${errorClassName} large-modal` : `${errorClassName}`}>
             <Modal.Header closeButton>
                 {this.props.modalType === "CREATE" &&
                 <Modal.Title id="contained-modal-title">{"+ New " + this.props.constants.creationTitle}</Modal.Title>}
@@ -129,7 +135,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 {this.props.modalType === "CUSTOM" &&
                 <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-body">
                 {this.state.error &&
                 <Alert bsStyle="danger">
                     {

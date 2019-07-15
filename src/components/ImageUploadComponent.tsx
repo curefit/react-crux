@@ -72,7 +72,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                             </div>}
                 </Dropzone>
                 {this.props.currentModel &&
-                    <a onClick={this.removeFile} style={{ color: "#0000EE" }}>Remove</a>}
+                    <a onClick={this.removeFile} style={{ color: "#0000EE", marginLeft: "42px" }}>Remove</a>}
             </div>
         )
     }
