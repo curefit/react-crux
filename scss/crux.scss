@@ -56,6 +56,15 @@ mark {
   background-color: white !important;
 }
 
+.font-resize {
+  font: inherit !important;
+}
+
+.height-resize {
+  height: 40px !important;
+  width: 200px !important;
+}
+
 .modal-body {
   height: 75vh !important;
   overflow: scroll;
