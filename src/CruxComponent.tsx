@@ -313,7 +313,8 @@ export class CruxComponentCreator {
                     model={this.state.model}
                     closeModal={this.closeCustomModal}
                     sucessDispatch={this.successCustomModalDispatch}
-                    failureDispatch={this.failureCustomModalDispatch} />
+                    failureDispatch={this.failureCustomModalDispatch}
+                    {...this.props} />
             }
 
             previousPage() {

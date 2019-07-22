@@ -135,7 +135,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 {this.props.modalType === "CUSTOM" &&
                 <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
             </Modal.Header>
-            <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-body">
+            <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-height">
                 {this.state.error &&
                 <Alert bsStyle="danger">
                     {
