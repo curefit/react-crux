@@ -65,8 +65,9 @@ mark {
   width: 200px !important;
 }
 
-.modal-body {
-  height: 75vh !important;
+.modal-height {
+  min-height: 35vh !important;
+  max-height: 75vh !important;
   overflow: scroll;
 }
 
