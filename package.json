@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "autobind-decorator": "2.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",
     "query-string": "^6.2.0",
@@ -51,6 +51,7 @@
     "@types/react-select": "^2.0.11",
     "@types/reactcss": "^1.2.3",
     "@types/superagent": "^3.8.4",
+    "@types/uuid": "^3.4.5",
     "barrelsby": "^1.0.2",
     "typescript": "^3.0.1",
     "webpack": "^4.28.3"
