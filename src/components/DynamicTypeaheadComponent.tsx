@@ -47,7 +47,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         } else {
             this.setState({
                 isLoading: false,
-                options: this.state.options || []
+                options: this.props.options || []
             })
         }
     }
