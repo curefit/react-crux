@@ -116,11 +116,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                 }
                 return doc.value === this.props.currentModel
             })
-            if (selectedRecord) {
-                selected = [selectedRecord]
-            } else {
-                selected = [{ label: `${this.state.selected} - Bad Value`, value: this.state.selected }]
-            }
+            selected = selectedRecord ? [selectedRecord] : [{ label: `${this.state.selected} - Bad Value`, value: this.state.selected }]
         }
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
