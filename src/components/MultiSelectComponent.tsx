@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
+import { isEmpty, sortBy, map, find, trim } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import Select, { components } from "react-select"
 
@@ -25,9 +25,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
             }
         } else {
-            optionsData = _.isEmpty(this.props.field.foreign.orderby)
+            optionsData = isEmpty(this.props.field.foreign.orderby)
                 ? this.props.additionalModels[this.props.field.foreign.modelName]
-                : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+                : sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => trim(doc[this.props.field.foreign.orderby].toLowerCase()))
         }
 
         optionsData = optionsData.map((modelData: any) => {
@@ -46,14 +46,14 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             if (!this.props.field.foreign.title) {
                 console.error(`Did you forget to add a "title" field in foreign . Possible culprit: ${this.props.field}`)
             }
-            if (!_.isEmpty(this.props.currentModel)) {
+            if (!isEmpty(this.props.currentModel)) {
                 let foreignTitle: any
                 if (this.props.isMulti && Array.isArray(this.props.currentModel)) {
-                    multiSelectValue = _.map(this.props.currentModel, (value: string) => {
-                        const foreignDoc = _.find(optionsData, (doc: any) => {
+                    multiSelectValue = map(this.props.currentModel, (value: string) => {
+                        const foreignDoc = find(optionsData, (doc: any) => {
                             return doc["value"] == value
                         })
-                        if (_.isEmpty(foreignDoc)) {
+                        if (isEmpty(foreignDoc)) {
                             foreignTitle = { label: value + " Bad Value", value }
                         } else {
                             foreignTitle = foreignDoc
@@ -61,13 +61,13 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                         return foreignTitle
                     })
                 } else {
-                    const foreignDoc = _.find(optionsData, (doc: any) => {
+                    const foreignDoc = find(optionsData, (doc: any) => {
                         if (this.props.field.foreign.keys) {
                             return this.props.field.foreign.keys.every((key: any) => doc.value[key] == this.props.currentModel[key])
                         }
                         return doc.value == this.props.currentModel
                     })
-                    if (_.isEmpty(foreignDoc)) {
+                    if (isEmpty(foreignDoc)) {
                         foreignTitle = { label: this.props.currentModel + " Bad Value", value: this.props.currentModel }
                     } else {
                         foreignTitle = foreignDoc
@@ -80,7 +80,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         }
         return <div style={{ width: "300px" }}>
             {
-                this.props.showTitle && !_.isEmpty(this.props.field.title) && !hideLabel &&
+                this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div><label style={{
                     fontSize: "10px",
                     marginRight: "10px"

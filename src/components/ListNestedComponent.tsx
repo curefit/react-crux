@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
+import { includes, isEmpty, filter, map } from "lodash"
 import { ListIterableComponent } from "./ListIterableComponent"
 import { ListDateComponent } from "./ListDateComponent"
 import { ListCheckboxComponent } from "./ListCheckboxComponent"
@@ -24,7 +24,7 @@ export class ListNestedComponent extends React.Component<any, any> {
     render(): any {
         if (this.props.field.conditionalField) {
             if (Array.isArray(this.props.field.conditionalValue)) {
-                if (!_.includes(this.props.field.conditionalValue, this.props.model[this.props.field.conditionalField])) {
+                if (!includes(this.props.field.conditionalValue, this.props.model[this.props.field.conditionalField])) {
                     return <div />
                 }
             } else if (this.props.field.conditionalValue !== this.props.model[this.props.field.conditionalField]) {
@@ -42,7 +42,7 @@ export class ListNestedComponent extends React.Component<any, any> {
                 return <div />
             }
 
-            if (typeof value === "object" && _.isEmpty(value) && _.isEmpty(field.foreign)) {
+            if (typeof value === "object" && isEmpty(value) && isEmpty(field.foreign)) {
                 return <div />
             }
 
@@ -71,7 +71,7 @@ export class ListNestedComponent extends React.Component<any, any> {
             }
 
             if (field.type === "nested") {
-                return _.map(_.filter(field.fields, (f: any) => f.display && (typeof value[f.field] === "number" || !_.isEmpty(value[f.field]))), (f: any, index: number) => (
+                return map(filter(field.fields, (f: any) => f.display && (typeof value[f.field] === "number" || !isEmpty(value[f.field]))), (f: any, index: number) => (
                     <div key={index}>
                         <span>{f.title + " : "}</span>
                         <span>
@@ -89,7 +89,7 @@ export class ListNestedComponent extends React.Component<any, any> {
                 return <ListMultiSelectComponent model={this.props.model[field.field]} field={field.foreign} additionalModels={this.props.additionalModels} />
             }
 
-            if (!_.isEmpty(field.foreign)) {
+            if (!isEmpty(field.foreign)) {
                 return <ListForeignComponent model={this.props.model[field.field]} field={field.foreign} additionalModels={this.props.additionalModels} />
             }
 

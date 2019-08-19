@@ -4,7 +4,7 @@ import {
     createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
     searchModel, bulkCreate
 } from "./Actions"
-import * as _ from "lodash"
+import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
 import autobind from "autobind-decorator"
 import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
@@ -51,12 +51,12 @@ export class CruxComponentCreator {
         function mapStateToProps(state: any, ownProps: any): any {
             const additionalModels = getAdditionalModels(constants)
             const stateRoot = !constants.stateRoot ? "crux" : (constants.stateRoot === "none" ? undefined : constants.stateRoot)
-            const additionalModelValues = _.map(additionalModels, (model: any) => {
+            const additionalModelValues = map(additionalModels, (model: any) => {
                 return { "modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model] }
             })
             return Object.assign({}, {
                 [constants.modelName]: stateRoot ? state[stateRoot][constants.modelName] : state[constants.modelName],
-                additionalModels: _.reduce(additionalModelValues, (sum: any, obj: any) => {
+                additionalModels: reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
                 queryParams: ownProps ? (ownProps.options && ownProps.options.queryParams || undefined) : undefined
@@ -100,7 +100,7 @@ export class CruxComponentCreator {
             }
 
             fetchModels = (props: any) => {
-                const additionalModels = _.filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model, props))
+                const additionalModels = filter(getAdditionalModels(constants), (model: string) => this.checkAdditionalModel(model, props))
                 additionalModels && additionalModels.forEach((model: string) => this.fetchServerData(model, props))
             }
 
@@ -110,7 +110,7 @@ export class CruxComponentCreator {
                     !Array.isArray(props.additionalModels[modelName]))) {
                     return true
                 }
-                return _.isEmpty(props.additionalModels[modelName])
+                return isEmpty(props.additionalModels[modelName])
             }
 
             fetchServerData(modelName: string, props: any) {
@@ -176,7 +176,7 @@ export class CruxComponentCreator {
             }
 
             componentWillReceiveProps(nextProps: any) {
-                if (!_.isEqual(this.props.queryParams, nextProps.queryParams)) {
+                if (!isEqual(this.props.queryParams, nextProps.queryParams)) {
                     this.fetchModels(nextProps)
                 }
             }
@@ -359,14 +359,14 @@ export class CruxComponentCreator {
             }
 
             render() {
-                const rows = _.isEmpty(constants.orderby) ? this.getTableData() : _.sortBy(this.getTableData(), (doc: any) => {
-                    return _.trim(doc[constants.orderby].toLowerCase())
+                const rows = isEmpty(constants.orderby) ? this.getTableData() : sortBy(this.getTableData(), (doc: any) => {
+                    return trim(doc[constants.orderby].toLowerCase())
                 })
-                let filteredRows = (!constants.enableSearch || _.isEmpty(this.state.searchQuery)) ? rows : _.filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
-                _.forEach(_.filter(constants.fields, (field) => field.search &&
+                let filteredRows = (!constants.enableSearch || isEmpty(this.state.searchQuery)) ? rows : filter(rows, (row: any) => JSON.stringify(row).toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) !== -1)
+                forEach(filter(constants.fields, (field) => field.search &&
                     field.search.filterLocation !== "server" &&
                     this.state.filterModel[field.search.key]), (field: any) => {
-                        filteredRows = _.filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
+                        filteredRows = filter(filteredRows, (row: any) => !row[field.field] || JSON.stringify(row[field.field]).toLowerCase().indexOf(this.state.filterModel[field.search.key].toLowerCase()) !== -1)
                     })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
@@ -415,7 +415,7 @@ export class CruxComponentCreator {
                             <tbody>
                                 {constants.fields.some((field: any) => field.search) &&
                                     <tr key="searchRow">
-                                        {_.map(_.filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
+                                        {map(filter(constants.fields, (field: any) => field.display === true), (field: any, i: number) => (
                                             <td key={"search" + field.field + i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 {field.search && field.search.filterLocation === "server" &&
                                                     <div style={{ display: "flex" }}>
@@ -437,11 +437,11 @@ export class CruxComponentCreator {
                                         {constants.editModal && <td></td>}
                                         {constants.customModal && <td></td>}
                                     </tr>}
-                                {_.map(filteredRows, (model: any, index: number) => {
+                                {map(filteredRows, (model: any, index: number) => {
                                     const filtered = constants.fields.filter((field: any) => field.display === true)
                                     const rowKey = model._id || ""
                                     return <tr key={rowKey + index}>
-                                        {_.map(filtered, (field: any, i: number) => {
+                                        {map(filtered, (field: any, i: number) => {
                                             return <td key={rowKey + field.field + i} style={(field.cellCss) ? field.cellCss : { margin: "0px" }}>
                                                 <div style={{ marginTop: 8 }}>
                                                     <ListNestedComponent

@@ -1,6 +1,5 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
@@ -15,6 +14,8 @@ import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
+import { fetchDynamicTypeaheadResults } from "../Actions"
+import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -29,14 +30,33 @@ export interface ImageUploadProps extends IterableEditComponentProps {
 export class IterableEditComponent extends React.Component<ImageUploadProps | IterableEditComponentProps, any> {
     constructor(props: any) {
         super(props)
-        const modalValue = _.isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel))
+        const modalValue = isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel))
         const collapsedIndexArray: any = []
         collapsedIndexArray.length = modalValue.length
         this.state = {
             model: modalValue,
             checkIterableButton: undefined,
+            dynamicTypeaheadOptions: [],
             collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
                 props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0)
+        }
+    }
+
+    componentDidMount() {
+        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
+            const item: any = {}
+            const widgetIds = this.state.model
+            item[this.props.field.iterabletype.foreign.bulkKey] = widgetIds
+            if (isEmpty(widgetIds)) {
+                item["limit"] = 10
+            }
+            fetchDynamicTypeaheadResults(this.props.field.iterabletype.foreign.modelName, item).then((data: any) => {
+                this.setState({
+                    dynamicTypeaheadOptions: data.results,
+                })
+            }).catch((error: any) => {
+                console.log("Error while fetching " + this.props.field.iterabletype.foreign.modelName, error)
+            })
         }
     }
 
@@ -106,7 +126,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     getRepIterableField = (index: number) => {
         let subTitle = ""
 
-        if (_.isEmpty(this.state.model[index])) {
+        if (isEmpty(this.state.model[index])) {
             return subTitle
         }
 
@@ -116,19 +136,19 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             return subTitle
         }
 
-        if (_.isEmpty(this.state.model[index][repField.field]) && typeof this.state.model[index][repField.field] !== "number") {
+        if (isEmpty(this.state.model[index][repField.field]) && typeof this.state.model[index][repField.field] !== "number") {
             return subTitle
         }
 
-        if (!_.isEmpty(repField.foreign)) {
-            if (_.isEmpty(this.props.additionalModels)) {
+        if (!isEmpty(repField.foreign)) {
+            if (isEmpty(this.props.additionalModels)) {
                 return "Loading ....."
             }
 
             try {
                 const foreignDoc = this.props.additionalModels[repField.foreign.modelName]
                     .find((datum: any) => datum[repField.foreign.key] === this.state.model[index][repField.field])
-                return foreignDoc ? _.get(foreignDoc, repField.foreign.title) :
+                return foreignDoc ? get(foreignDoc, repField.foreign.title) :
                     this.state.model[index][repField.field] + " - Bad Value"
             } catch (err) {
                 return "Loading ...."
@@ -163,9 +183,9 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     marginRight: "10px"
                 }}>{this.props.field.title.toUpperCase()}</label>}
             <div
-                style={this.state.collapsed ? { display: "none" } : (!_.isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
+                style={this.state.collapsed ? { display: "none" } : (!isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                 {
-                    _.map(this.state.model, ((datum: any, index: any) => {
+                    map(this.state.model, ((datum: any, index: any) => {
                         const parentModel = {
                             data: this.state.model,
                             parentModel: this.props.parentModel
@@ -398,6 +418,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         modelChanged={this.fieldChanged(index)}
                                         showTitle={false}
                                         parentModel={parentModel}
+                                        options={this.state.dynamicTypeaheadOptions}
+                                        type="iterable"
                                     />
                                 </div>
                                 {this.iterableButtons(index, totalLength)}
@@ -549,12 +571,12 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     createNew = () => {
-        this.props.modelChanged(_.concat(this.state.model, this.getIterableDefaultValue(this.props.field.iterabletype)))
+        this.props.modelChanged(concat(this.state.model, this.getIterableDefaultValue(this.props.field.iterabletype)))
     }
 
     remove = (index: any) => {
         const modelCopy = JSON.parse(JSON.stringify(this.state.model))
-        _.pullAt(modelCopy, index)
+        pullAt(modelCopy, index)
         this.props.modelChanged(modelCopy)
     }
 
@@ -573,7 +595,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     addAtIndex = (index: any) => {
-        const clone = _.cloneDeep(this.state.model)
+        const clone = cloneDeep(this.state.model)
         clone.splice(index, 0, this.getIterableDefaultValue(this.props.field.iterabletype))
         this.props.modelChanged(clone)
     }
@@ -582,23 +604,23 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         if (iterableType.type === "nested") {
             // Adding Default Value, while creating new Iterable
             const defaultValue: any = {}
-            _.map(this.props.field.iterabletype.fields, field => {
+            map(this.props.field.iterabletype.fields, field => {
                 if (field.hasOwnProperty("defaultValueFn")) {
-                    defaultValue[field.field] = field.defaultValueFn()
+                    defaultValue[field.field] = field.defaultValueFn(this.props)
                 }
             })
             return defaultValue
         } else {
             // Adding Default Value, while creating new Iterable
             if (iterableType.hasOwnProperty("defaultValueFn")) {
-                return iterableType.defaultValueFn()
+                return iterableType.defaultValueFn(this.props)
             }
             return ""
         }
     }
 
     reorder(index: any, flag: number) {
-        const clone = _.cloneDeep(this.state.model)
+        const clone = cloneDeep(this.state.model)
         let tempArr
         if (flag === 0) {
             tempArr = clone[index - 1]

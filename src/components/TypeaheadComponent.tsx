@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
+import { isEmpty, sortBy, find, trim } from "lodash"
 import { Typeahead } from "react-bootstrap-typeahead"
 import { InlineComponentProps } from "../CruxComponent"
 
@@ -17,12 +17,12 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                     console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
                 }
             } else {
-                optionsData = _.isEmpty(this.props.field.foreign.orderby)
+                optionsData = isEmpty(this.props.field.foreign.orderby)
                     ? this.props.additionalModels[this.props.field.foreign.modelName]
-                    : _.sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => _.trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+                    : sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => trim(doc[this.props.field.foreign.orderby].toLowerCase()))
             }
-            if (!_.isEmpty(this.props.currentModel)) {
-                selected = _.find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
+            if (!isEmpty(this.props.currentModel)) {
+                selected = find(optionsData, (option: any) => option[this.props.field.foreign.key] === this.props.currentModel)
                 if (!selected) {
                     selected = { [this.props.field.foreign.title]: this.props.currentModel + " - Bad Value", [this.props.field.foreign.key]: "" }
                 }
@@ -61,7 +61,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
     }
 
     handleChange = (selected: any) => {
-        if (!_.isEmpty(selected)) {
+        if (!isEmpty(selected)) {
             const newObject = selected[0]
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
         } else {

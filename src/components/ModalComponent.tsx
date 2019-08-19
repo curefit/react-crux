@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
+import { omit, isEmpty } from "lodash"
 import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
@@ -85,7 +85,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     closeModal = () => {
-        this.setState(Object.assign({}, this.state, _.omit(this.state, "error")))
+        this.setState(Object.assign({}, this.state, omit(this.state, "error")))
         this.props.closeModal()
     }
 
@@ -109,7 +109,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     render() {
         let errorType, errorMessage
-        if (this.state.error && !_.isEmpty(this.state.error.message)) {
+        if (this.state.error && !isEmpty(this.state.error.message)) {
             try {
                 const error: any = JSON.parse(this.state.error.message)
                 errorType = error.type

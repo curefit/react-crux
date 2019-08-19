@@ -1,6 +1,5 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
 import { NestedEditComponent, InlineComponentProps } from "../CruxComponent"
 
 interface IterableNestedComponentProps extends InlineComponentProps {
