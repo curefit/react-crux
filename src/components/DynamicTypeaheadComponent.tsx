@@ -44,11 +44,6 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             }).catch((error: any) => {
                 console.log("Error while fetching " + this.props.field.foreign.modelName, error)
             })
-        } else {
-            this.setState({
-                isLoading: false,
-                options: this.props.options || []
-            })
         }
     }
 
