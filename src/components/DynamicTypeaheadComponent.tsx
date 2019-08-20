@@ -2,7 +2,7 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
-import { isEmpty, find } from "lodash"
+import { isEmpty, find, isEqual } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
 
 interface DynamicTypeAheadProps extends InlineComponentProps {
@@ -39,7 +39,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
                 this.setState({
                     isLoading: false,
-                    options: data.results,
+                    options: data.results
                 })
             }).catch((error: any) => {
                 console.log("Error while fetching " + this.props.field.foreign.modelName, error)
@@ -48,12 +48,20 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.options && isEmpty(this.state.options)) {
+        if (!isEmpty(nextProps.options) && isEmpty(this.state.options)) {
             this.setState({
                 isLoading: false,
                 options: nextProps.options
             })
         }
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        if (this.props.currentModel !== nextProps.currentModel ||
+                    !isEqual(this.state.options, nextState.options)) {
+            return true
+        }
+        return false
     }
 
     handleSearch = (query: string) => {
