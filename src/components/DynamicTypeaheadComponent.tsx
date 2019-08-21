@@ -2,7 +2,7 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
-import { isEmpty, find, isEqual } from "lodash"
+import { isEmpty, find, isEqual, uniq, concat } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
 
 interface DynamicTypeAheadProps extends InlineComponentProps {
@@ -58,7 +58,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (this.props.currentModel !== nextProps.currentModel ||
-                    !isEqual(this.state.options, nextState.options)) {
+            !isEqual(this.state.options, nextState.options)) {
             return true
         }
         return false
@@ -81,8 +81,14 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     handleChange = (item: any) => {
         if (!isEmpty(item)) {
-            this.setState({ selected: item[0].value })
-            this.props.modelChanged(this.props.field, item[0].value)
+            const value = item[0].value
+            this.setState({ selected: value })
+            if (this.props.type === "iterable") {
+                const currentOption = this.state.options.find((option: any) => value === this.getModalValue(option))
+                this.props.modelChanged(this.props.field, value, currentOption)
+            } else {
+                this.props.modelChanged(this.props.field, value)
+            }
         } else {
             this.setState({ selected: undefined })
         }

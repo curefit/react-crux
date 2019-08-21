@@ -11,11 +11,12 @@ import { MultiSelectComponent } from "./MultiSelectComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
-import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
 import { fetchDynamicTypeaheadResults } from "../Actions"
 import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
+import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadComponent"
+import { v4 } from "uuid"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -38,7 +39,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             checkIterableButton: undefined,
             dynamicTypeaheadOptions: [],
             collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
-                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0)
+                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0),
+            newModel: collapsedIndexArray.fill("")
         }
     }
 
@@ -62,7 +64,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.currentModel) {
-            this.setState(Object.assign({}, this.state, { model: JSON.parse(JSON.stringify(nextProps.currentModel)) }))
+            this.setState({ model: JSON.parse(JSON.stringify(nextProps.currentModel)) })
         }
     }
 
@@ -163,6 +165,15 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     getIterableNestedTitle(index: number) {
         const subTitle = this.getRepIterableField(index)
         return this.props.field.iterabletype.nestedIterableCollapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
+    }
+
+    componentDidUpdate() {
+        const uuidArray = this.state.newModel.filter((newModel: string) => !isEmpty(newModel))
+        const newModelArray: string[] = []
+        newModelArray.length = this.state.model.length
+        if (uuidArray.length) {
+            this.setState({ newModel: newModelArray.fill("")})
+        }
     }
 
     render() {
@@ -398,32 +409,25 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index + currentModel}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <DynamicTypeaheadComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        fetch={this.props.fetch}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        options={this.state.dynamicTypeaheadOptions}
-                                        type="iterable"
-                                    />
-                                </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
+                            return <IterableDynamicTypeaheadComponent
+                                key={"iterable" + this.props.field.iterabletype.type + index + this.state.newModel[index]}
+                                index={index}
+                                readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                currentModel={currentModel}
+                                fetch={this.props.fetch}
+                                field={this.props.field}
+                                additionalModels={this.props.additionalModels}
+                                modelChanged={this.iterableDynamicTypeaheadFieldChange}
+                                modalType={this.props.modalType}
+                                parentModel={parentModel}
+                                collapsable={this.state.collapsedIndex[index] || false}
+                                totalLength={totalLength}
+                                remove={this.remove}
+                                addAtIndex={this.addAtIndex}
+                                reorder={this.reorder}
+                                type={"iterable"}
+                                options={this.state.dynamicTypeaheadOptions}
+                            />
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
@@ -570,6 +574,19 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.props.modelChanged(modelCopy)
     }
 
+    iterableDynamicTypeaheadFieldChange = (index: any, value: any, currentOption: any) => {
+        const optionExist = this.state.dynamicTypeaheadOptions.find((option: any) => currentOption.widgetId === option.widgetId)
+        if (!optionExist) {
+            const newDynamicTypeaheadOptions = [...this.state.dynamicTypeaheadOptions, currentOption]
+            this.setState({ dynamicTypeaheadOptions: newDynamicTypeaheadOptions}, () => {
+                console.log(this.state)
+            })
+        }
+        const modelCopy = JSON.parse(JSON.stringify(this.state.model))
+        modelCopy[index] = value
+        this.props.modelChanged(modelCopy)
+    }
+
     createNew = () => {
         this.props.modelChanged(concat(this.state.model, this.getIterableDefaultValue(this.props.field.iterabletype)))
     }
@@ -596,6 +613,9 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     addAtIndex = (index: any) => {
         const clone = cloneDeep(this.state.model)
+        const newModel = this.state.newModel
+        newModel[index] = v4()
+        this.setState({ newModel })
         clone.splice(index, 0, this.getIterableDefaultValue(this.props.field.iterabletype))
         this.props.modelChanged(clone)
     }
@@ -620,17 +640,22 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     reorder(index: any, flag: number) {
+        const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
         let tempArr
         if (flag === 0) {
             tempArr = clone[index - 1]
             clone[index - 1] = clone[index]
+            newModel[index - 1] = v4()
         }
         else if (flag === 1) {
             tempArr = clone[index + 1]
             clone[index + 1] = clone[index]
+            newModel[index + 1] = v4()
         }
         clone[index] = tempArr
+        newModel[index] = v4()
+        this.setState({ newModel })
         this.props.modelChanged(clone)
     }
 }
