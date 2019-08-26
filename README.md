@@ -29,7 +29,7 @@ $bootstrap-sass-asset-helper: false;
 
 3- Write the config and pass it to the factory method to create the component (config guide explained later)
   
-```javascript
+```jsonc
 import * as React from "react"
 import { CruxComponentCreator } from "@curefit/react-crux"
 
@@ -65,7 +65,7 @@ export default ServiceAccessComponent
 
 4- Create the CRUX reducer by using the factory method and it to your redux app
 
-```javascript
+```jsonc
 import { applyMiddleware, combineReducers, createStore } from "redux"
 import { createLogger } from "redux-logger"
 import thunk from "redux-thunk"
@@ -87,7 +87,7 @@ const store = createStore(
 
 ## Dependencies
 
-```json
+```jsonc
   "dependencies": {
     "autobind-decorator": "^2.1.0", // Because binding manually is so 2017
     "lodash": "^4.17.10", // Used heavily for all list/object manipulations
@@ -158,7 +158,7 @@ const store = createStore(
 
 This helps us to filter records from the table. The fields with filterParameter=true will be displayed inside filter modal.
 
-```javascript
+```jsonc
 const constants = {
     modelName: "serviceAccess",
     title: "Service Access",
@@ -208,7 +208,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 
 [Example](https://curefit.github.io/react-crux-examples/#/select)
 
-```javascript
+```jsonc
 {
     title: "Media Type",
     field: "mediaType",
@@ -240,7 +240,7 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 
 This helps us to select multiple values in List. multiClear will allow us to clear multi values
 
-```javascript
+```jsonc
 {
     title: "Media Type",
     field: "mediaType",
@@ -260,7 +260,7 @@ This helps us to select multiple values in List. multiClear will allow us to cle
 
 This helps us to select color in Color Pallete.
 
-```javascript
+```jsonc
 {
     title: "Text Color",
     field: "textColor",
@@ -274,7 +274,7 @@ This helps us to select color in Color Pallete.
 
 This helps us to select multiple values in List.
 
-```javascript
+```jsonc
 {
     title: "Media Type",
     field: "mediaType",
@@ -293,7 +293,7 @@ This helps us to select multiple values in List.
 
 Select Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
 
-```javascript
+```jsonc
 {
    editable: true,
    title: "Attribute Name",
@@ -320,7 +320,7 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 
 Typeahead Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
 
-```javascript
+```jsonc
 {
    editable: true,
    title: "Attribute Name",
@@ -346,7 +346,7 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 ### Typeahead Field with Dynamic Server Fetch
 Dynamic Typeahead Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
 
-```javascript
+```jsonc
 {
    editable: true,
    title: "Attribute Name",
@@ -365,7 +365,7 @@ Iterable Dynamic Typeahead Field which will query based on user typings. It is n
 
 bulkKey in foreign object => will contain all the ids to fetch initially
 
-```javascript
+```jsonc
 {
         title: "Nicknames",
         field: "nicknames",
@@ -389,7 +389,7 @@ bulkKey in foreign object => will contain all the ids to fetch initially
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 
-```javascript
+```jsonc
 {
     title: "Nicknames",
     field: "nicknames",
@@ -407,7 +407,7 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have re-order button
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 
-```javascript
+```jsonc
 {
     title: "Nicknames",
     field: "nicknames",
@@ -428,7 +428,7 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have Add At Index Button
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 
-```javascript
+```jsonc
 {
     title: "Nicknames",
     field: "nicknames",
@@ -450,7 +450,7 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 Iterable Field will also have re-order buttons
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
 
-```javascript
+```jsonc
 {
     title: "Nicknames",
     field: "nicknames",
@@ -476,7 +476,7 @@ function customIterableButtonAction(data: any) {
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
 [Example](https://curefit.github.io/react-crux-examples/#/nested)
 
-```javascript
+```jsonc
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -546,7 +546,7 @@ If the field is itself an object containing more fields, its _type_ should be "n
 This is to support default values for our components. In each config, we can represent a defaultValueFn key. Custom Function will be called, when the
 component does not have value.
 
-```javascript
+```jsonc
 {
     "title": "Text",
     "editable": true,
@@ -637,7 +637,7 @@ Here data will be stored as an object with ( date and timezone ) ex: joiningDate
 
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
 
-```javascript
+```jsonc
 {
     editable: true,
     width: 100,
@@ -653,7 +653,7 @@ This is to support fields that require a image/file upload. When _type_ is _imag
 
 This is to support that require a Custom Modal with Custom Button in Table. 
 
-```javascript
+```jsonc
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -702,7 +702,7 @@ class CustomModalComponent extends React.Component<any, any> {
 
 This is to support Custom Components with our edit/create Modal. 
 
-```javascript
+```jsonc
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -739,7 +739,7 @@ function customComponentView(model: model, additionalModels: any) {
 
 This is to support Custom Components with our edit/create Modal. This will allow us to create our own support with our own state.
 
-```javascript
+```jsonc
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -794,7 +794,7 @@ export class CustomEditComponent extends React.Component<any, any> {
 
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
 
-```javascript
+```jsonc
 // DefaultModels.tsx
 
 const DefaultModels = {
@@ -844,7 +844,7 @@ Filtering and Ordering (Client Side) will be performed. Search Bar will shown ab
   "title": "Employees with list of free-form Tags",
   "creationTitle": "Employee",
   "editModal": true,
-  "enableSearch": true
+  "enableSearch": true,
   "fields": [
     {
       "title": "Name",
@@ -910,7 +910,7 @@ Field Value
           "display": true,
           "editable": true,
           "conditionalField": "type",
-          "conditionalValue": "residential",
+          "conditionalValue": "residential"
         },
         {
           "title": "Address Line",
@@ -918,7 +918,7 @@ Field Value
           "display": true,
           "editable": true,
           "conditionalField": "type",
-          "conditionalValue": "office",
+          "conditionalValue": "office"
         },
         {
           "title": "City",
@@ -946,7 +946,7 @@ Config Based Styles Can be Applied to Components.
 
 #### Hide Label
 
-```javascript
+```jsonc
 {
     title: "",
     field: "units",
@@ -966,7 +966,7 @@ Config Based Styles Can be Applied to Components.
 
 #### Border
 
-```javascript
+```jsonc
 {
     title: "",
     field: "units",
@@ -994,7 +994,7 @@ Config Based Styles Can be Applied to Components.
 
 #### Force Indent
 
-```javascript
+```jsonc
 {
     title: "",
     field: "units",
@@ -1020,7 +1020,7 @@ Config Based Styles Can be Applied to Components.
 
 We can give queryParams in config. It will append queryparams with every fetch call.
 
-```javascript
+```jsonc
 import * as React from "react"
 import { CruxComponentCreator } from "@curefit/react-crux"
 
@@ -1082,7 +1082,7 @@ Some example snippets have been copied below for convenience.
 
 Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify and delete employees
 
-```javascript
+```jsonc
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1122,7 +1122,7 @@ export { Employees }
 
 Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify, save as new and delete employees
 
-```javascript
+```jsonc
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1163,7 +1163,7 @@ export { Employees }
 
 Lets say we want to show a table of employees with 4 fields (name, joiningDate, isPartTime, nicknames) with a functionality to create, modify and delete employees. Readonly attribute is applicable for all the components.
 
-```javascript
+```jsonc
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1216,7 +1216,7 @@ export { Employees }
 Readonly attribute is applicable for all the components. Readonly value can either be boolean or Function. For Example. You can write your own
 function to dynamic set readonly for a particular input. Return of that function has to be boolean
 
-```javascript
+```jsonc
  {
      title: "Name",
      field: "name",
@@ -1236,7 +1236,7 @@ function to dynamic set readonly for a particular input. Return of that function
 
 Since components created using CRUX are actual react components, you can render as many CRUX components on a page or inside another component. Since they are all backed by same Redux store, they also share all the models and dont make redundant http requests if some of the underlying models are same.
 
-```javascript
+```jsonc
 const employeeSchema = {
     modelName: "employees",
     ...
@@ -1265,7 +1265,7 @@ export class EmployeeContainer extends React.Component<{}, {}> {
 
 One very common pattern is to have a field which is a list of objects. In CRUX terminology that translates to iterable of nested. The example below shows how to model it. The example if for products which typically have list of media attached to them. Each media object can either be a image or video and have a url.
 
-```javascript
+```jsonc
 {
     title: "Media",
     field: "media",
@@ -1303,7 +1303,7 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
 
 Addition of Support for Collapsed Nested Iterable Component. Each Iterable component can be expanded based on necessity.
 
-```javascript
+```jsonc
 {
     title: "Media",
     field: "media",
@@ -1347,7 +1347,7 @@ Addition of Support for Collapsed Nested Iterable Component. Each Iterable compo
 Lets say we want to show a table of employees with 3 fields (name, age, emailAddress) with a functionality to create, modify and delete employees with server
 side pagination. (i.e. server call will be pointed to /filter rather than /fetch)
 
-```javascript
+```jsonc
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
