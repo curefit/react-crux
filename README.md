@@ -344,7 +344,6 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 ```
 
 ### Typeahead Field with Dynamic Server Fetch
-
 Dynamic Typeahead Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
 
 ```javascript
@@ -356,10 +355,33 @@ Dynamic Typeahead Field which will query based on user typings. It is not suppor
    foreign: {
        modelName: "cohortEventMeta",
        key: "id",
-       title: "name",
-       transform: customFilter
+       title: "name"
    }
 }
+```
+
+### Iterable Typeahead Field with Dynamic Server Fetch
+Iterable Dynamic Typeahead Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
+
+bulkKey in foreign object => will contain all the ids to fetch initially
+
+```javascript
+{
+        title: "Nicknames",
+        field: "nicknames",
+        type: "iterable",
+        editable: true,
+        iterabletype: {
+            title: "Nickname",
+            type: "dynamicTypeahead",
+            foreign: {
+                bulkKey: "ids",
+                modelName: "names",
+                key: "id",
+                title: "name"
+            }
+        }
+    }
 ```
 
 ### Iterable fields

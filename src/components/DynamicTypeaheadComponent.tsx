@@ -1,29 +1,33 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
-import { FetchUtil } from "../FetchUtil"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
-import * as _ from "lodash"
+import { isEmpty, find, isEqual, uniq, concat } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
 
+interface DynamicTypeAheadProps extends InlineComponentProps {
+    options?: any
+    type?: string
+}
+
 @autobind
-export class DynamicTypeaheadComponent extends React.Component<InlineComponentProps, any> {
+export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadProps, any> {
 
     constructor(props: any) {
         super(props)
         this.state = {
             isLoading: false,
-            options: [],
+            options: props.options || [],
             selected: props.currentModel || undefined
         }
     }
 
     componentDidMount() {
-        if (_.isEmpty(this.state.options)) {
+        if (isEmpty(this.state.options) && this.props.type !== "iterable") {
             const item: any = {
                 limit: 10
             }
-            if (!_.isEmpty(this.state.selected)) {
+            if (!isEmpty(this.state.selected)) {
                 if (this.props.field.foreign.keys) {
                     for (const key of this.props.field.foreign.keys) {
                         item[key] = this.state.selected[key]
@@ -35,12 +39,29 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
             fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
                 this.setState({
                     isLoading: false,
-                    options: data.results,
+                    options: data.results
                 })
             }).catch((error: any) => {
                 console.log("Error while fetching " + this.props.field.foreign.modelName, error)
             })
         }
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        if (!isEmpty(nextProps.options) && isEmpty(this.state.options)) {
+            this.setState({
+                isLoading: false,
+                options: nextProps.options
+            })
+        }
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        if (this.props.currentModel !== nextProps.currentModel ||
+            !isEqual(this.state.options, nextState.options)) {
+            return true
+        }
+        return false
     }
 
     handleSearch = (query: string) => {
@@ -59,16 +80,22 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
     }
 
     handleChange = (item: any) => {
-        if (!_.isEmpty(item)) {
-            this.setState({ selected: item[0].value })
-            this.props.modelChanged(this.props.field, item[0].value)
+        if (!isEmpty(item)) {
+            const value = item[0].value
+            this.setState({ selected: value })
+            if (this.props.type === "iterable") {
+                const currentOption = this.state.options.find((option: any) => value === this.getModalValue(option))
+                this.props.modelChanged(this.props.field, value, currentOption)
+            } else {
+                this.props.modelChanged(this.props.field, value)
+            }
         } else {
             this.setState({ selected: undefined })
         }
     }
 
     handleBlurChange = () => {
-        if (_.isEmpty(this.state.selected) && !_.isEmpty(this.props.currentModel)) {
+        if (isEmpty(this.state.selected) && !isEmpty(this.props.currentModel)) {
             this.props.modelChanged(this.props.field, "")
         }
     }
@@ -97,24 +124,25 @@ export class DynamicTypeaheadComponent extends React.Component<InlineComponentPr
             })
         }
         if (this.state.selected) {
-            const selectedRecord = _.find(optionsData, (doc: any) => {
+            const selectedRecord = find(optionsData, (doc: any) => {
                 if (this.props.field.foreign.keys) {
                     return this.props.field.foreign.keys.every((key: any) => doc.value[key] === this.props.currentModel[key])
                 }
                 return doc.value === this.props.currentModel
             })
-            selected = selectedRecord ? [selectedRecord] : undefined
+            selected = selectedRecord ? [selectedRecord] : [{ label: `${this.state.selected} - Bad Value`, value: this.state.selected }]
         }
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
                 {
-                    this.props.showTitle && !_.isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
+                    this.props.showTitle && !isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
                     <div><label style={{
                         fontSize: "10px",
                         marginRight: "10px"
                     }}>{this.props.field.title.toUpperCase()}</label><br /></div>
                 }
                 <AsyncTypeahead
+                    id={`id-${this.props.field.title}`}
                     labelKey={"label"}
                     minLength={0}
                     isLoading={this.state.isLoading}

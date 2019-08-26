@@ -1,4 +1,4 @@
-import * as _ from "lodash"
+import { isEmpty, forEach, flatten, map, filter, concat, uniq } from "lodash"
 
 export function getAnchors(field: any): any {
     const anchors: any = {}
@@ -7,15 +7,15 @@ export function getAnchors(field: any): any {
         anchors[field.anchor] = field
     }
 
-    if (!_.isEmpty(field.fields)) {
-        _.forEach(field.fields, (field: any) => this.getAnchors(field, anchors))
+    if (!isEmpty(field.fields)) {
+        forEach(field.fields, (field: any) => this.getAnchors(field, anchors))
     }
 
-    if (!_.isEmpty(field.iterabletype)) {
+    if (!isEmpty(field.iterabletype)) {
         this.getAnchors(field.iterabletype, anchors)
     }
 
-    if (!_.isEmpty(field.nestedtype)) {
+    if (!isEmpty(field.nestedtype)) {
         this.getAnchors(field.nestedtype, anchors)
     }
     return anchors
@@ -32,9 +32,9 @@ export function getAdditionalModelsSingle(field: any): string[] {
 }
 
 export function getAdditionalModels(parent: any): string[] {
-    const result: any = _.flatten(_.map(parent.fields, (field: any) => getAdditionalModelsSingle(field)))
-    const filtered = _.filter(result, (model: string) => model && model !== "" && !_.isEmpty(model))
-    return _.uniq((parent.modelName) ? _.concat(filtered, parent.modelName) : filtered)
+    const result: any = flatten(map(parent.fields, (field: any) => getAdditionalModelsSingle(field)))
+    const filtered = filter(result, (model: string) => model && model !== "" && !isEmpty(model))
+    return uniq((parent.modelName) ? concat(filtered, parent.modelName) : filtered)
 }
 
 export function getReadOnly(readonly: boolean | Function, currentModel: any): boolean {

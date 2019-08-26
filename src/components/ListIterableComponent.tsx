@@ -1,11 +1,11 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
 import { ListNestedComponent } from "./ListNestedComponent"
 import { ListForeignComponent } from "./ListForeignComponent"
 import { ListCheckboxComponent } from "./ListCheckboxComponent"
 import { InlineEditComponent } from "./InlineEditComponent"
 import { ListMultiSelectComponent } from "./ListMultiSelectComponent"
+import { map, filter, has } from "lodash"
 
 @autobind
 export class ListIterableComponent extends React.Component<any, any> {
@@ -23,7 +23,7 @@ export class ListIterableComponent extends React.Component<any, any> {
     render(): any {
         return <div>
             {
-                _.map(this.props.model, (datum: any, index: number) => {
+                map(this.props.model, (datum: any, index: number) => {
                     const field = this.props.field
                     if (!field.iterabletype) {
                         return <div key={index}>
@@ -45,9 +45,9 @@ export class ListIterableComponent extends React.Component<any, any> {
                         }
 
                         if (field.iterabletype.type === "nested") {
-                            const filtered = _.filter(field.iterabletype.fields, (f: any) => f.display && _.has(datum, f.field))
+                            const filtered = filter(field.iterabletype.fields, (f: any) => f.display && has(datum, f.field))
                             return <div>
-                                {_.map(filtered, (f: any, index: number) => {
+                                {map(filtered, (f: any, index: number) => {
                                     return <div className="html-comma" style={{ display: "inline-block" }}>
                                         <span style={{ display: "inline-block" }}>{f.title + ":"}&nbsp;</span>
                                         <span style={{ display: "inline-block" }}>
