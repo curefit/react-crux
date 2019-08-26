@@ -2,7 +2,7 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
-import { isEmpty, find, isEqual, uniq, concat } from "lodash"
+import { isEmpty, find, isEqual } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
 
 interface DynamicTypeAheadProps extends InlineComponentProps {
