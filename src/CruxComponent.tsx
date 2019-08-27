@@ -39,6 +39,7 @@ export interface InlineComponentProps {
     style?: any
     iterableNested?: boolean
     nestedIterableModelChanged?: any
+    additionalProps?: any
 }
 
 export { ModalComponent } from "./components/ModalComponent"
@@ -59,7 +60,8 @@ export class CruxComponentCreator {
                 additionalModels: reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
-                queryParams: ownProps ? (ownProps.options && ownProps.options.queryParams || undefined) : undefined
+                queryParams: ownProps ? (ownProps.options && ownProps.options.queryParams || undefined) : undefined,
+                additionalProps:  ownProps ? (ownProps.options && ownProps.options.additionalProps || undefined) : undefined
             })
         }
 
@@ -314,6 +316,7 @@ export class CruxComponentCreator {
                     closeModal={this.closeCustomModal}
                     sucessDispatch={this.successCustomModalDispatch}
                     failureDispatch={this.failureCustomModalDispatch}
+                    additionalProps = {this.props.additionalProps}
                     {...this.props} />
             }
 
@@ -475,7 +478,9 @@ export class CruxComponentCreator {
                                 createOrModify={this.props.createOrModify}
                                 createOrEditSuccess={this.createOrEditSuccess}
                                 additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams} />
+                                queryParams={this.props.queryParams}
+                                additionalProps = {this.props.additionalProps}
+                            />
                         }
 
                         {constants.bulkCreateModal && this.state.showBulkCreateModal &&
@@ -485,6 +490,7 @@ export class CruxComponentCreator {
                                 closeModal={this.closeBulkCreateModal}
                                 createOrModify={this.props.bulkCreate}
                                 createOrEditSuccess={this.createOrEditSuccess}
+                                additionalProps = {this.props.additionalProps}
                             />
                         }
 
@@ -500,7 +506,9 @@ export class CruxComponentCreator {
                                 createOrEditSuccess={this.createOrEditSuccess}
                                 deleteModel={constants.deleteModal === false ? undefined : this.props.deleteModel}
                                 additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams} />
+                                queryParams={this.props.queryParams}
+                                additionalProps = {this.props.additionalProps}
+                            />
                         }
                         {constants.filterModal && this.state.showFilterModal &&
                             <ModalComponent
@@ -512,7 +520,9 @@ export class CruxComponentCreator {
                                 filterSuccess={this.filterSuccess}
                                 filter={this.props.filter}
                                 additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams} />
+                                queryParams={this.props.queryParams}
+                                additionalProps = {this.props.additionalProps}
+                            />
                         }
                         {constants.customModal && this.state.showCustomModal &&
                             this.getCustomComponent()

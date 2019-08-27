@@ -274,6 +274,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         currentModel={this.props.currentModel}
                         additionalModels={this.props.additionalModels}
                         parentModel={this.props.parentModel}
+                        additionalProps={this.props.additionalProps}
                         field={field}
                         handleChange={this.select} />
                 </div>
@@ -405,7 +406,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }}>
                         {
                             map(wysiwygFields, (field: any, index: number) => {
-                                const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+                                const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
                                 return <div key={index}>
                                     <label style={{
                                         fontSize: "10px",
