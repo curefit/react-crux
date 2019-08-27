@@ -17,6 +17,7 @@ import { fetchDynamicTypeaheadResults } from "../Actions"
 import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
 import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadComponent"
 import { v4 } from "uuid"
+import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
@@ -240,6 +241,33 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
+                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        constants={this.props.constants}
+                                        currentModel={currentModel}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                        isMulti={false}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicMultiselect") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <DynamicMultiSelectComponent
                                         readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}

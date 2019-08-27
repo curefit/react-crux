@@ -139,6 +139,7 @@ const store = createStore(
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
         - _dynamicTypeahead_ - For searching within dropdown. Specification is same as select. It is a server search. Display in table is not supported.
+        - _dynamicMultiselect_ - For searching within dropdown. Specification is similar to multi select. It is a server search. Display in table is not supported.
         - _tinyinput_ - For very small texts. [Example](http://localhost:3000/#/bigtext) 
         - _bigtext_ - For large blobs of text. [Example](http://localhost:3000/#/bigtext)
         - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
@@ -382,6 +383,27 @@ bulkKey in foreign object => will contain all the ids to fetch initially
             }
         }
     }
+```
+
+
+### Dynamic MultiSelect Field with Dynamic Server Fetch
+Iterable Dynamic MultiSelect Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
+
+bulkKey in foreign object => will contain all the ids to fetch initially
+
+```javascript
+{
+   editable: true,
+   title: "Attribute Name",
+   type: "dynamicMultiselect",
+   field: "id",
+   foreign: {
+       bulkKey: "ids",
+       modelName: "cohortEventMeta",
+       key: "id",
+       title: "name"
+   }
+}
 ```
 
 ### Iterable fields

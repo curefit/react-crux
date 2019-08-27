@@ -15,6 +15,7 @@ import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
+import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -67,6 +68,19 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <MultiSelectComponent field={field}
+                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={true}
+                />
+            )
+        } else if (field.type === "dynamicMultiselect") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
+            return (
+                <DynamicMultiSelectComponent field={field}
                     readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
