@@ -60,8 +60,8 @@ export class CruxComponentCreator {
                 additionalModels: reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
-                queryParams: ownProps ? (ownProps.options && ownProps.options.queryParams || undefined) : undefined,
-                additionalProps:  ownProps ? (ownProps.options && ownProps.options.additionalProps || undefined) : undefined
+                queryParams: ownProps && ownProps.options && ownProps.options.queryParams,
+                additionalProps:  ownProps && ownProps.options && ownProps.options.additionalProps
             })
         }
 
