@@ -1,4 +1,12 @@
-import { isEmpty, forEach, flatten, map, filter, concat, uniq } from "lodash"
+import { isEmpty, includes, forEach, flatten, map, filter, concat, uniq } from "lodash"
+
+export function isConditionSatisfied(field: any, model: any): boolean {
+    if (Array.isArray(field.conditionalValue)) {
+        return includes(field.conditionalValue, model[field.conditionalField])
+    } else {
+        return field.conditionalValue === model[field.conditionalField]
+    }
+}
 
 export function getAnchors(field: any): any {
     const anchors: any = {}

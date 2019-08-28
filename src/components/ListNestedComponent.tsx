@@ -1,6 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { includes, isEmpty, filter, map } from "lodash"
+import { includes, isEmpty, isNull, filter, map } from "lodash"
+import { isConditionSatisfied } from "../util"
 import { ListIterableComponent } from "./ListIterableComponent"
 import { ListDateComponent } from "./ListDateComponent"
 import { ListCheckboxComponent } from "./ListCheckboxComponent"
@@ -19,6 +20,20 @@ export class ListNestedComponent extends React.Component<any, any> {
     modelChanged = (data: any, success: any, error: any) => {
         const newModel = Object.assign({}, this.props.model, { [this.props.field.field]: data })
         this.props.modelChanged(newModel, success, error)
+    }
+
+    updateValues(field: any, model: any) {
+        if(field.conditionalField && !isNull(model[field.conditionalField]) && field.clearOnConditionFail && !isConditionSatisfied(field, model)) {
+            this.modelChanged(null, () => {}, () => {})
+        }
+    }
+
+    componentDidMount() {
+        this.updateValues(this.props.field, this.props.model)
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.updateValues(nextProps.field, nextProps.model)
     }
 
     render(): any {

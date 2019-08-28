@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { has, isEmpty, map, isNil, filter } from "lodash"
+import { has, isEmpty, map, isNull, filter } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
@@ -14,7 +14,7 @@ import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
-import { getReadOnly } from "../util"
+import { getReadOnly, isConditionSatisfied } from "../util"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 
 @autobind
@@ -306,6 +306,10 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         map(props.field.fields, field => {
             if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
                 defaultValue[field.field] = field.defaultValueFn()
+            }
+
+            if(field.conditionalField && !isNull(props.currentModel[field.field]) && field.clearOnConditionFail && isConditionSatisfied(field, props.currentModel)) {
+                defaultValue[field.field] = null
             }
         })
         if (!isEmpty(defaultValue)) {
