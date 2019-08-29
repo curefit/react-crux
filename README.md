@@ -149,6 +149,7 @@ const store = createStore(
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
         - _customedit_ - For injecting your own custom Editable component to render this field. Requires another field called _customEditComponent_ (defined later)
+        -  additionalProps - For passing your own props to CruxComponent, that may used as additional props details to render your component or custom component. 
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
     * _wysiwyg_ - If present and true, adds support to show a live preview will editing the object. Requires another field called _customComponent_
     * _customComponent_ - Required for wysiwyg and for _type_ "custom".
@@ -786,7 +787,7 @@ This is to support Custom Components with our edit/create Modal. This will allow
   "createModal": true
 }
 
-// Props for this CustomEditComponent is currentModal, additionalModels, parentModel, field, handleChange
+// Props for this CustomEditComponent is currentModal, additionalModels, parentModel, addtionalProps, field, handleChange
 
 export class CustomEditComponent extends React.Component<any, any> {
 
@@ -1082,6 +1083,52 @@ class ComponentWithQueryParams extends React.Component<{}, {}> {
 
 export {ComponentWithQueryParams}
 ```
+
+### Passing Additional Props to cruxComponent
+
+We can pass props to crux component as below.
+
+```javascript
+import * as React from "react"
+import { CruxComponentCreator } from "@curefit/react-crux"
+
+const constants = {
+    modelName: "serviceAccess",
+    title: "Service Access",
+    creationTitle: "Service Access",
+    createModal: true,
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [
+        {
+            title: "Service",
+            field: "serviceName",
+            representative: true,
+        },
+        {
+            title: "Users",
+            field: "users",
+            type: "iterable",
+            iterabletype: {
+                title: "User",
+                inlineEdit: true
+            }
+        }
+    ]
+}
+
+const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
+
+class ComponentWithProps extends React.Component<{}, {}> {
+    render() {
+        return (<ServiceAccessComponent {...this.props} options={{ queryParams: { data: "1", title: "check" }, additionalProps: {...this.props}} />)
+    }
+}
+
+export {ComponentWithProps}
+```
+
 
 ### Fetching logic in CRUX
 

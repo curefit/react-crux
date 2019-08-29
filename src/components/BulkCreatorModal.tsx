@@ -8,6 +8,7 @@ interface BulkCreateModalProps {
     createOrEditSuccess: any
     closeModal: any
     showModal: any
+    additionalProps?: any
 }
 
 interface BulkCreateModalState {

@@ -21,6 +21,7 @@ interface ModalComponentProps {
     additionalModels: any[],
     successButtonLabel?: string,
     queryParams: any
+    additionalProps?: any
 }
 
 @autobind
@@ -150,6 +151,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                                      readonly={this.props.constants.readonly === true}
                                      additionalModels={this.props.additionalModels} fetch={this.props.fetch}
                                      modelChanged={this.modelChanged} currentModel={this.state.item}
+                                     additionalProps={this.props.additionalProps}
                                      showTitle={false}
                                      parentModel={{}}
                 />
