@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { has, isEmpty, map, isNull, filter } from "lodash"
+import { has, isEmpty, map, isEqual, filter } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
@@ -302,21 +302,25 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     updateDefaultValue = (props: any) => {
-        const defaultValue: any = {}
+        const newValue: any = {}
         map(props.field.fields, field => {
             if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
-                defaultValue[field.field] = field.defaultValueFn()
+                newValue[field.field] = field.defaultValueFn(props)
             }
-
-            if(field.conditionalField && !isNull(props.currentModel[field.field]) && field.clearOnConditionFail && isConditionSatisfied(field, props.currentModel)) {
-                defaultValue[field.field] = null
+            
+            if (field.hasOwnProperty("valueFn")) {
+                let resolvedValue = field.valueFn({ field, model: props.currentModel })
+                if(!isEqual(props.currentModel[field.field], resolvedValue)) {
+                    newValue[field.field] = resolvedValue
+                }
             }
         })
-        if (!isEmpty(defaultValue)) {
+
+        if (!isEmpty(newValue)) {
             if (props.iterableNested && props.nestedIterableModelChanged) {
-                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, defaultValue))
+                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, newValue))
             } else {
-                props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+                props.modelChanged(Object.assign({}, props.currentModel, newValue))
             }
         }
     }
