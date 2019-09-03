@@ -309,7 +309,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             }
             
             if (field.hasOwnProperty("valueFn")) {
-                let resolvedValue = field.valueFn({ field, model: props.currentModel })
+                let resolvedValue = field.valueFn(props)
                 if(!isEqual(props.currentModel[field.field], resolvedValue)) {
                     newValue[field.field] = resolvedValue
                 }
