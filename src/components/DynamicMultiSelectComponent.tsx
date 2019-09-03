@@ -49,7 +49,9 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
             [this.props.field.foreign.title]: query, limit: 10
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
-            const newOptions = uniqBy(concat(data.results, this.state.options), this.props.field.foreign.key)
+            const newOptions = uniqBy(concat(data.results, this.state.options), v => {
+                return v[this.props.field.foreign.key] || this.props.field.foreign.keys.map((value: string) => v[value]).join()
+            })
             this.setState({
                 isLoading: false,
                 options: newOptions,
