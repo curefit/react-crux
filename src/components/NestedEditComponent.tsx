@@ -14,7 +14,7 @@ import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
-import { getReadOnly, isConditionSatisfied } from "../util"
+import { getReadOnly } from "../util"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 
 @autobind
