@@ -39,9 +39,9 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             model: modalValue,
             checkIterableButton: undefined,
             dynamicTypeaheadOptions: [],
-            collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
-                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0),
-            newModel: collapsedIndexArray.fill("")
+            collapsedIndex: [...collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
+                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0)],
+            newModel: [...collapsedIndexArray.fill("")]
         }
     }
 
@@ -603,12 +603,12 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     iterableDynamicTypeaheadFieldChange = (index: any, value: any, currentOption: any) => {
-        const optionExist = this.state.dynamicTypeaheadOptions.find((option: any) => currentOption.widgetId === option.widgetId)
-        if (!optionExist) {
-            const newDynamicTypeaheadOptions = [...this.state.dynamicTypeaheadOptions, currentOption]
-            this.setState({ dynamicTypeaheadOptions: newDynamicTypeaheadOptions}, () => {
-                console.log(this.state)
-            })
+        if (value && currentOption) {
+            const optionExist = this.state.dynamicTypeaheadOptions.find((option: any) => currentOption.widgetId === option.widgetId)
+            if (!optionExist) {
+                const newDynamicTypeaheadOptions = [...this.state.dynamicTypeaheadOptions, currentOption]
+                this.setState({ dynamicTypeaheadOptions: newDynamicTypeaheadOptions})
+            }
         }
         const modelCopy = JSON.parse(JSON.stringify(this.state.model))
         modelCopy[index] = value
