@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { has, isEmpty, map, isEqual, filter } from "lodash"
+import { includes, has, isEmpty, map, isEqual, filter } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
@@ -16,6 +16,18 @@ import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
+
+const isConditionalField = (field: any) => !isEmpty(field.conditionalField)
+
+const isConditionSatisfied = (model: any, field: any) => {
+    if(!isConditionalField) return true
+
+    if(Array.isArray(field.conditionalValue)) {
+        return includes(field.conditionalValue, model[field.conditionalField])
+    } else {
+        return model[field.conditionalField] == field.conditionalValue
+    }
+}
 
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
@@ -304,12 +316,13 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     updateDefaultValue = (props: any) => {
         const newValue: any = {}
+
         map(props.field.fields, field => {
             if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
                 newValue[field.field] = field.defaultValueFn(props)
             }
             
-            if (field.hasOwnProperty("valueFn")) {
+            if (field.hasOwnProperty("valueFn") && isConditionSatisfied(props.currentModel, field)) {
                 let resolvedValue = field.valueFn(props)
                 if(!isEqual(props.currentModel[field.field], resolvedValue)) {
                     newValue[field.field] = resolvedValue
