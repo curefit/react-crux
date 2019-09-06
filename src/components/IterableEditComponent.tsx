@@ -34,16 +34,14 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         super(props)
         const modalValue = isEmpty(this.props.currentModel) ? [] : JSON.parse(JSON.stringify(this.props.currentModel))
         const collapsedIndexArray: any = []
-        const newCollapsedIndexArray: any = []
         collapsedIndexArray.length = modalValue.length
-        newCollapsedIndexArray.length = modalValue.length
         this.state = {
             model: modalValue,
             checkIterableButton: undefined,
             dynamicTypeaheadOptions: [],
-            collapsedIndex: collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
-                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0),
-            newModel: newCollapsedIndexArray.fill("")
+            collapsedIndex: [...collapsedIndexArray.fill(props.field.iterabletype.nestedIterableCollapse ?
+                props.field.iterabletype.nestedIterableCollapse.default ? true : false : false, 0)],
+            newModel: [...collapsedIndexArray.fill("")]
         }
     }
 
