@@ -21,6 +21,7 @@ const isConditionalField = (field: any) => !isEmpty(field.conditionalField)
 
 const isConditionSatisfied = (model: any, field: any) => {
     if(!isConditionalField) return true
+    if(field.hasOwnProperty("isConditionSatisfied")) return field.isConditionSatisfied(model, field)
 
     if(Array.isArray(field.conditionalValue)) {
         return includes(field.conditionalValue, model[field.conditionalField])
