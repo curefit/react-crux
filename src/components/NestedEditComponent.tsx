@@ -20,7 +20,7 @@ import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 const isConditionalField = (field: any) => !isEmpty(field.conditionalField)
 
 const isConditionSatisfied = (model: any, field: any) => {
-    if(!isConditionalField || field.forceResolve) return true
+    if(!isConditionalField(field) || field.forceResolve) return true
 
     if(Array.isArray(field.conditionalValue)) {
         return includes(field.conditionalValue, model[field.conditionalField])
