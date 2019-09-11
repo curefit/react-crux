@@ -17,18 +17,6 @@ import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 
-const isConditionalField = (field: any) => !isEmpty(field.conditionalField)
-
-const isConditionSatisfied = (model: any, field: any) => {
-    if(!isConditionalField) return true
-
-    if(Array.isArray(field.conditionalValue)) {
-        return includes(field.conditionalValue, model[field.conditionalField])
-    } else {
-        return model[field.conditionalField] == field.conditionalValue
-    }
-}
-
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -322,7 +310,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                 newValue[field.field] = field.defaultValueFn(props)
             }
             
-            if (field.hasOwnProperty("valueFn") && isConditionSatisfied(props.currentModel, field)) {
+            if (field.hasOwnProperty("valueFn")) {
                 let resolvedValue = field.valueFn(props)
                 if(!isEqual(props.currentModel[field.field], resolvedValue)) {
                     newValue[field.field] = resolvedValue
