@@ -173,8 +173,12 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const newModelArray: string[] = []
         newModelArray.length = this.state.model.length
         if (uuidArray.length) {
-            this.setState({ newModel: newModelArray.fill("")})
+            this.setState({ newModel: newModelArray.fill("") })
         }
+    }
+
+    checkReadonly = (readonly: boolean, currentModel: any) => {
+        return this.props.modalType !== "CREATE" && (getReadOnly(readonly, currentModel) || this.props.readonly)
     }
 
     render() {
@@ -215,7 +219,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <SelectComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -241,7 +245,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -268,7 +272,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DynamicMultiSelectComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -295,7 +299,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -323,7 +327,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <ImageUploadComponent
                                         constants={this.props.constants}
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         width={this.props.width}
                                         height={this.props.height} contentType={this.props.field.contentType}
                                         currentModel={currentModel} field={this.props.field.iterabletype}
@@ -354,7 +358,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         modelChanged={this.fieldChanged(index)}
                                         showTitle={false}
                                         parentModel={parentModel}
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                     />
                                 </div>
                                 {this.iterableButtons(index, totalLength)}
@@ -374,7 +378,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TimezoneComponent
                                         field={this.props.field.iterabletype}
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         additionalModels={this.props.additionalModels}
                                         modelChanged={this.fieldChanged(index)}
                                         currentModel={currentModel}
@@ -397,7 +401,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DateTimezoneComponent field={this.props.field.iterabletype}
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         additionalModels={this.props.additionalModels}
                                         modelChanged={this.fieldChanged(index)}
                                         currentModel={currentModel}
@@ -421,7 +425,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TypeaheadComponent
-                                        readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                        readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         fetch={this.props.fetch}
@@ -440,7 +444,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             return <IterableDynamicTypeaheadComponent
                                 key={"iterable" + this.props.field.iterabletype.type + index + this.state.newModel[index]}
                                 index={index}
-                                readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                 currentModel={currentModel}
                                 fetch={this.props.fetch}
                                 field={this.props.field}
@@ -462,7 +466,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             return <IterableNestedComponent
                                 key={"iterable" + this.props.field.iterabletype.type + index}
                                 index={index}
-                                readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                 currentModel={currentModel}
                                 fetch={this.props.fetch}
                                 field={this.props.field}
@@ -487,7 +491,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <NestedEditComponent currentModel={this.state.model[index]}
-                                    readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                    readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                     fetch={this.props.fetch}
                                     field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
                                     additionalModels={this.props.additionalModels}
@@ -505,7 +509,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <CheckboxComponent
-                                    readonly={getReadOnly(this.props.field.iterabletype.readonly, currentModel) || this.props.readonly}
+                                    readonly={this.checkReadonly(this.props.field.iterabletype.readonly, currentModel)}
                                     currentModel={this.state.model[index]}
                                     field={this.props.field.iterabletype}
                                     additionalModels={this.props.additionalModels}
@@ -535,7 +539,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <textarea
-                                    disabled={getReadOnly(this.props.field.iterabletype.readonly, datum) || this.props.readonly}
+                                    disabled={this.checkReadonly(this.props.field.iterabletype.readonly, datum)}
                                     value={datum}
                                     onChange={this.handleChange.bind(this, index)} style={{ width: 250 }} />
                                 {this.iterableButtons(index, totalLength)}
@@ -547,7 +551,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <input
-                                    disabled={getReadOnly(this.props.field.iterabletype.readonly, datum) || this.props.readonly}
+                                    disabled={this.checkReadonly(this.props.field.iterabletype.readonly, datum)}
                                     type="number"
                                     value={datum}
                                     onChange={this.handleChange.bind(this, index)}
@@ -561,7 +565,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             onMouseEnter={this.showIterableButtons.bind(this, index)}
                             onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                             <input
-                                disabled={getReadOnly(this.props.field.iterabletype.readonly, datum) || this.props.readonly}
+                                disabled={this.checkReadonly(this.props.field.iterabletype.readonly, datum)}
                                 type="text"
                                 value={datum}
                                 onChange={this.handleChange.bind(this, index)}
@@ -607,7 +611,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             const optionExist = this.state.dynamicTypeaheadOptions.find((option: any) => currentOption.widgetId === option.widgetId)
             if (!optionExist) {
                 const newDynamicTypeaheadOptions = [...this.state.dynamicTypeaheadOptions, currentOption]
-                this.setState({ dynamicTypeaheadOptions: newDynamicTypeaheadOptions})
+                this.setState({ dynamicTypeaheadOptions: newDynamicTypeaheadOptions })
             }
         }
         const modelCopy = JSON.parse(JSON.stringify(this.state.model))
