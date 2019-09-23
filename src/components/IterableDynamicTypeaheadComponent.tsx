@@ -2,7 +2,6 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
-import { getReadOnly } from "../util"
 import { isEmpty } from "lodash"
 
 interface IterableDynamicTypeaheadComponentProps extends InlineComponentProps {
@@ -109,7 +108,7 @@ export class IterableDynamicTypeaheadComponent extends React.Component<IterableD
                 <div style={this.props.field.iterabletype.style ?
                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                     <DynamicTypeaheadComponent
-                        readonly={getReadOnly(this.props.field.iterabletype.readonly, this.props.currentModel) || this.props.readonly}
+                        readonly={this.props.readonly}
                         constants={this.props.constants}
                         currentModel={this.props.currentModel}
                         fetch={this.props.fetch}
