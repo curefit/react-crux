@@ -78,7 +78,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
-        return <div style={{ width: "300px" }}>
+        return <div style={this.props.field.style || { width: "300px" }}>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div><label style={{
