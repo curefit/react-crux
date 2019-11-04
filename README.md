@@ -748,7 +748,7 @@ This is to support Custom Components with our edit/create Modal.
   "createModal": true
 }
 
-function customComponentView(model: model, additionalModels: any) {
+function customComponentView(currentModal: model, additionalModels: any, parentModel: any, addtionalProps: any, modal: any) {
     class CustomComponent extends React.Component<{}, {}> {
         render() {
             return <p>{model.address}</p>
