@@ -151,6 +151,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                     selected={selected || []}
                     onChange={this.handleChange}
                     onBlur={this.handleBlurChange}
+                    disabled={this.props.readonly}
                 />
             </div>
         </div>

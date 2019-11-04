@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { isEmpty, map, find, uniq, concat } from "lodash"
+import { isEmpty, map, find, concat, uniqBy } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { components } from "react-select"
 import AsyncSelect from "react-select/async"
@@ -49,7 +49,9 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
             [this.props.field.foreign.title]: query, limit: 10
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
-            const newOptions = uniq(concat(data.results, this.state.options))
+            const newOptions = uniqBy(concat(data.results, this.state.options), v => {
+                return v[this.props.field.foreign.key] || this.props.field.foreign.keys.map((value: string) => v[value]).join()
+            })
             this.setState({
                 isLoading: false,
                 options: newOptions,

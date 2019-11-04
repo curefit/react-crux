@@ -425,7 +425,7 @@ export class CruxComponentCreator {
                                                         <div style={{ display: "inline-block", width: "80%" }}>
                                                             <input type="text"
                                                                 style={{ width: "100%" }}
-                                                                value={(this.state.filterModel || {})[field.search.key]}
+                                                                value={this.state.filterModel && this.state.filterModel[field.search.key] || ""}
                                                                 onKeyPress={this.handleSearchKeyPress}
                                                                 onChange={(e: any) => this.handleFieldSearch(field.search.key, e.target.value)}
                                                             />
@@ -450,7 +450,9 @@ export class CruxComponentCreator {
                                                     <ListNestedComponent
                                                         field={field} model={model}
                                                         additionalModels={this.props.additionalModels}
-                                                        modelChanged={this.inlineEdit} />
+                                                        modelChanged={this.inlineEdit}
+                                                        additionalProps={this.props.additionalProps}
+                                                    />
                                                 </div>
                                             </td>
                                         })}
