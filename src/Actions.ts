@@ -3,7 +3,7 @@ import { FetchUtil } from "./FetchUtil"
 
 const queryString = require("query-string")
 
-const apiServer = process.env.API_SERVER ? process.env.API_SERVER : ""
+const apiServer = process.env.API_SERVER || ""
 
 export function getMyDetails(success?: any, error?: any) {
     return (dispatch: Dispatch<any>) => {
