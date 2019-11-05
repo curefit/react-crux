@@ -742,19 +742,27 @@ This is to support Custom Components with our edit/create Modal.
     {
         title: "Address",
         type: "custom",
-        customComponent: customComponentView
+        customComponent: customComponentFn, // Deprecated
+        customViewComponent: CustomViewComponent
     }
   ],
   "createModal": true
 }
 
-function customComponentView(currentModal: model, additionalModels: any, parentModel: any, addtionalProps: any, modal: any) {
+// @Deprecated
+function customComponentFn(currentModal: model, additionalModels: any, parentModel: any, addtionalProps: any, modal: any) {
     class CustomComponent extends React.Component<{}, {}> {
         render() {
             return <p>{model.address}</p>
         }
     }
     return CustomComponent
+}
+
+class CustomViewComponent extends React.Component<{}, {}> {
+    render() {
+        return <p>{this.props.currentModal.address}</p>
+    }
 }
 ```
 

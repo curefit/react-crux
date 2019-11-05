@@ -33,8 +33,18 @@ export class ListNestedComponent extends React.Component<any, any> {
         }
 
         if (this.props.field.type === "custom") {
-            const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels, this.props.parentModel, this.props.additionalProps, this.modelChanged)
-            return <CustomComponent />
+            if (this.props.field.customComponent) {
+                const CustomComponent = this.props.field.customComponent(this.props.model, this.props.additionalModels, this.props.parentModel, this.props.additionalProps, this.modelChanged)
+                return <CustomComponent />
+            } else {
+                const CustomComponent = this.props.field.customViewComponent
+                return <CustomComponent
+                    currentModel={this.props.model}
+                    additionalModels={this.props.additionalModels}
+                    parentModel={this.props.parentModel}
+                    additionalProps={this.props.additionalProps}
+                    modelChanged={this.modelChanged} />
+            }
         } else {
             const value = this.props.model[this.props.field.field]
             const field = this.props.field
