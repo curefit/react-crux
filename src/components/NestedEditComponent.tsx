@@ -419,14 +419,29 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }}>
                         {
                             map(wysiwygFields, (field: any, index: number) => {
-                                const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
-                                return <div key={index}>
-                                    <label style={{
-                                        fontSize: "10px",
-                                        marginRight: "10px"
-                                    }}>{field.title.toUpperCase()}</label>
-                                    <CustomComponent key={index} />
-                                </div>
+                                if (field.customComponent) {
+                                    const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
+                                    return <div key={index}>
+                                        <label style={{
+                                            fontSize: "10px",
+                                            marginRight: "10px"
+                                        }}>{field.title.toUpperCase()}</label>
+                                        <CustomComponent key={index} />
+                                    </div>
+                                } else {
+                                    const CustomComponent = field.customViewComponent
+                                    return <div key={index}>
+                                        <label style={{
+                                            fontSize: "10px",
+                                            marginRight: "10px"
+                                        }}>{field.title.toUpperCase()}</label>
+                                        <CustomComponent key={index}
+                                            currentModel={this.props.currentModel}
+                                            additionalModels={this.props.additionalModels}
+                                            parentModel={this.props.parentModel}
+                                            additionalProps={this.props.additionalProps} />
+                                    </div>
+                                }
                             })
                         }
                     </div>

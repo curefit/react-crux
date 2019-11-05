@@ -450,7 +450,9 @@ export class CruxComponentCreator {
                                                     <ListNestedComponent
                                                         field={field} model={model}
                                                         additionalModels={this.props.additionalModels}
-                                                        modelChanged={this.inlineEdit} />
+                                                        modelChanged={this.inlineEdit}
+                                                        additionalProps = {this.props.additionalProps}
+                                                    />
                                                 </div>
                                             </td>
                                         })}
