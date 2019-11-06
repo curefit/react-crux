@@ -60,7 +60,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
                 // Copies the filter items to persist the preference
                 Object.assign(this.props.item, newItem)
-                this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError)
+                this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError, this.props.queryParams)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
