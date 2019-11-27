@@ -487,7 +487,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     trimValue(event: any) {
         const {
-            modelChanged, field, currentModel
+            modelChanged, field, currentModel, index
         } = this.props;
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
         const newModel = Object.assign({}, currentModel, { [event.target.getAttribute("data-value")]: value })
@@ -497,10 +497,10 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             && value !== undefined
             && !this.checkReadonly(field.readonly, currentModel)
         ) {
-            if (this.props.index >= 0) {
-                this.props.modelChanged(this.props.index, newModel)
+            if (index >= 0) {
+                modelChanged(index, newModel)
             } else {
-                this.props.modelChanged(newModel)
+                modelChanged(newModel)
             }
         }
     }
