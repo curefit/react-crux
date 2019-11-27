@@ -296,6 +296,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         disabled={this.checkReadonly(field.readonly, currentModel)}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
                         onChange={this.handleFieldChange}
+                        onBlur={this.trimValue.bind(this)}
+                        onKeyDown={this.onKeyDown.bind(this)}
                         style={field.type === "tinyinput" ? {
                             width: 64,
                             paddingTop: 5
@@ -475,6 +477,30 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             this.props.modelChanged(this.props.index, newModel)
         } else {
             this.props.modelChanged(newModel)
+        }
+    }
+
+    onKeyDown(event: any) {
+        // when pressing Enter or Esc
+        if (event.keyCode === 13 || event.keyCode === 27) this.trimValue(event);
+    }
+
+    trimValue(event: any) {
+        const {
+            modelChanged
+        } = this.props;
+        const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
+        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
+        if (
+            modelChanged
+            && value !== null
+            && value !== undefined
+        ) {
+            if (this.props.index >= 0) {
+                this.props.modelChanged(this.props.index, newModel)
+            } else {
+                this.props.modelChanged(newModel)
+            }
         }
     }
 
