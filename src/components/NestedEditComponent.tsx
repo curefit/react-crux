@@ -498,9 +498,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             && !this.checkReadonly(field.readonly, currentModel)
         ) {
             if (index >= 0) {
-                modelChanged(index, newModel)
+                modelChanged(index, newModel.trim())
             } else {
-                modelChanged(newModel)
+                modelChanged(newModel.trim())
             }
         }
     }
