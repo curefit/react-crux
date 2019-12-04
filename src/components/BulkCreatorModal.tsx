@@ -175,6 +175,12 @@ export class BulkCreateModal extends React.Component<any, any> {
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                 </Dropzone>
+                <FormGroup>
+                    <ControlLabel>Sync URL</ControlLabel>
+                    <FormControl type="text"
+                        value={this.state.syncUrl}
+                        placeholder="Sync CSV URL" onChange={this.syncUrl} />
+                </FormGroup>
             </Modal.Body>
             <Modal.Footer>
                 <div className="btn btn-primary" onClick={this.bulkCreate}>Sync With Url</div>
