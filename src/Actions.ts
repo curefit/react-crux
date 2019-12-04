@@ -25,11 +25,11 @@ export function getMyDetails(success?: any, error?: any) {
 
 export function filterModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
-        dispatch({ type: "FETCH_" + model +  "_STARTED", model: model , item: item, isFilters: true})
+        dispatch({ type: "FETCH_" + model + "_STARTED", model: model, item: item, isFilters: true })
         const modalQueryParams = queryString.parseUrl(model)
         const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}/filter?${queryParamsString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: {results : data.results ? data.results : data, metadata: data.metadata}, model: model})
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: { results: data.results ? data.results : data, metadata: data.metadata }, model: model })
             if (success) success(data.results ? data.results : data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
@@ -49,7 +49,7 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
         const modalQueryParams = queryString.parseUrl(model)
         const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}?${queryParamsString}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data : data.results ? data.results : data, model: model})
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: data.results ? data.results : data, model: model })
             if (success) success(data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
@@ -67,6 +67,22 @@ export function bulkCreate(model: string, csvUrl: string, success?: any, error?:
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "BULK_CREATE_" + model + "_STARTED", model: model })
         fetch("/model/" + model + "/bulkCreate", FetchUtil.post({ csvUrl: csvUrl })).then(FetchUtil.parseResponse).then((data: any) => {
+            dispatch({ type: "BULK_CREATE_" + model + "_COMPLETED", data: data, model: model })
+            if (success) success(data)
+        }).catch((err: any) => {
+            if (err.name === "AuthError") {
+                return dispatch({ type: "AUTH_FAILED" })
+            }
+            dispatch({ type: "BULK_CREATE_" + model + "_FAILURE", err: err, model: model })
+            if (error) error(err)
+        })
+    }
+}
+
+export function bulkCreateWithJSONData(model: string, jsonData: [], success?: any, error?: any) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ type: "BULK_CREATE_" + model + "_STARTED", model: model })
+        fetch("/model/" + model + "/bulkCreateWithJSONData", FetchUtil.post({ jsonData: jsonData })).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "BULK_CREATE_" + model + "_COMPLETED", data: data, model: model })
             if (success) success(data)
         }).catch((err: any) => {

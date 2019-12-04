@@ -2,7 +2,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import {
     createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-    searchModel, bulkCreate
+    searchModel, bulkCreate, bulkCreateWithJSONData
 } from "./Actions"
 import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
@@ -61,7 +61,7 @@ export class CruxComponentCreator {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
                 queryParams: ownProps && ownProps.options && ownProps.options.queryParams,
-                additionalProps:  ownProps && ownProps.options && ownProps.options.additionalProps
+                additionalProps: ownProps && ownProps.options && ownProps.options.additionalProps
             })
         }
 
@@ -90,7 +90,10 @@ export class CruxComponentCreator {
                 },
                 bulkCreate: (model: string, csvUrl: string, success: any, error: any) => {
                     dispatch(bulkCreate(model, csvUrl, success, error))
-                }
+                },
+                bulkCreateWithJSONData: (model: string, jsonData: [], success: any, error: any) => {
+                    dispatch(bulkCreateWithJSONData(model, jsonData, success, error))
+                },
             }
         }
 
@@ -316,7 +319,7 @@ export class CruxComponentCreator {
                     closeModal={this.closeCustomModal}
                     sucessDispatch={this.successCustomModalDispatch}
                     failureDispatch={this.failureCustomModalDispatch}
-                    additionalProps = {this.props.additionalProps}
+                    additionalProps={this.props.additionalProps}
                     {...this.props} />
             }
 
@@ -451,7 +454,7 @@ export class CruxComponentCreator {
                                                         field={field} model={model}
                                                         additionalModels={this.props.additionalModels}
                                                         modelChanged={this.inlineEdit}
-                                                        additionalProps = {this.props.additionalProps}
+                                                        additionalProps={this.props.additionalProps}
                                                     />
                                                 </div>
                                             </td>
@@ -481,7 +484,7 @@ export class CruxComponentCreator {
                                 createOrEditSuccess={this.createOrEditSuccess}
                                 additionalModels={this.props.additionalModels}
                                 queryParams={this.props.queryParams}
-                                additionalProps = {this.props.additionalProps}
+                                additionalProps={this.props.additionalProps}
                             />
                         }
 
@@ -492,7 +495,8 @@ export class CruxComponentCreator {
                                 closeModal={this.closeBulkCreateModal}
                                 createOrModify={this.props.bulkCreate}
                                 createOrEditSuccess={this.createOrEditSuccess}
-                                additionalProps = {this.props.additionalProps}
+                                createBulkUserWithJSONdata={this.props.bulkCreateWithJSONData}
+                                additionalProps={this.props.additionalProps}
                             />
                         }
 
@@ -509,7 +513,7 @@ export class CruxComponentCreator {
                                 deleteModel={constants.deleteModal === false ? undefined : this.props.deleteModel}
                                 additionalModels={this.props.additionalModels}
                                 queryParams={this.props.queryParams}
-                                additionalProps = {this.props.additionalProps}
+                                additionalProps={this.props.additionalProps}
                             />
                         }
                         {constants.filterModal && this.state.showFilterModal &&
@@ -523,7 +527,7 @@ export class CruxComponentCreator {
                                 filter={this.props.filter}
                                 additionalModels={this.props.additionalModels}
                                 queryParams={this.props.queryParams}
-                                additionalProps = {this.props.additionalProps}
+                                additionalProps={this.props.additionalProps}
                             />
                         }
                         {constants.customModal && this.state.showCustomModal &&

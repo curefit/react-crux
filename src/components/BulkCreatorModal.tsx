@@ -10,33 +10,12 @@ if ("default" in Dropzone) {
 }
 
 interface BulkCreateModalProps {
+    constants?: any,
+    showModal: any
     createOrModify: any
+    createBulkUserWithJSONdata: any
     createOrEditSuccess: any
     closeModal: any
-    showModal: any
-    field: any,
-    modelChanged: any,
-    additionalModels: any
-    currentModel: any
-    fetch?: any
-    indent?: boolean
-    showTitle?: boolean
-    width?: string
-    height?: string
-    contentType?: string
-    item?: any
-    parentModel: any,
-    shouldRender?: boolean,
-    urlPrefix?: string,
-    urlSuffix?: string
-    constants?: any,
-    anchors?: any,
-    readonly?: boolean,
-    isMulti?: boolean,
-    index?: number
-    style?: any
-    iterableNested?: boolean
-    nestedIterableModelChanged?: any
     additionalProps?: any
 }
 
@@ -45,6 +24,7 @@ interface BulkCreateModalState {
     error: any
     inProgress: any
     files: any
+    jsonData: any
 }
 
 export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkCreateModalState> {
@@ -54,7 +34,8 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
             syncUrl: "",
             error: null,
             inProgress: false,
-            files: []
+            files: [],
+            jsonData: []
         }
     }
 
@@ -77,11 +58,11 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
     }
 
     bulkCreate = () => {
-        this.props.bulkCreate(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
+        this.props.createOrModify(this.props.constants.modelName, this.state.syncUrl, this.createOrEditSuccess, this.createOrEditError)
     }
 
     bulkCreateWithJson = () => {
-        this.props.bulkCreateWithJson(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
+        this.props.createBulkUserWithJSONdata(this.props.constants.modelName, this.state.jsonData, this.createOrEditSuccess, this.createOrEditError)
     }
 
     syncUrl = (e: any) => {
@@ -107,8 +88,7 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
                 })
                     .fromString(fileAsBinaryString)
                     .then((csvRows: any) => {
-                        const toJson: any = [];
-                        console.log(csvRows, 'csvRows');
+                        const jsonData: any = [];
                         csvRows.forEach((aCsvRow: any, i: number) => {
                             if (i !== 0) {
                                 const builtObject: any = {}
@@ -119,15 +99,13 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
                                     builtObject[keyToAddInBuiltObject] = valueToAddInBuiltObject
                                 })
 
-                                toJson.push(builtObject)
+                                jsonData.push(builtObject)
                             }
                         });
-                        console.log(toJson, 'toJson');
                         this.setState({
                             inProgress: false,
-                            toJson
+                            jsonData
                         })
-
                     });
             };
 
@@ -171,7 +149,6 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
                 }
 
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
-                    disabled={this.props.readonly}
                     onDrop={(data: any) => {
                         this.onDrop(data)
                     }} multiple={true}>
