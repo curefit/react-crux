@@ -77,7 +77,7 @@ export class BulkCreateModal extends React.Component<any, any> {
     }
 
     bulkCreate = () => {
-        this.props.createOrModify(this.props.constants.modelName, this.state.syncUrl, this.createOrEditSuccess, this.createOrEditError)
+        this.props.createOrModify(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
     }
 
     syncUrl = (e: any) => {
@@ -104,6 +104,7 @@ export class BulkCreateModal extends React.Component<any, any> {
                     .fromString(fileAsBinaryString)
                     .then((csvRows: any) => {
                         const toJson: any = [];
+                        console.log(csvRows, 'csvRows');
                         csvRows.forEach((aCsvRow: any, i: number) => {
                             if (i !== 0) {
                                 const builtObject: any = {}
@@ -117,9 +118,10 @@ export class BulkCreateModal extends React.Component<any, any> {
                                 toJson.push(builtObject)
                             }
                         });
-                        console.log(toJson);
+                        console.log(toJson, 'toJson');
                         this.setState({
-                            inProgress: false
+                            inProgress: false,
+                            toJson
                         })
 
                     });
@@ -169,13 +171,14 @@ export class BulkCreateModal extends React.Component<any, any> {
                     onDrop={(data: any) => {
                         this.onDrop(data)
                     }} multiple={true}>
-                    <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
+                    <div style={{ textAlign: "left", color: "#E2356F" }}>Upload CSV</div>
                     {this.state.inProgress &&
                         <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
                 </Dropzone>
             </Modal.Body>
             <Modal.Footer>
-                <div className="btn btn-primary" onClick={this.bulkCreate}>Sync</div>
+                <div className="btn btn-primary" onClick={this.bulkCreate}>Sync With Url</div>
+                <div className="btn btn-primary" onClick={this.bulkCreate}>Sync With File</div>
                 <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
             </Modal.Footer>
         </Modal>
