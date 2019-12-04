@@ -9,45 +9,45 @@ if ("default" in Dropzone) {
     Dropzone = Dropzone.default
 }
 
-// interface BulkCreateModalProps {
-//     createOrModify: any
-//     createOrEditSuccess: any
-//     closeModal: any
-//     showModal: any
-//     field: any,
-//     modelChanged: any,
-//     additionalModels: any
-//     currentModel: any
-//     fetch?: any
-//     indent?: boolean
-//     showTitle?: boolean
-//     width?: string
-//     height?: string
-//     contentType?: string
-//     item?: any
-//     parentModel: any,
-//     shouldRender?: boolean,
-//     urlPrefix?: string,
-//     urlSuffix?: string
-//     constants?: any,
-//     anchors?: any,
-//     readonly?: boolean,
-//     isMulti?: boolean,
-//     index?: number
-//     style?: any
-//     iterableNested?: boolean
-//     nestedIterableModelChanged?: any
-//     additionalProps?: any
-// }
+interface BulkCreateModalProps {
+    createOrModify: any
+    createOrEditSuccess: any
+    closeModal: any
+    showModal: any
+    field: any,
+    modelChanged: any,
+    additionalModels: any
+    currentModel: any
+    fetch?: any
+    indent?: boolean
+    showTitle?: boolean
+    width?: string
+    height?: string
+    contentType?: string
+    item?: any
+    parentModel: any,
+    shouldRender?: boolean,
+    urlPrefix?: string,
+    urlSuffix?: string
+    constants?: any,
+    anchors?: any,
+    readonly?: boolean,
+    isMulti?: boolean,
+    index?: number
+    style?: any
+    iterableNested?: boolean
+    nestedIterableModelChanged?: any
+    additionalProps?: any
+}
 
-// interface BulkCreateModalState {
-//     syncUrl: string
-//     error: any
-//     inProgress: any
-//     files: any
-// }
+interface BulkCreateModalState {
+    syncUrl: string
+    error: any
+    inProgress: any
+    files: any
+}
 
-export class BulkCreateModal extends React.Component<any, any> {
+export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkCreateModalState> {
     constructor(props: any) {
         super(props)
         this.state = {
@@ -77,7 +77,11 @@ export class BulkCreateModal extends React.Component<any, any> {
     }
 
     bulkCreate = () => {
-        this.props.createOrModify(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
+        this.props.bulkCreate(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
+    }
+
+    bulkCreateWithJson = () => {
+        this.props.bulkCreateWithJson(this.props.constants.modelName, this.state.toJson, this.createOrEditSuccess, this.createOrEditError)
     }
 
     syncUrl = (e: any) => {
@@ -184,7 +188,7 @@ export class BulkCreateModal extends React.Component<any, any> {
             </Modal.Body>
             <Modal.Footer>
                 <div className="btn btn-primary" onClick={this.bulkCreate}>Sync With Url</div>
-                <div className="btn btn-primary" onClick={this.bulkCreate}>Sync With File</div>
+                <div className="btn btn-primary" onClick={this.bulkCreateWithJson}>Sync With File</div>
                 <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
             </Modal.Footer>
         </Modal>
