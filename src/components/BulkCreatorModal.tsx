@@ -1,27 +1,60 @@
 import { omit, isEmpty } from "lodash"
 import * as React from "react"
 import { Alert, ControlLabel, FormControl, FormGroup, Modal } from "react-bootstrap"
-
-interface BulkCreateModalProps {
-    createOrModify: any
-    constants: any
-    createOrEditSuccess: any
-    closeModal: any
-    showModal: any
-    additionalProps?: any
+import * as upload from "superagent"
+import { InlineComponentProps } from "../CruxComponent"
+import * as csv from "csvtojson";
+let Dropzone = require("react-dropzone")
+if ("default" in Dropzone) {
+    Dropzone = Dropzone.default
 }
 
-interface BulkCreateModalState {
-    syncUrl: string
-    error: any
-}
+// interface BulkCreateModalProps {
+//     createOrModify: any
+//     createOrEditSuccess: any
+//     closeModal: any
+//     showModal: any
+//     field: any,
+//     modelChanged: any,
+//     additionalModels: any
+//     currentModel: any
+//     fetch?: any
+//     indent?: boolean
+//     showTitle?: boolean
+//     width?: string
+//     height?: string
+//     contentType?: string
+//     item?: any
+//     parentModel: any,
+//     shouldRender?: boolean,
+//     urlPrefix?: string,
+//     urlSuffix?: string
+//     constants?: any,
+//     anchors?: any,
+//     readonly?: boolean,
+//     isMulti?: boolean,
+//     index?: number
+//     style?: any
+//     iterableNested?: boolean
+//     nestedIterableModelChanged?: any
+//     additionalProps?: any
+// }
 
-export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkCreateModalState> {
+// interface BulkCreateModalState {
+//     syncUrl: string
+//     error: any
+//     inProgress: any
+//     files: any
+// }
+
+export class BulkCreateModal extends React.Component<any, any> {
     constructor(props: any) {
         super(props)
         this.state = {
             syncUrl: "",
-            error: null
+            error: null,
+            inProgress: false,
+            files: []
         }
     }
 
@@ -48,10 +81,58 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
     }
 
     syncUrl = (e: any) => {
-        this.setState({syncUrl: e.target.value })
+        this.setState({ syncUrl: e.target.value })
+    }
+    onDrop = (acceptedFiles: any) => {
+        this.setState({
+            files: acceptedFiles
+        });
+        this.setState({
+            inProgress: true
+        })
+
+        acceptedFiles.forEach((file: any) => {
+            const reader = new FileReader()
+
+            reader.onload = () => {
+                const fileAsBinaryString: any = reader.result;
+
+                csv({
+                    noheader: true,
+                    output: "json"
+                })
+                    .fromString(fileAsBinaryString)
+                    .then((csvRows: any) => {
+                        const toJson: any = [];
+                        csvRows.forEach((aCsvRow: any, i: number) => {
+                            if (i !== 0) {
+                                const builtObject: any = {}
+
+                                Object.keys(aCsvRow).forEach(aKey => {
+                                    const valueToAddInBuiltObject = aCsvRow[aKey]
+                                    const keyToAddInBuiltObject = csvRows[0][aKey]
+                                    builtObject[keyToAddInBuiltObject] = valueToAddInBuiltObject
+                                })
+
+                                toJson.push(builtObject)
+                            }
+                        });
+                        console.log(toJson);
+                        this.setState({
+                            inProgress: false
+                        })
+
+                    });
+            };
+
+            reader.onabort = () => console.log("file reading was aborted")
+            reader.onerror = () => console.log("file reading has failed")
+
+            reader.readAsText(file, 'ISO-8859-1')
+        })
     }
 
-    render () {
+    render() {
         let errorType, errorMessage
         if (this.state.error && !isEmpty(this.state.error.message)) {
             try {
@@ -83,12 +164,15 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
                     </Alert>
                 }
 
-                    <FormGroup>
-                        <ControlLabel>Sync URL</ControlLabel>
-                        <FormControl type="text"
-                                     value={this.state.syncUrl}
-                                     placeholder="Sync CSV URL" onChange={this.syncUrl} />
-                    </FormGroup>
+                <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
+                    disabled={this.props.readonly}
+                    onDrop={(data: any) => {
+                        this.onDrop(data)
+                    }} multiple={true}>
+                    <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
+                    {this.state.inProgress &&
+                        <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
+                </Dropzone>
             </Modal.Body>
             <Modal.Footer>
                 <div className="btn btn-primary" onClick={this.bulkCreate}>Sync</div>
