@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { isEmpty, sortBy, trim, find, map, isNil } from "lodash"
+import { isEmpty, sortBy, trim, find, map, isNil, isObject } from "lodash"
 import { DropdownButton, MenuItem } from "react-bootstrap"
 import { InlineComponentProps } from "../CruxComponent"
 
@@ -35,7 +35,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             if (!this.props.field.foreign.title) {
                 console.error(`Did you forget to add a "title" field in foreign . Possible culprit: ${this.props.field}`)
             }
-            if (!isNil(this.props.currentModel)) {
+            if (!isNil(this.props.currentModel) && !(isObject(this.props.currentModel) && isEmpty(this.props.currentModel))) {
                 const foreignDoc = find(optionsData, (doc: any) => {
                     if (this.props.field.foreign.keys) {
                         return this.props.field.foreign.keys.every((key: any) => doc[key] === this.props.currentModel[key])
