@@ -3,7 +3,6 @@ import * as React from "react"
 import * as moment from "moment-timezone"
 import { InlineComponentProps } from "../CruxComponent"
 import TimePicker from 'rc-time-picker';
-import 'rc-time-picker/assets/index.css';
 
 
 const format = 'h:mm a';
