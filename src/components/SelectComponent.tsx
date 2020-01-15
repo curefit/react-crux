@@ -68,8 +68,9 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 }}>{this.props.field.title.toUpperCase()}</label><br /></div>
             }
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
-                            title={foreignTitle}
-                            disabled={this.props.readonly}>
+                title={foreignTitle}
+                disabled={this.props.readonly}>
+                <button onClick={() => this.select(this.props.field, undefined)}>Close</button>
                 {
                     map(optionsData, ((doc: any, index: any) => {
                         let eventKey = doc
