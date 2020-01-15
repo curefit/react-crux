@@ -31,6 +31,8 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
                         onChange={this.handleChange}
                         format={format}
                         disabled={readonly}
+                        showSecond={false}
+                        use12Hours
                     />
                 </div>
             </div>
@@ -38,6 +40,6 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleChange = (value: any) => {
-        this.props.modelChanged(this.props.field, value)
+        this.props.modelChanged(this.props.field, value.format(format))
     }
 }
