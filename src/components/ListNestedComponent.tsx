@@ -72,10 +72,6 @@ export class ListNestedComponent extends React.Component<any, any> {
                 return <ListDateComponent model={value} field={field} />
             }
 
-            if (field.type === "timepicker") {
-                return <ListDateComponent model={value} field={field} />
-            }
-
             if (field.type === "datetimezonepicker") {
                 return <ListDateTimezoneComponent model={value} field={field} />
             }
