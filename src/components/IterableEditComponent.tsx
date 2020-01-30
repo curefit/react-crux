@@ -5,6 +5,8 @@ import { SelectComponent } from "./SelectComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
 import { CheckboxComponent } from "./CheckboxComponent"
 import { DatePickerComponent } from "./DatePickerComponent"
+import { TimePickerComponent } from "./TimePickerComponent"
+
 import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
@@ -351,6 +353,32 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DatePickerComponent
+                                        constants={this.props.constants}
+                                        currentModel={currentModel}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                        readonly={readonly}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timepicker") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <TimePickerComponent
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}

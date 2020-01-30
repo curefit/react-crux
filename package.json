@@ -16,6 +16,7 @@
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",
     "query-string": "^6.2.0",
+    "rc-time-picker": "^3.7.3",
     "react": "^16.4.2",
     "react-bootstrap": "^0.32.3",
     "react-bootstrap-typeahead": "^3.2.2",

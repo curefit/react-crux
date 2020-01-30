@@ -12,6 +12,7 @@ import { MultiSelectComponent } from "./MultiSelectComponent"
 import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
+import { TimePickerComponent } from "./TimePickerComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
@@ -133,7 +134,23 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     parentModel={currentModelWithParent}
                 />
             )
-        } else if (field.type === "timezone") {
+
+
+        } 
+        else if (field.type === "timepicker") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
+            return (
+                <TimePickerComponent field={field}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                />
+            )
+        }
+        else if (field.type === "timezone") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <TimezoneComponent field={field}
