@@ -18,7 +18,7 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     render() {
-        const { readonly } = this.props;
+        const { readonly, currentModel } = this.props;
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "250px" }}>
@@ -28,6 +28,7 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
                     }}>{this.props.field.title.toUpperCase()}</label>
                     <TimePicker
                         defaultValue={now}
+                        value={currentModel || now}
                         onChange={this.handleChange}
                         format={format}
                         disabled={readonly}
