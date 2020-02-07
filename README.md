@@ -357,7 +357,8 @@ Dynamic Typeahead Field which will query based on user typings. It is not suppor
    foreign: {
        modelName: "cohortEventMeta",
        key: "id",
-       title: "name"
+       title: "name",
+       dynamicPayloadFn: ({parentModel}) => parentModel.data
    }
 }
 ```
