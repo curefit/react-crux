@@ -25,7 +25,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     componentDidMount() {
         if (isEmpty(this.state.options) && this.props.type !== "iterable") {
             const item: any = {
-                limit: 10
+                limit: 10, ...this.getDynamicPaylaod(),
             }
             if (!isEmpty(this.state.selected)) {
                 if (this.props.field.foreign.keys) {
@@ -64,10 +64,18 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         return false
     }
 
+    getDynamicPaylaod = () => {
+        let dynamicPayload = {}
+        if (this.props.field.foreign.dynamicPayloadFn && typeof this.props.field.foreign.dynamicPayloadFn === "function") {
+            dynamicPayload = this.props.field.foreign.dynamicPayloadFn({parentModel: this.props.parentModel})
+        }
+        return dynamicPayload
+    }
+
     handleSearch = (query: string) => {
         this.setState({ isLoading: true })
         const item = {
-            [this.props.field.foreign.title]: query, limit: 10
+            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPaylaod(),
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
             this.setState({
