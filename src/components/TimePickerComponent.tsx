@@ -28,7 +28,7 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
                     }}>{this.props.field.title.toUpperCase()}</label>
                     <TimePicker
                         defaultValue={now}
-                        value={currentModel || now}
+                        value={currentModel ? moment(currentModel, format): now}
                         onChange={this.handleChange}
                         format={format}
                         disabled={readonly}
