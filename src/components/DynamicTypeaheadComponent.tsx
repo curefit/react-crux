@@ -62,6 +62,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (this.props.currentModel !== nextProps.currentModel ||
+            this.state.query!== nextState.query ||
             !isEqual(this.state.options, nextState.options)) {
             return true
         }
@@ -163,6 +164,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                     isLoading={this.state.isLoading}
                     onSearch={() => {}}
                     onInputChange={this.handleInputChange}
+                    onFocus={() => this.handleSearch(this.state.query)}
                     options={optionsData}
                     selected={selected || []}
                     onChange={this.handleChange}
