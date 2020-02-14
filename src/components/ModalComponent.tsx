@@ -53,7 +53,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     modalPerformOperation(modalType: ModalType, edit: boolean) {
-        return async () => {
+        return () => {
             this.setState({
                 requestInProgress: true
             })
@@ -66,7 +66,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError, this.props.queryParams)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
 
-                await this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
+                this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
         }
     }
