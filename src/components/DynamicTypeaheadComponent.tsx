@@ -48,15 +48,18 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         }
     }
 
-    componentWillReceiveProps(nextProps: any, nextState: any) {
-        if (this.state.query !== nextState.query) {
-            this.handleSearch(nextState.query)
-        }
+    componentWillReceiveProps(nextProps: any) {
         if (!isEmpty(nextProps.options) && isEmpty(this.state.options)) {
             this.setState({
                 isLoading: false,
                 options: nextProps.options
             })
+        }
+    }
+
+    componentWillUpdate(nextProps: any, nextState: any) {
+        if (this.state.query !== nextState.query) {
+            this.handleSearch(nextState.query)
         }
     }
 
