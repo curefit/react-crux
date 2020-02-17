@@ -54,6 +54,9 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
+            this.setState({
+                requestInProgress: true
+            })
             if (modalType === "FILTER") {
                 const newItem = Object.assign({}, this.state.item,
                     { skip: 0, paginate: Object.assign({}, this.state.item.paginate, { currentPage: 1 }) })
@@ -62,25 +65,32 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 Object.assign(this.props.item, newItem)
                 this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError, this.props.queryParams)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
+
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
         }
     }
 
     createOrEditSuccess = (data: any) => {
+        this.setState({
+            requestInProgress: false
+        })
         this.props.createOrEditSuccess()
     }
 
     filterSuccess(data: any) {
+        this.setState({
+            requestInProgress: false
+        })
         this.props.filterSuccess()
     }
 
     filterError(err: any) {
-        this.setState(Object.assign({}, this.state, { error: err }))
+        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
     }
 
     createOrEditError = (err: any) => {
-        this.setState(Object.assign({}, this.state, { error: err }))
+        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
         this.closeDeleteModal()
         this.modalBodyRef.scrollTop = 0
     }
@@ -119,6 +129,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 errorMessage = this.state.error.message
             }
         }
+        const { requestInProgress } = this.state
         const errorClassName = this.state.error ? "error-animate" : ""
         return <Modal
             show={this.props.showModal}
@@ -177,17 +188,18 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 }
                 {this.props.modalType === "EDIT" ?
                     <>
-                        <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</div>
+                        <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</button>
                         {this.props.constants.saveAsNew &&
-                            <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</div>}
+
+                            <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</button>}
                     </> : null}
                 {this.props.modalType === "CREATE" || this.props.modalType === "CUSTOM" ? (
-                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>{this.props.successButtonLabel || "Create"}</div>
+                    <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>{this.props.successButtonLabel || "Create"}</button>
                 ) : null}
                 {this.props.modalType === "FILTER" ? (
-                    <div className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Filter</div>
+                    <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Filter</button>
                 ) : null}
-                <div className="btn btn-secondary" onClick={this.closeModal}>Cancel</div>
+                <button disabled={requestInProgress} className="btn btn-secondary" onClick={this.closeModal}>Cancel</button>
             </Modal.Footer>
         </Modal>
     }
