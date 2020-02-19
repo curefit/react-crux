@@ -16,6 +16,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     constructor(props: any) {
         super(props)
         this.state = {
+            query: "",
             isLoading: false,
             options: props.options || [],
             selected: props.currentModel || undefined
@@ -25,7 +26,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     componentDidMount() {
         if (isEmpty(this.state.options) && this.props.type !== "iterable") {
             const item: any = {
-                limit: 10, ...this.getDynamicPaylaod(),
+                limit: 10, ...this.getDynamicPayload(),
             }
             if (!isEmpty(this.state.selected)) {
                 if (this.props.field.foreign.keys) {
@@ -56,15 +57,22 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         }
     }
 
+    componentWillUpdate(nextProps: any, nextState: any) {
+        if (this.state.query !== nextState.query) {
+            this.handleSearch(nextState.query)
+        }
+    }
+
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (this.props.currentModel !== nextProps.currentModel ||
+            this.state.query!== nextState.query ||
             !isEqual(this.state.options, nextState.options)) {
             return true
         }
         return false
     }
 
-    getDynamicPaylaod = () => {
+    getDynamicPayload = () => {
         let dynamicPayload = {}
         if (this.props.field.foreign.dynamicPayloadFn && typeof this.props.field.foreign.dynamicPayloadFn === "function") {
             dynamicPayload = this.props.field.foreign.dynamicPayloadFn({parentModel: this.props.parentModel})
@@ -72,10 +80,13 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         return dynamicPayload
     }
 
+    handleInputChange = (query: string, e: Event) => {
+        this.setState({ query })
+    }
+
     handleSearch = (query: string) => {
-        this.setState({ isLoading: true })
         const item = {
-            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPaylaod(),
+            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(),
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
             this.setState({
@@ -154,7 +165,9 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                     labelKey={"label"}
                     minLength={0}
                     isLoading={this.state.isLoading}
-                    onSearch={this.handleSearch}
+                    onSearch={() => {}}
+                    onInputChange={this.handleInputChange}
+                    onFocus={() => this.handleSearch(this.state.query)}
                     options={optionsData}
                     selected={selected || []}
                     onChange={this.handleChange}
