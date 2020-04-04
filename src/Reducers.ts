@@ -36,6 +36,9 @@ export function CruxReducerFactory(defaultModels: any) {
                     return Object.assign({}, initialState, { [action.model]: { error: action.err }, fetchComplete: true })
                 }
             }
+            if (action.type.endsWith("OPEN_")) {
+                return Object.assign({}, initialState, { [action.model]: action.data})
+            }
         }
 
         return Object.assign({}, initialState)

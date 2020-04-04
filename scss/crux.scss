@@ -89,3 +89,22 @@ mark {
   90% { transform: translate(1px, 2px) rotate(0deg); }
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
+
+
+.bottomTabsCss{
+    background: #ddd;
+    padding: 20px 20px 15px 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 30px 0px;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.minimise_icon{
+  font-size: 50px;
+    position: absolute;
+    right: 36px;
+    top: -14px;
+    color: gray;
+}
