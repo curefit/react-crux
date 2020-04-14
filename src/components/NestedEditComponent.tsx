@@ -47,8 +47,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     getComponentForField(field: any, currentModelWithParent: any) {
         if (field.type === "select") {
-            if (field.defaultValue) {
-                this.props.currentModel && this.props.currentModel[field.field] ? null : this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: field.defaultValue }))
+            if (field.defaultValue && !(this.props.currentModel && this.props.currentModel[field.field])) {
+                this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: field.defaultValue }))
             }
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (<SelectComponent field={field}
