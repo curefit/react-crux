@@ -12,7 +12,8 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
     constructor(props: any) {
         super(props)
         this.state = {
-            inProgress: false
+            inProgress: false,
+            percentageDone: 0
         }
     }
 
@@ -29,7 +30,15 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         if (this.props.item && this.props.item["contentType"] && this.props.item["contentType"] !== contentType) {
             contentType = this.props.item["contentType"]
         }
+        this.setState({
+            percentageDone: 0
+        })
         upload.post("/content/" + contentType + "/upload/").send(formData)
+            .on('progress', (e) => {
+                this.setState({
+                    percentageDone: e.percent
+                })
+            })
             .end((err: any, res: any) => {
                 this.setState(Object.assign({}, this.state, { inProgress: false }))
                 if (res.status !== 200) {
@@ -50,12 +59,13 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
 
     previewUpload = () => {
         if (this.props.contentType === "video") {
-            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)}/>
+            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)} />
         }
         return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
     }
 
     render() {
+        const { percentageDone } = this.state
         return (
             <div>
                 <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
@@ -65,14 +75,20 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     }} multiple={true}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
-                        <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />}
+                        <div>
+                            <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />,
+                            <p>{percentageDone} % done}</p>
+                        </div>
+                    }
                     {this.props.currentModel &&
-                            <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
-                                {this.previewUpload()}
-                            </div>}
+                        <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
+                            {this.previewUpload()}
+                        </div>}
                 </Dropzone>
-                {this.props.currentModel &&
-                    <a onClick={this.removeFile} style={{ color: "#0000EE", marginLeft: "42px" }}>Remove</a>}
+                {
+                    this.props.currentModel &&
+                    <a onClick={this.removeFile} style={{ color: "#0000EE", marginLeft: "42px" }}>Remove</a>
+                }
             </div>
         )
     }
