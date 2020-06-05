@@ -77,7 +77,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.state.inProgress &&
                         <div>
                             <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />,
-                            <p>{percentageDone} % done}</p>
+                            <p>{percentageDone} % done</p>
                         </div>
                     }
                     {this.props.currentModel &&
