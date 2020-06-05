@@ -36,7 +36,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         upload.post("/content/" + contentType + "/upload/").send(formData)
             .on('progress', (e) => {
                 this.setState({
-                    percentageDone: e.percent
+                    percentageDone: e.percent.toFixed(2)
                 })
             })
             .end((err: any, res: any) => {
@@ -77,7 +77,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     {this.state.inProgress &&
                         <div>
                             <img src="./images/loadingGif.gif" style={{ width: "112px", textAlign: "center" }} />,
-                            <p>{percentageDone} % done</p>
+                            <p>{percentageDone} % uploaded</p>
                         </div>
                     }
                     {this.props.currentModel &&
