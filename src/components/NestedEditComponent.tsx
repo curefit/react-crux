@@ -238,6 +238,11 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         fontSize: "10px",
                         marginRight: "10px"
                     }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {field.required ?
+                        <span style={{
+                            color: 'red',
+                            fontSize: 11
+                        }}> * </span> : null}
                     <textarea
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -276,7 +281,13 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     {!isEmpty(field.title) && <span><label style={{
                         fontSize: "10px",
                         marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    }}>{field.title.toUpperCase()}
+                        {field.required ?
+                            <span style={{
+                                color: 'red',
+                                fontSize: 11
+                            }}> * </span> : null}
+                    </label><br /></span>}
                     <input type="number"
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -293,7 +304,14 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     {!isEmpty(field.title) && <span><label style={{
                         fontSize: "10px",
                         marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    }}>{field.title.toUpperCase()}
+                        {field.required ?
+                            <span style={{
+                                color: 'red',
+                                fontSize: 11
+                            }}> * </span> : null}
+
+                    </label><br /></span>}
                     <CustomEditComponent
                         currentModel={this.props.currentModel}
                         additionalModels={this.props.additionalModels}
@@ -305,12 +323,23 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             )
         } else {
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
+            console.log('input value')
             return (
                 <div>
                     {!isEmpty(field.title) && <span><label style={{
                         fontSize: "10px",
                         marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    }}>
+                        {field.title.toUpperCase()}
+                        {field.required ?
+                            <span style={{
+                                color: 'red',
+                                fontSize: 11
+                            }}> * </span> : null}
+                    </label>
+
+                        <br />
+                    </span>}
                     <input type="text"
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -445,7 +474,15 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                         <label style={{
                                             fontSize: "10px",
                                             marginRight: "10px"
-                                        }}>{field.title.toUpperCase()}</label>
+                                        }}>{field.title.toUpperCase()}
+                                            {field.required ?
+                                                <span style={{
+                                                    color: 'red',
+                                                    fontSize: 11
+                                                }}> * </span> : null}
+
+                                        </label>
+
                                         <CustomComponent key={index} />
                                     </div>
                                 } else {
@@ -454,7 +491,14 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                         <label style={{
                                             fontSize: "10px",
                                             marginRight: "10px"
-                                        }}>{field.title.toUpperCase()}</label>
+                                        }}>{field.title.toUpperCase()}
+                                            {field.required ?
+                                                <span style={{
+                                                    color: 'red',
+                                                    fontSize: 11
+                                                }}> * </span> : null}
+
+                                        </label>
                                         <CustomComponent key={index}
                                             currentModel={this.props.currentModel}
                                             additionalModels={this.props.additionalModels}

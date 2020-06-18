@@ -199,7 +199,14 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                 <label onClick={this.collapseToggle} style={{
                     fontSize: "10px",
                     marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}</label>}
+                }}>{this.props.field.title.toUpperCase()}
+                {this.props.field.required ?
+                        <span style={{
+                            color: 'red',
+                            fontSize: 11
+                        }}> * </span> : null}
+                
+                </label>}
             <div
                 style={this.state.collapsed ? { display: "none" } : (!isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                 {
