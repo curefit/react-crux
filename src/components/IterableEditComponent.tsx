@@ -20,7 +20,7 @@ import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
 import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadComponent"
 import { v4 } from "uuid"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
-
+import { TitleComponent } from "./TitleComponent"
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
 }
@@ -196,17 +196,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
         return <div>
             {!(this.props.field.style && this.props.field.style.hideLabel) &&
-                <label onClick={this.collapseToggle} style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}
-                {this.props.field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-                
-                </label>}
+                <TitleComponent field={this.props.field} />}
             <div
                 style={this.state.collapsed ? { display: "none" } : (!isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                 {

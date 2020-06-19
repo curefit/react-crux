@@ -5,7 +5,7 @@ import { InlineComponentProps } from "../CruxComponent"
 import { components } from "react-select"
 import AsyncSelect from "react-select/async"
 import { fetchDynamicTypeaheadResults } from "../Actions"
-
+import { TitleComponent } from "./TitleComponent"
 const MultiValueLabel = (props: any) => {
     return (
         <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title : props.data.label})} />
@@ -134,16 +134,10 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
         return <div style={{ width: "300px" }}>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
-                <div><label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}
-                {this.props.field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-                </label><br /></div>
+                <div>
+                <TitleComponent field={this.props.field} />
+                
+                <br /></div>
             }
             <AsyncSelect isMulti={true}
                 isClearable={this.props.field.multiClear || false}

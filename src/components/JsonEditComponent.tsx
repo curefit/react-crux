@@ -2,7 +2,7 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import ReactJson, { InteractionProps } from "react-json-view"
-
+import { TitleComponent } from "./TitleComponent"
 
 @autobind
 export class JsonEditComponent extends React.Component<InlineComponentProps, any> {
@@ -11,17 +11,9 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
         const { field, currentModel } = this.props;
         return (
             <div>
-                {field.title && <span><label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{field.title.toUpperCase()}
-                    {field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-
-                </label><br /></span>}
+                {field.title && <span>
+                    <TitleComponent field={field} />
+                    <br /></span>}
 
                 <ReactJson
                     style={{ borderWidth: "2px" }}

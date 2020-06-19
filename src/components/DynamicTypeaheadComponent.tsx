@@ -4,7 +4,7 @@ import { InlineComponentProps } from "../CruxComponent"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
 import { isEmpty, find, isEqual } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
-
+import { TitleComponent } from "./TitleComponent"
 interface DynamicTypeAheadProps extends InlineComponentProps {
     options?: any
     type?: string
@@ -155,16 +155,9 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             <div style={{ display: "inline-block", width: "300px" }}>
                 {
                     this.props.showTitle && !isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
-                    <div><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}
-                    {this.props.field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-                    </label><br /></div>
+                    <div>
+                        <TitleComponent field={this.props.field} />
+                        <br /></div>
                 }
                 <AsyncTypeahead
                     id={`id-${this.props.field.title}`}

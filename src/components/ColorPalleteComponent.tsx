@@ -3,7 +3,7 @@ import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { SketchPicker } from "react-color"
 import reactCSS from "reactcss"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class ColorPalleteComponent extends React.Component<InlineComponentProps, any> {
 
@@ -73,13 +73,9 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
 
         return <div>
             <div>
-                <label style={{ fontSize: "10px", marginRight: "10px" }}>{this.props.field.title.toUpperCase()}
-                {this.props.field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-                </label><br />
+
+                <TitleComponent field={this.props.field} />
+
             </div>
             <div style={styles.swatch} onClick={this.handleClick}>
                 <div style={styles.color} />

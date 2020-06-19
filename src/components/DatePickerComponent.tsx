@@ -3,7 +3,7 @@ import * as React from "react"
 import * as moment from "moment"
 import DatePicker from "react-datepicker"
 import { InlineComponentProps } from "../CruxComponent"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -24,16 +24,7 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}
-                    {this.props.field.required ?
-                        <span style={{
-                            color: 'red',
-                            fontSize: 11
-                        }}> * </span> : null}
-                    </label>
+                <TitleComponent field={this.props.field} />
                     <DatePicker
                         showTimeSelect={this.props.field.showTimeSelect}
                         timeIntervals={this.state.interval}
