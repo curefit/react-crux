@@ -9,9 +9,8 @@ export const TitleComponent = (props: any) => {
         }}>{field.title.toUpperCase()}
             {field.required ?
                 <span style={{
-                    color: 'red',
                     fontSize: 11
-                }} > * </span> : null}
+                }} className="text-danger"> * </span> : null}
         </label>
     )
 }

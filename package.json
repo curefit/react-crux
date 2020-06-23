@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "autobind-decorator": "2.1.0",
+    "bootstrap": "^4.5.0",
     "lodash": "^4.17.13",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",
