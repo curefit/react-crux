@@ -7,7 +7,7 @@ export const TitleComponent = (props: any) => {
         <label className="small mr-2">{field.title.toUpperCase()}
             {field.required ?
                 <span className="text-danger"> * </span> : null}
-            {!!field.description ? <span data-tip={field.description} style={{
+           {!!field.description ? <span data-tip={field.description} style={{
                 background: 'grey',
                 color: 'white',
                 padding: 5,
