@@ -300,7 +300,6 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             )
         } else {
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
-            console.log('input value')
             return (
                 <div>
                     {!isEmpty(field.title) && <span>
