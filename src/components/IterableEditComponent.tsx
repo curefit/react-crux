@@ -10,6 +10,7 @@ import { TimePickerComponent } from "./TimePickerComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
 import { ImageUploadComponent } from "./ImageUploadComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
+import { SelectWithStylesComponent } from "./SelectWithStylesComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { IterableNestedComponent } from "./IterableNestedComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
@@ -262,6 +263,33 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             </div>
                         }
 
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "selectWithStyles") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <SelectWithStylesComponent
+                                        readonly={readonly}
+                                        constants={this.props.constants}
+                                        currentModel={currentModel}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                        isMulti={this.props.field.iterabletype.isMulti}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicMultiselect") {
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
@@ -309,12 +337,40 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                         modelChanged={this.fieldChanged(index)}
                                         showTitle={false}
                                         parentModel={parentModel}
-                                        isMulti={true}
                                     />
                                 </div>
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
+
+                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "selectWithStyles") {
+                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                    padding: "5px 0px",
+                                    display: "inline-block",
+                                    marginRight: "30px"
+                                } : { padding: "5px 0px" }}
+                                onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                <div style={this.props.field.iterabletype.style ?
+                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                    <SelectWithStylesComponent
+                                        readonly={readonly}
+                                        constants={this.props.constants}
+                                        currentModel={currentModel}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)}
+                                        showTitle={false}
+                                        parentModel={parentModel}
+                                        isMulti={this.props.field.iterabletype.isMulti}
+                                    />
+                                </div>
+                                {this.iterableButtons(index, totalLength)}
+                            </div>
+                        }
+
+
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
