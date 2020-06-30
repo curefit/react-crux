@@ -168,11 +168,12 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                     isLoading={this.state.isLoading}
                     onSearch={() => { }}
                     onInputChange={this.handleInputChange}
-                    onFocus={async (e: any) => {
-                        await this.setState({
+                    onFocus={(e: any) => {
+                        this.setState({
                             query: e.target.value
+                        }, () => {
+                            this.handleSearch(this.state.query)
                         })
-                        this.handleSearch(this.state.query)
                     }}
                     options={optionsData}
                     selected={selected || []}
