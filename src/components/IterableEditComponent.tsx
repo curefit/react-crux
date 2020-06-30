@@ -130,8 +130,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getRepIterableField = (index: number) => {
         let subTitle = ""
-        if (this.props.field.iterabletype.hasOwnProperty("defaultTitleFn")) {
-            subTitle = this.props.field.iterabletype.defaultTitleFn(this.state.model)
+        if (this.props.field.iterabletype.hasOwnProperty("subtitleFn")) {
+            subTitle = this.props.field.iterabletype.subtitleFn(this.state.model)
             return subTitle
         }
         if (isEmpty(this.state.model[index])) {
