@@ -65,7 +65,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (this.props.currentModel !== nextProps.currentModel ||
-            this.state.query!== nextState.query ||
+            this.state.query !== nextState.query ||
             !isEqual(this.state.options, nextState.options)) {
             return true
         }
@@ -75,7 +75,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     getDynamicPayload = () => {
         let dynamicPayload = {}
         if (this.props.field.foreign.dynamicPayloadFn && typeof this.props.field.foreign.dynamicPayloadFn === "function") {
-            dynamicPayload = this.props.field.foreign.dynamicPayloadFn({parentModel: this.props.parentModel})
+            dynamicPayload = this.props.field.foreign.dynamicPayloadFn({ parentModel: this.props.parentModel })
         }
         return dynamicPayload
     }
@@ -151,6 +151,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             })
             selected = selectedRecord ? [selectedRecord] : [{ label: `${this.state.selected} - Bad Value`, value: this.state.selected }]
         }
+
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
                 {
@@ -164,9 +165,15 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                     labelKey={"label"}
                     minLength={0}
                     isLoading={this.state.isLoading}
-                    onSearch={() => {}}
+                    onSearch={() => { }}
                     onInputChange={this.handleInputChange}
-                    onFocus={() => this.handleSearch(this.state.query)}
+                    onFocus={(e: any) => {
+                        this.setState({
+                            query: e.target.value
+                        }, () => {
+                            this.handleSearch(this.state.query)
+                        })
+                    }}
                     options={optionsData}
                     selected={selected || []}
                     onChange={this.handleChange}
