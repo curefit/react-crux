@@ -3,7 +3,7 @@ import * as React from "react"
 import { isEmpty, sortBy, trim, find, map, isNil, isObject } from "lodash"
 import { DropdownButton, MenuItem } from "react-bootstrap"
 import { InlineComponentProps } from "../CruxComponent"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class SelectComponent extends React.Component<InlineComponentProps, any> {
     render() {
@@ -62,10 +62,8 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
         return <div>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
-                <div><label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}</label><br /></div>
+                <div>
+                    <TitleComponent field={this.props.field} /><br /></div>
             }
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
                 title={foreignTitle}

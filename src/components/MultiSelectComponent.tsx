@@ -3,10 +3,10 @@ import * as React from "react"
 import { isEmpty, sortBy, map, find, trim } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import Select, { components } from "react-select"
-
+import { TitleComponent } from "./TitleComponent"
 const MultiValueLabel = (props: any) => {
     return (
-        <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title : props.data.label})} />
+        <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title: props.data.label })} />
     )
 }
 
@@ -81,10 +81,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         return <div style={this.props.field.style || { width: "300px" }}>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
-                <div><label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}</label><br /></div>
+                <div>
+                    <TitleComponent field={this.props.field} />
+                    <br /></div>
             }
             <Select isMulti={this.props.isMulti}
                 isClearable={this.props.field.multiClear || false}
@@ -122,7 +121,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             this.props.modelChanged(field, fieldList)
         } else if (this.props.isMulti) {
             this.props.modelChanged(field, [])
-        } else  {
+        } else {
             this.props.modelChanged(field, eventKey.value)
         }
     }
