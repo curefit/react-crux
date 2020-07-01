@@ -130,11 +130,13 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getRepIterableField = (index: number) => {
         let subTitle = ""
-
+        if (this.props.field.iterabletype.hasOwnProperty("subtitleFn")) {
+            subTitle = this.props.field.iterabletype.subtitleFn(this.state.model)
+            return subTitle
+        }
         if (isEmpty(this.state.model[index])) {
             return subTitle
         }
-
         const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
         if (!repField) {
             console.error("Did you forget to add the representative tag at the top level.")
@@ -166,6 +168,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     getIterableNestedTitle(index: number) {
+
         const subTitle = this.getRepIterableField(index)
         return this.props.field.iterabletype.nestedIterableCollapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
