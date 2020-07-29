@@ -3,7 +3,7 @@ import * as React from "react"
 import * as moment from "moment-timezone"
 import { InlineComponentProps } from "../CruxComponent"
 import TimePicker from 'rc-time-picker';
-
+import { TitleComponent } from "./TitleComponent"
 
 const format = 'h:mm a';
 
@@ -22,10 +22,7 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "250px" }}>
-                    <label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label>
+                <TitleComponent field={this.props.field} />
                     <TimePicker
                         defaultValue={now}
                         value={currentModel ? moment(currentModel, format): now}

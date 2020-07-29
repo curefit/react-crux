@@ -4,7 +4,7 @@ import { InlineComponentProps } from "../CruxComponent"
 import { AsyncTypeahead } from "react-bootstrap-typeahead"
 import { isEmpty, find, isEqual } from "lodash"
 import { fetchDynamicTypeaheadResults } from "../Actions"
-
+import { TitleComponent } from "./TitleComponent"
 interface DynamicTypeAheadProps extends InlineComponentProps {
     options?: any
     type?: string
@@ -26,7 +26,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     componentDidMount() {
         if (isEmpty(this.state.options) && this.props.type !== "iterable") {
             const item: any = {
-                limit: 10, ...this.getDynamicPayload(),
+                limit: 10, ...this.getDynamicPayload(""),
             }
             if (!isEmpty(this.state.selected)) {
                 if (this.props.field.foreign.keys) {
@@ -65,17 +65,17 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (this.props.currentModel !== nextProps.currentModel ||
-            this.state.query!== nextState.query ||
+            this.state.query !== nextState.query ||
             !isEqual(this.state.options, nextState.options)) {
             return true
         }
         return false
     }
 
-    getDynamicPayload = () => {
+    getDynamicPayload = (query: string) => {
         let dynamicPayload = {}
         if (this.props.field.foreign.dynamicPayloadFn && typeof this.props.field.foreign.dynamicPayloadFn === "function") {
-            dynamicPayload = this.props.field.foreign.dynamicPayloadFn({parentModel: this.props.parentModel})
+            dynamicPayload = this.props.field.foreign.dynamicPayloadFn({ parentModel: this.props.parentModel, query: query })
         }
         return dynamicPayload
     }
@@ -86,7 +86,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
 
     handleSearch = (query: string) => {
         const item = {
-            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(),
+            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(query),
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
             this.setState({
@@ -151,23 +151,29 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             })
             selected = selectedRecord ? [selectedRecord] : [{ label: `${this.state.selected} - Bad Value`, value: this.state.selected }]
         }
+
         return <div style={{ marginBottom: "10px" }}>
             <div style={{ display: "inline-block", width: "300px" }}>
                 {
                     this.props.showTitle && !isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
-                    <div><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label><br /></div>
+                    <div>
+                        <TitleComponent field={this.props.field} />
+                        <br /></div>
                 }
                 <AsyncTypeahead
                     id={`id-${this.props.field.title}`}
                     labelKey={"label"}
                     minLength={0}
                     isLoading={this.state.isLoading}
-                    onSearch={() => {}}
+                    onSearch={() => { }}
                     onInputChange={this.handleInputChange}
-                    onFocus={() => this.handleSearch(this.state.query)}
+                    onFocus={(e: any) => {
+                        this.setState({
+                            query: e.target.value
+                        }, () => {
+                            this.handleSearch(this.state.query)
+                        })
+                    }}
                     options={optionsData}
                     selected={selected || []}
                     onChange={this.handleChange}

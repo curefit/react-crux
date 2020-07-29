@@ -1,6 +1,6 @@
 {
   "name": "react-crux",
-  "version": "0.15.8",
+  "version": "0.19.1",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
     "react-redux": "^5.0.7",
     "react-select": "^3.0.4",
     "react-timezone": "^2.3.0",
+    "react-tooltip": "^4.2.7",
     "reactcss": "^1.2.3",
     "superagent": "^3.8.3"
   },

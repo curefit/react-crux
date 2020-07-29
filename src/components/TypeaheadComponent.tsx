@@ -3,7 +3,7 @@ import * as React from "react"
 import { isEmpty, sortBy, find, trim } from "lodash"
 import { Typeahead } from "react-bootstrap-typeahead"
 import { InlineComponentProps } from "../CruxComponent"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
     render() {
@@ -35,10 +35,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                 this.props.showTitle &&
                 !(this.props.field.style && this.props.field.style.hideLabel) &&
                 <div>
-                    <label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label>
+                    <TitleComponent field={this.props.field} />
                     {this.props.field.showRefresh &&
                         <span style={{ float: "right", fontSize: "10px" }}>
                             <span style={{ marginLeft: "20px", color: "grey" }}

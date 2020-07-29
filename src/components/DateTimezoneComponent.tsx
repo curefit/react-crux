@@ -4,7 +4,7 @@ import * as moment from "moment-timezone"
 import * as Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -22,10 +22,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "250px" }}>
-                    <label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{this.props.field.title.toUpperCase()}</label>
+                <TitleComponent field={this.props.field} />
                     <Datetime
                         value={this.state.dateTime}
                         dateFormat={"LL"}

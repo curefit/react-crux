@@ -17,7 +17,7 @@ import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
-
+import { TitleComponent } from "./TitleComponent"
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -47,6 +47,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     getComponentForField(field: any, currentModelWithParent: any) {
         if (field.type === "select") {
+            if (field.defaultValue && !(this.props.currentModel && this.props.currentModel[field.field])) {
+                this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: field.defaultValue }))
+            }
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (<SelectComponent field={field}
                 readonly={this.checkReadonly(field.readonly, currentModel)}
@@ -136,7 +139,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             )
 
 
-        } 
+        }
         else if (field.type === "timepicker") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
@@ -231,10 +234,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {!isEmpty(field.title) && <span><TitleComponent field={field} /><br /></span>}
+
                     <textarea
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -270,10 +271,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {!isEmpty(field.title) && <span>
+                        <TitleComponent field={field} /><br /></span>}
                     <input type="number"
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -287,10 +286,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const CustomEditComponent = field.customEditComponent
             return (
                 <div>
-                    {!isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {!isEmpty(field.title) && <span>
+                        <TitleComponent field={field} />
+                        <br /></span>}
                     <CustomEditComponent
                         currentModel={this.props.currentModel}
                         additionalModels={this.props.additionalModels}
@@ -304,10 +302,11 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {!isEmpty(field.title) && <span>
+                        <TitleComponent field={field} />
+
+                        <br />
+                    </span>}
                     <input type="text"
                         data-value={field.field}
                         disabled={this.checkReadonly(field.readonly, currentModel)}
@@ -405,8 +404,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         const wysiwygFields = filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
         return <div style={this.props.indent ? { border: "1px solid #EEE", padding: "10px" } : { padding: 0 }}>
             {this.props.showTitle && !(this.props.field.style && this.props.field.style.hideLabel) &&
-                <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}><label
-                    style={{ fontSize: "10px", marginRight: "10px" }}>{this.props.field.title.toUpperCase()}</label>
+                <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}>
+                    <TitleComponent field={this.props.field} />
                 </div>}
             <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
                 <div style={{ display: "inline-block" }}>
@@ -439,19 +438,13 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                 if (field.customComponent) {
                                     const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
                                     return <div key={index}>
-                                        <label style={{
-                                            fontSize: "10px",
-                                            marginRight: "10px"
-                                        }}>{field.title.toUpperCase()}</label>
+                                        <TitleComponent field={field} />
                                         <CustomComponent key={index} />
                                     </div>
                                 } else {
                                     const CustomComponent = field.customViewComponent
                                     return <div key={index}>
-                                        <label style={{
-                                            fontSize: "10px",
-                                            marginRight: "10px"
-                                        }}>{field.title.toUpperCase()}</label>
+                                        <TitleComponent field={field} />
                                         <CustomComponent key={index}
                                             currentModel={this.props.currentModel}
                                             additionalModels={this.props.additionalModels}

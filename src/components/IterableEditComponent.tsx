@@ -20,7 +20,7 @@ import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
 import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadComponent"
 import { v4 } from "uuid"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
-
+import { TitleComponent } from "./TitleComponent"
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
 }
@@ -130,11 +130,13 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     getRepIterableField = (index: number) => {
         let subTitle = ""
-
+        if (this.props.field.iterabletype.hasOwnProperty("subtitleFn")) {
+            subTitle = this.props.field.iterabletype.subtitleFn(this.state.model)
+            return subTitle
+        }
         if (isEmpty(this.state.model[index])) {
             return subTitle
         }
-
         const repField = this.props.field.iterabletype.fields.find((field: any) => field.iterableRepresentative)
         if (!repField) {
             console.error("Did you forget to add the representative tag at the top level.")
@@ -166,6 +168,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     getIterableNestedTitle(index: number) {
+
         const subTitle = this.getRepIterableField(index)
         return this.props.field.iterabletype.nestedIterableCollapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
@@ -196,10 +199,13 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
         return <div>
             {!(this.props.field.style && this.props.field.style.hideLabel) &&
-                <label onClick={this.collapseToggle} style={{
+                <div onClick={this.collapseToggle} style={{
                     fontSize: "10px",
                     marginRight: "10px"
-                }}>{this.props.field.title.toUpperCase()}</label>}
+                }}>
+                    <TitleComponent field={this.props.field} />
+                </div>
+            }
             <div
                 style={this.state.collapsed ? { display: "none" } : (!isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
                 {
