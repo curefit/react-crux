@@ -406,6 +406,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             {this.props.showTitle && !(this.props.field.style && this.props.field.style.hideLabel) &&
                 <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}>
                     <TitleComponent field={this.props.field} />
+                    {!this.state.collapsed &&
+                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                            className="glyphicon glyphicon-chevron-up" aria-hidden="true" />}
+                    {this.state.collapsed &&
+                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
+                            className="glyphicon glyphicon-chevron-down" aria-hidden="true" />}
                 </div>}
             <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
                 <div style={{ display: "inline-block" }}>
