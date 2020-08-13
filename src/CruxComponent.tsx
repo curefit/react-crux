@@ -2,7 +2,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import {
     createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-    searchModel, bulkCreate, openModal
+    searchModel, bulkCreate, openModal, putData
 } from "./Actions"
 import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
@@ -56,10 +56,12 @@ export class CruxComponentCreator {
                 return { "modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model] }
             })
             return Object.assign({}, {
+                modalData: state.crux.modalData,
                 [constants.modelName]: stateRoot ? state[stateRoot][constants.modelName] : state[constants.modelName],
                 additionalModels: reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
+
                 queryParams: ownProps && ownProps.options && ownProps.options.queryParams,
                 additionalProps: ownProps && ownProps.options && ownProps.options.additionalProps
             })
@@ -75,6 +77,9 @@ export class CruxComponentCreator {
                 },
                 createOrModify: (model: string, item: any, edit: boolean, success: any, error: any, queryParams: any) => {
                     dispatch(createOrModify(model, item, edit, success, error, queryParams))
+                },
+                putData: (data: any, model: string) => {
+                    dispatch(putData(data, model))
                 },
                 deleteModel: (model: string, item: any, success: any, error: any, queryParams: any) => {
                     dispatch(deleteModel(model, item, success, error, queryParams))
@@ -96,6 +101,28 @@ export class CruxComponentCreator {
 
         @autobind
         class ListClass extends React.Component<any, any> {
+            constructor(props: any) {
+                super(props)
+                this.state = {
+                    showCreateModal: props.modalData && props.modalData[constants.modelName] ? true : false,
+                    showCreateModalArray: props.modalData && props.modalData[constants.modelName] ? props.modalData[constants.modelName] : [],
+                    showModalComponent: false,
+                    showFilterModal: false,
+                    model: {},
+                    showCustomModal: false,
+                    filterModel: {
+                        paginate: {
+                            currentPage: 1,
+                            currentPageSize: this.getDefaultPageSize()
+                        },
+                        limit: this.getDefaultPageSize(),
+                        skip: 0
+                    },
+                    openCreateModal: false,
+                    showBulkCreateModal: false
+                }
+            }
+
             componentDidMount() {
                 this.fetchModels(this.props)
                 anchors = getAnchors(constants)
@@ -154,25 +181,9 @@ export class CruxComponentCreator {
                 }
             }
 
-            constructor(props: any) {
-                super(props)
-                this.state = {
-                    showCreateModal: false,
-                    showCreateModalArray: [],
-                    showFilterModal: false,
-                    model: {},
-                    showCustomModal: false,
-                    filterModel: {
-                        paginate: {
-                            currentPage: 1,
-                            currentPageSize: this.getDefaultPageSize()
-                        },
-                        limit: this.getDefaultPageSize(),
-                        skip: 0
-                    },
-                    showBulkCreateModal: false
-                }
-            }
+
+
+
 
             getDefaultPageSize = () => {
                 return constants.paginate && constants.paginate.defaultPageSize || ""
@@ -186,9 +197,8 @@ export class CruxComponentCreator {
 
             showCreateModal = () => {
                 const { showCreateModalArray } = this.state
-                showCreateModalArray.push('')
-                this.setState({ showCreateModal: true, showCreateModalArray })
-                console.log(this.state.model, 'this.state.model')
+                showCreateModalArray.push({})
+                this.setState({ showCreateModal: true, showModalComponent: true, showCreateModalArray })
                 openModal('ModalName', showCreateModalArray)
             }
 
@@ -483,12 +493,22 @@ export class CruxComponentCreator {
                             bottom: 0
                         }}>
                             {constants.createModal && this.state.showCreateModal &&
-                                this.state.showCreateModalArray.map((index: number) => (
+                                this.state.showCreateModalArray.map((item: any, index: number) => (
                                     <ModalComponent
                                         constants={constants}
+                                        setValueInArray={(index: any, value: any) => {
+                                            let { showCreateModalArray } = this.state
+                                            showCreateModalArray[index] = value
+                                            this.setState({
+                                                showCreateModalArray
+                                            })
+                                            this.props.putData(showCreateModalArray, constants.modelName)
+                                        }}
                                         showModal={this.state.showCreateModal}
+                                        showModalComponent={this.state.showModalComponent}
                                         closeModal={this.closeCreateModal}
                                         modalIndex={index}
+                                        item={item}
                                         modalType={"CREATE"}
                                         createOrModify={this.props.createOrModify}
                                         createOrEditSuccess={this.createOrEditSuccess}
@@ -553,3 +573,5 @@ export class CruxComponentCreator {
         return connect(mapStateToProps, mapDispatchToProps)(ListClass)
     }
 }
+
+

@@ -140,6 +140,12 @@ export function successCustomModal(data: any, type: string, model: string) {
     }
 }
 
+export function putData(data: any, model: string) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ data, type: "SET_MODAL_DATA", model })
+    }
+}
+
 export function failureCustomModal(err: any, model: string, type: string) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type, err, model })

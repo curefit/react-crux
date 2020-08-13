@@ -1,7 +1,7 @@
 import { isEmpty, cloneDeep } from "lodash"
 
 export function CruxReducerFactory(defaultModels: any) {
-        return function CruxReducer(initialState = defaultModels,
+    return function CruxReducer(initialState = defaultModels,
         action: any): any {
         if (action.model) {
             if (action.type.startsWith("FETCH_")) {
@@ -17,6 +17,8 @@ export function CruxReducerFactory(defaultModels: any) {
                         return Object.assign({}, initialState, { fetchComplete: false })
                     }
                 }
+
+                // dispatch({ type: "FETCH_" + model + "_PUT_DATA", data: { results: data.results ? data.results : data, metadata: data.metadata }, model: model })
 
                 // It can be used, when New Data Comes in. It will be concated with existing props
                 if (action.type.endsWith("_PUT_DATA")) {
@@ -37,7 +39,11 @@ export function CruxReducerFactory(defaultModels: any) {
                 }
             }
             if (action.type.endsWith("OPEN_")) {
-                return Object.assign({}, initialState, { [action.model]: action.data})
+                return Object.assign({}, initialState, { [action.model]: action.data })
+            }
+            if (action.type === "SET_MODAL_DATA") {
+                const newState = { ...initialState, modalData: { ...initialState.modalData, [action.model]: action.data } }
+                return newState
             }
         }
 

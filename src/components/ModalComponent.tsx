@@ -23,6 +23,8 @@ interface ModalComponentProps {
     successButtonLabel?: string,
     queryParams: any
     additionalProps?: any
+    setValueInArray?: any
+    showModalComponent?: boolean
 }
 
 @autobind
@@ -32,10 +34,11 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     constructor(props: any) {
         super(props)
+        console.log(props.showModalComponent, 'props.showModalComponent')
         this.state = {
             item: this.props.item || {},
             deleteModal: false,
-            showModal: true
+            showModal: props.showModalComponent === false ? false : true
         }
     }
 
@@ -44,7 +47,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
         if (!repField) {
             console.error("Did you forget to add the representative tag at the top level.")
         }
-        console.log(repField, 'repField');
         return repField
     }
 
@@ -106,6 +108,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     modelChanged = (value: any) => {
         this.setState((prevState: any) => {
             return { item: Object.assign({}, prevState.item, value) }
+        }, () => {
+            this.props.setValueInArray(this.props.modalIndex, this.state.item)
         })
     }
 
@@ -122,8 +126,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     render() {
-        console.log(this.state.item)
-        console.log(this.state.item);
         let errorType, errorMessage
         if (this.state.error && !isEmpty(this.state.error.message)) {
             try {
