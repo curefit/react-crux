@@ -416,8 +416,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                                 display: "inline-block",
                                 marginRight: "10px",
                                 marginBottom: "30px",
-                                verticalAlign: "top"
-                            } : { marginBottom: "30px", marginRight: "10px" }}>
+                                verticalAlign: "top", ...field.wrapperStyles
+                            } : { marginBottom: "30px", marginRight: "10px", ...field.wrapperStyles }}>
                                 <div>
                                     {this.getComponentForField(field, currentModelWithParent)}
                                 </div>
