@@ -109,7 +109,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
         this.setState((prevState: any) => {
             return { item: Object.assign({}, prevState.item, value) }
         }, () => {
-            this.props.setValueInArray(this.props.modalIndex, this.state.item)
+            this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
         })
     }
 
