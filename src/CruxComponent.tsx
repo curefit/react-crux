@@ -205,7 +205,8 @@ export class CruxComponentCreator {
                 const { showCreateModalArray } = this.state
                 showCreateModalArray.push({
                     constants: constants,
-                    model: {}
+                    model: {},
+                    additionalModels: this.props.additionalModels,
                 })
                 this.setState({ showCreateModal: true, showModalComponent: true, showCreateModalArray })
                 openModal('ModalName', showCreateModalArray)
@@ -509,7 +510,9 @@ export class CruxComponentCreator {
                                             let { showCreateModalArray } = this.state
                                             showCreateModalArray[index] = {
                                                 model: value,
-                                                constants: item.constants
+                                                constants: item.constants,
+                                                additionalModels: this.props.additionalModels,
+
                                             }
                                             this.setState({
                                                 showCreateModalArray
@@ -524,7 +527,7 @@ export class CruxComponentCreator {
                                         modalType={"CREATE"}
                                         createOrModify={this.props.createOrModify}
                                         createOrEditSuccess={this.createOrEditSuccess}
-                                        additionalModels={this.props.additionalModels}
+                                        additionalModels={item.additionalModels}
                                         queryParams={this.props.queryParams}
                                         additionalProps={this.props.additionalProps}
                                     />
@@ -553,7 +556,8 @@ export class CruxComponentCreator {
                                         let { showCreateModalArray } = this.state
                                         showCreateModalArray[index] = {
                                             model: value,
-                                            constants: constants
+                                            constants: constants,
+                                            additionalModelValues: this.props.additionalModels,
                                         }
                                         this.setState({
                                             showCreateModalArray
