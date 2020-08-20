@@ -220,7 +220,9 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 })
             }} className="bottomTabsCss">
                 {this.props.constants.creationTitle} - {this.state.item ? this.state.item[this.getRepField().field] : ""}
-                <span className="maximise-icon">+</span>
+                <img src="https://cdn2.iconfinder.com/data/icons/lucid-generic/24/expand_maximise_send_transfer_share-512.png" style={{
+                    width: 20
+                }} />
             </div> : null
         ] : null
     }

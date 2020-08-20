@@ -414,10 +414,10 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                             const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
                             return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                 display: "inline-block",
-                                marginRight: "10px",
+                                marginRight: "30px",
                                 marginBottom: "30px",
                                 verticalAlign: "top", ...field.wrapperStyles
-                            } : { marginBottom: "30px", marginRight: "10px", ...field.wrapperStyles }}>
+                            } : { marginBottom: "30px", marginRight: "30px", ...field.wrapperStyles }}>
                                 <div>
                                     {this.getComponentForField(field, currentModelWithParent)}
                                 </div>

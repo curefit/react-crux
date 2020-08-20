@@ -98,8 +98,8 @@ mark {
     box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 30px 0px;
     display: inline-block;
     margin: 0 10px;
-    background: #000000;
-    color: white;
+    background: white;
+    color: black;
     font-size: 16px;
     font-weight: bold;
 }
@@ -121,3 +121,11 @@ mark {
   border-radius: 20px;
   cursor: pointer;
 }
+
+.modal-header .close {
+  margin-top: -5px!important;
+  font-size: 28px!important;
+  color: gray!important;
+  opacity: 1!important;
+}
+
