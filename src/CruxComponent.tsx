@@ -213,9 +213,10 @@ export class CruxComponentCreator {
             }
 
 
-            closeCreateModal = (index: number) => {
+            closeCreateModal = (index: number, constantsModal: any) => {
                 const { showCreateModalArray } = this.state
                 showCreateModalArray.splice(index, 1)
+                this.props.putData(showCreateModalArray, constantsModal.modelName)
                 this.setState({ showCreateModalArray })
             }
 
@@ -251,14 +252,15 @@ export class CruxComponentCreator {
                 this.setState({ showEditModal: false, model: {} })
             }
 
-            createOrEditSuccess = (data?: any, index?: any) => {
+            createOrEditSuccess = (data?: any, index?: any, constantsModal?: any) => {
                 this.closeEditModal()
-                this.closeCreateModal(index)
+                this.closeCreateModal(index, constantsModal)
                 this.closeBulkCreateModal()
-                if (constants.filterModal || constants.paginate)
-                    this.props.filter(constants.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
+                const constNew = constantsModal ? constantsModal : constants
+                if (constNew.filterModal || constNew.paginate)
+                    this.props.filter(constNew.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
                 else
-                    this.fetchModel(constants.modelName)
+                    this.fetchModel(constNew.modelName)
             }
 
             resetFilter() {
@@ -517,16 +519,16 @@ export class CruxComponentCreator {
                                             this.setState({
                                                 showCreateModalArray
                                             })
-                                            this.props.putData(showCreateModalArray, constants.modelName)
+                                            this.props.putData(showCreateModalArray, item.constants.modelName)
                                         }}
                                         showModal={this.state.showCreateModal}
                                         showModalComponent={this.state.showModalComponent}
-                                        closeModal={this.closeCreateModal}
+                                        closeModal={(modalIndex: number) => this.closeCreateModal(modalIndex, item.constants)}
                                         modalIndex={index}
                                         item={item.model}
                                         modalType={"CREATE"}
                                         createOrModify={this.props.createOrModify}
-                                        createOrEditSuccess={this.createOrEditSuccess}
+                                        createOrEditSuccess={(index: any, data: any) => this.createOrEditSuccess(index, data, item.constants)}
                                         additionalModels={item.additionalModels}
                                         queryParams={this.props.queryParams}
                                         additionalProps={this.props.additionalProps}

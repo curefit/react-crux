@@ -14,7 +14,7 @@ export const TitleComponent = (props: any) => {
                 }}> * </span> : null}
             {!!field.description ? <span data-tip={field.description} style={{
                 borderRadius: 10,
-                marginLeft: 8,
+                marginLeft: 10,
                 background: 'white',
                 color: 'black',
                 padding: 4,
