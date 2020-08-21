@@ -34,7 +34,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     constructor(props: any) {
         super(props)
-        console.log(props.showModalComponent, 'props.showModalComponent')
         this.state = {
             item: this.props.item || {},
             deleteModal: false,
@@ -108,8 +107,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     modelChanged = (value: any) => {
         this.setState((prevState: any) => {
             return { item: Object.assign({}, prevState.item, value) }
-        }, () => {
-            this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
         })
     }
 
@@ -156,6 +153,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
 
                     <div className="minimise_icon" onClick={() => {
+                        this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
                         this.setState({
                             showModal: false
                         })
@@ -221,7 +219,8 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
             }} className="bottomTabsCss">
                 {this.props.constants.creationTitle} - {this.state.item ? this.state.item[this.getRepField().field] : ""}
                 <img src="https://cdn2.iconfinder.com/data/icons/lucid-generic/24/expand_maximise_send_transfer_share-512.png" style={{
-                    width: 20
+                    width: 20,
+                    marginLeft: 20
                 }} />
             </div> : null
         ] : null

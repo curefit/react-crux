@@ -513,13 +513,13 @@ export class CruxComponentCreator {
                                             showCreateModalArray[index] = {
                                                 model: value,
                                                 constants: item.constants,
-                                                additionalModels: this.props.additionalModels,
-
+                                                additionalModels: item.additionalModels,
                                             }
+                                            let modelArray = showCreateModalArray.filter((arr: any) => arr.constants.modelName === item.constants.modelName)
+                                            this.props.putData(modelArray, item.constants.modelName)
                                             this.setState({
                                                 showCreateModalArray
                                             })
-                                            this.props.putData(showCreateModalArray, item.constants.modelName)
                                         }}
                                         showModal={this.state.showCreateModal}
                                         showModalComponent={this.state.showModalComponent}
