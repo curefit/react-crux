@@ -44,8 +44,8 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         const styles = reactCSS({
             "default": {
                 color: {
-                    width: "36px",
-                    height: "14px",
+                    width: "200px",
+                    height: "24px",
                     borderRadius: "2px",
                     background: `${this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}`,
                 },

@@ -2,7 +2,7 @@ import * as React from "react"
 import { connect } from "react-redux"
 import {
     createOrModify, deleteModel, fetchModel, filterModel, successCustomModal, failureCustomModal,
-    searchModel, bulkCreate
+    searchModel, bulkCreate, openModal, putData
 } from "./Actions"
 import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
 import { getAdditionalModels, getAnchors } from "./util"
@@ -56,10 +56,12 @@ export class CruxComponentCreator {
                 return { "modelName": model, "value": stateRoot ? state[stateRoot][model] : state[model] }
             })
             return Object.assign({}, {
+                modalData: state.crux.modalData,
                 [constants.modelName]: stateRoot ? state[stateRoot][constants.modelName] : state[constants.modelName],
                 additionalModels: reduce(additionalModelValues, (sum: any, obj: any) => {
                     return Object.assign({}, sum, { [obj.modelName]: obj.value })
                 }, {}),
+
                 queryParams: ownProps && ownProps.options && ownProps.options.queryParams,
                 additionalProps: ownProps && ownProps.options && ownProps.options.additionalProps
             })
@@ -75,6 +77,9 @@ export class CruxComponentCreator {
                 },
                 createOrModify: (model: string, item: any, edit: boolean, success: any, error: any, queryParams: any) => {
                     dispatch(createOrModify(model, item, edit, success, error, queryParams))
+                },
+                putData: (data: any, model: string) => {
+                    dispatch(putData(data, model))
                 },
                 deleteModel: (model: string, item: any, success: any, error: any, queryParams: any) => {
                     dispatch(deleteModel(model, item, success, error, queryParams))
@@ -96,6 +101,34 @@ export class CruxComponentCreator {
 
         @autobind
         class ListClass extends React.Component<any, any> {
+            constructor(props: any) {
+                super(props)
+                const showCreateModal = []
+                if (props.modalData) {
+                    for (const property in props.modalData) {
+                        showCreateModal.push(...props.modalData[property])
+                    }
+                }
+                this.state = {
+                    showCreateModal: showCreateModal.length ? true : false,
+                    showCreateModalArray: showCreateModal,
+                    showModalComponent: false,
+                    showFilterModal: false,
+                    model: {},
+                    showCustomModal: false,
+                    filterModel: {
+                        paginate: {
+                            currentPage: 1,
+                            currentPageSize: this.getDefaultPageSize()
+                        },
+                        limit: this.getDefaultPageSize(),
+                        skip: 0
+                    },
+                    openCreateModal: false,
+                    showBulkCreateModal: false
+                }
+            }
+
             componentDidMount() {
                 this.fetchModels(this.props)
                 anchors = getAnchors(constants)
@@ -154,24 +187,9 @@ export class CruxComponentCreator {
                 }
             }
 
-            constructor(props: any) {
-                super(props)
-                this.state = {
-                    showCreateModal: false,
-                    showFilterModal: false,
-                    model: {},
-                    showCustomModal: false,
-                    filterModel: {
-                        paginate: {
-                            currentPage: 1,
-                            currentPageSize: this.getDefaultPageSize()
-                        },
-                        limit: this.getDefaultPageSize(),
-                        skip: 0
-                    },
-                    showBulkCreateModal: false
-                }
-            }
+
+
+
 
             getDefaultPageSize = () => {
                 return constants.paginate && constants.paginate.defaultPageSize || ""
@@ -184,12 +202,22 @@ export class CruxComponentCreator {
             }
 
             showCreateModal = () => {
-                this.setState({ showCreateModal: true })
+                const { showCreateModalArray } = this.state
+                showCreateModalArray.push({
+                    constants: constants,
+                    model: {},
+                    additionalModels: this.props.additionalModels,
+                })
+                this.setState({ showCreateModal: true, showModalComponent: true, showCreateModalArray })
+                openModal('ModalName', showCreateModalArray)
             }
 
 
-            closeCreateModal = () => {
-                this.setState({ showCreateModal: false })
+            closeCreateModal = (index: number, constantsModal: any) => {
+                const { showCreateModalArray } = this.state
+                showCreateModalArray.splice(index, 1)
+                this.props.putData(showCreateModalArray, constantsModal.modelName)
+                this.setState({ showCreateModalArray })
             }
 
             showBulkCreateModal = () => {
@@ -224,14 +252,15 @@ export class CruxComponentCreator {
                 this.setState({ showEditModal: false, model: {} })
             }
 
-            createOrEditSuccess = (data?: any) => {
+            createOrEditSuccess = (data?: any, index?: any, constantsModal?: any) => {
                 this.closeEditModal()
-                this.closeCreateModal()
+                this.closeCreateModal(index, constantsModal)
                 this.closeBulkCreateModal()
-                if (constants.filterModal || constants.paginate)
-                    this.props.filter(constants.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
+                const constNew = constantsModal ? constantsModal : constants
+                if (constNew.filterModal || constNew.paginate)
+                    this.props.filter(constNew.modelName, this.state.filterModel, undefined, undefined, this.props.queryParams)
                 else
-                    this.fetchModel(constants.modelName)
+                    this.fetchModel(constNew.modelName)
             }
 
             resetFilter() {
@@ -471,64 +500,101 @@ export class CruxComponentCreator {
 
                             </tbody>
                         </Table>
-                        {constants.createModal && this.state.showCreateModal &&
-                            <ModalComponent
-                                constants={constants}
-                                showModal={this.state.showCreateModal}
-                                closeModal={this.closeCreateModal}
-                                modalType={"CREATE"}
-                                createOrModify={this.props.createOrModify}
-                                createOrEditSuccess={this.createOrEditSuccess}
-                                additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams}
-                                additionalProps={this.props.additionalProps}
-                            />
-                        }
+                        <div style={{
+                            position: 'fixed',
+                            bottom: 0
+                        }}>
+                            {constants.createModal && this.state.showCreateModal &&
+                                this.state.showCreateModalArray.map((item: any, index: number) => (
+                                    <ModalComponent
+                                        constants={item.constants}
+                                        setValueInArray={(index: any, value: any) => {
+                                            let { showCreateModalArray } = this.state
+                                            showCreateModalArray[index] = {
+                                                model: value,
+                                                constants: item.constants,
+                                                additionalModels: item.additionalModels,
+                                            }
+                                            let modelArray = showCreateModalArray.filter((arr: any) => arr.constants.modelName === item.constants.modelName)
+                                            this.props.putData(modelArray, item.constants.modelName)
+                                            this.setState({
+                                                showCreateModalArray
+                                            })
+                                        }}
+                                        showModal={this.state.showCreateModal}
+                                        showModalComponent={this.state.showModalComponent}
+                                        closeModal={(modalIndex: number) => this.closeCreateModal(modalIndex, item.constants)}
+                                        modalIndex={index}
+                                        item={item.model}
+                                        modalType={"CREATE"}
+                                        createOrModify={this.props.createOrModify}
+                                        createOrEditSuccess={(index: any, data: any) => this.createOrEditSuccess(index, data, item.constants)}
+                                        additionalModels={item.additionalModels}
+                                        queryParams={this.props.queryParams}
+                                        additionalProps={this.props.additionalProps}
+                                    />
+                                ))
 
-                        {constants.bulkCreateModal && this.state.showBulkCreateModal &&
-                            <BulkCreateModal
-                                constants={constants}
-                                showModal={this.state.showBulkCreateModal}
-                                closeModal={this.closeBulkCreateModal}
-                                createOrModify={this.props.bulkCreate}
-                                createOrEditSuccess={this.createOrEditSuccess}
-                                additionalProps={this.props.additionalProps}
-                            />
-                        }
+                            }
 
-                        {constants.editModal && this.state.showEditModal &&
-                            <ModalComponent
-                                constants={constants}
-                                showModal={this.state.showEditModal}
-                                closeModal={this.closeEditModal}
-                                modalType={"EDIT"}
-                                fetch={(model: string) => this.props.fetch(model)}
-                                item={this.state.model}
-                                createOrModify={this.props.createOrModify}
-                                createOrEditSuccess={this.createOrEditSuccess}
-                                deleteModel={constants.deleteModal === false ? undefined : this.props.deleteModel}
-                                additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams}
-                                additionalProps={this.props.additionalProps}
-                            />
-                        }
-                        {constants.filterModal && this.state.showFilterModal &&
-                            <ModalComponent
-                                constants={constants}
-                                showModal={this.state.showFilterModal}
-                                closeModal={this.closeFilterModal}
-                                modalType={"FILTER"}
-                                item={this.state.filterModel}
-                                filterSuccess={this.filterSuccess}
-                                filter={this.props.filter}
-                                additionalModels={this.props.additionalModels}
-                                queryParams={this.props.queryParams}
-                                additionalProps={this.props.additionalProps}
-                            />
-                        }
-                        {constants.customModal && this.state.showCustomModal &&
-                            this.getCustomComponent()
-                        }
+                            {constants.bulkCreateModal && this.state.showBulkCreateModal &&
+                                <BulkCreateModal
+                                    constants={constants}
+                                    showModal={this.state.showBulkCreateModal}
+                                    closeModal={this.closeBulkCreateModal}
+                                    createOrModify={this.props.bulkCreate}
+                                    createOrEditSuccess={this.createOrEditSuccess}
+                                    additionalProps={this.props.additionalProps}
+                                />
+                            }
+
+                            {constants.editModal && this.state.showEditModal &&
+                                <ModalComponent
+                                    constants={constants}
+                                    showModal={this.state.showEditModal}
+                                    closeModal={this.closeEditModal}
+                                    modalType={"EDIT"}
+                                    setValueInArray={(index: any, value: any) => {
+                                        let { showCreateModalArray } = this.state
+                                        showCreateModalArray[index] = {
+                                            model: value,
+                                            constants: constants,
+                                            additionalModelValues: this.props.additionalModels,
+                                        }
+                                        this.setState({
+                                            showCreateModalArray
+                                        })
+                                        this.props.putData(showCreateModalArray, constants.modelName)
+                                    }}
+                                    fetch={(model: string) => this.props.fetch(model)}
+                                    item={this.state.model}
+                                    createOrModify={this.props.createOrModify}
+                                    createOrEditSuccess={this.createOrEditSuccess}
+                                    deleteModel={constants.deleteModal === false ? undefined : this.props.deleteModel}
+                                    additionalModels={this.props.additionalModels}
+                                    queryParams={this.props.queryParams}
+                                    additionalProps={this.props.additionalProps}
+                                />
+                            }
+                            {constants.filterModal && this.state.showFilterModal &&
+                                <ModalComponent
+                                    constants={constants}
+                                    showModal={this.state.showFilterModal}
+                                    closeModal={this.closeFilterModal}
+                                    modalType={"FILTER"}
+                                    item={this.state.filterModel}
+                                    filterSuccess={this.filterSuccess}
+                                    filter={this.props.filter}
+                                    additionalModels={this.props.additionalModels}
+                                    queryParams={this.props.queryParams}
+                                    additionalProps={this.props.additionalProps}
+                                />
+                            }
+                            {constants.customModal && this.state.showCustomModal &&
+                                this.getCustomComponent()
+                            }
+                        </div>
+
                     </div>
                 )
             }
@@ -537,3 +603,5 @@ export class CruxComponentCreator {
         return connect(mapStateToProps, mapDispatchToProps)(ListClass)
     }
 }
+
+
