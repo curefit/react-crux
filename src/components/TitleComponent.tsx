@@ -18,7 +18,8 @@ export const TitleComponent = (props: any) => {
                 background: 'white',
                 color: 'black',
                 padding: 4,
-                border: '1px solid'
+                fontSize: 13,
+                opacity: 0.5
             }}>?</span> : null}
             <ReactTooltip />
         </label>
