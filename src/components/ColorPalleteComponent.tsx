@@ -10,7 +10,8 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
     constructor(props: any) {
         super(props)
         this.state = {
-            displayColorPicker: false
+            displayColorPicker: false,
+            isValueChanged : false
         }
     }
 
@@ -23,6 +24,9 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
     }
 
     handleColorChange = (color: any) => {
+        this.setState({
+            isValueChanged : true
+        })
         this.props.modelChanged(this.props.field, color.hex)
     }
 
@@ -74,7 +78,7 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         return <div>
             <div>
 
-                <TitleComponent field={this.props.field} />
+                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
 
             </div>
             <div style={styles.swatch} onClick={this.handleClick}>

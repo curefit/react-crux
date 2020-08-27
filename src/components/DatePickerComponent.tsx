@@ -9,6 +9,7 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
     constructor(props: any) {
         super(props)
         this.state = { interval: 30,
+            isValueChanged : false,
             dateTime: props.currentModel ? moment(props.currentModel) : undefined}
     }
 
@@ -24,7 +25,7 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                <TitleComponent field={this.props.field} />
+                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
                     <DatePicker
                         showTimeSelect={this.props.field.showTimeSelect}
                         timeIntervals={this.state.interval}
@@ -44,10 +45,16 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleIntervalChange = (event: any) => {
+        this.setState({
+            isValueChanged : true
+        })
         this.setState({ interval: event.target.value })
     }
 
     handleChange(selected: any) {
+        this.setState({
+            isValueChanged : true
+        })
         this.props.modelChanged(this.props.field, selected)
     }
 }

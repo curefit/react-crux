@@ -19,6 +19,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             query: "",
             isLoading: false,
             options: props.options || [],
+            isValueChanged: false,
             selected: props.currentModel || undefined
         }
     }
@@ -101,7 +102,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     handleChange = (item: any) => {
         if (!isEmpty(item)) {
             const value = item[0].value
-            this.setState({ selected: value })
+            this.setState({ selected: value, isValueChanged: true })
             if (this.props.type === "iterable") {
                 const currentOption = this.state.options.find((option: any) => value === this.getModalValue(option))
                 this.props.modelChanged(this.props.field, value, currentOption)
@@ -109,7 +110,10 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                 this.props.modelChanged(this.props.field, value)
             }
         } else {
-            this.setState({ selected: undefined })
+            this.setState({
+                selected: undefined,
+                isValueChanged: true
+            })
         }
     }
 
@@ -157,7 +161,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                 {
                     this.props.showTitle && !isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
                     <div>
-                        <TitleComponent field={this.props.field} />
+                        <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
                         <br /></div>
                 }
                 <AsyncTypeahead

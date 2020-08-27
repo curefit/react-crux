@@ -9,7 +9,8 @@ export class TimezoneComponent extends React.Component<InlineComponentProps, any
         super(props)
         const timezone = props.currentModel || "Asia/Kolkata"
         this.state = {
-            timezone: timezone
+            timezone: timezone,
+            isValueChanged: false
         }
     }
 
@@ -32,7 +33,7 @@ export class TimezoneComponent extends React.Component<InlineComponentProps, any
     }
 
     handleTimezoneChange = (timezone: string) => {
-        this.setState({ timezone })
+
         this.props.modelChanged(this.props.field, timezone)
     }
 }

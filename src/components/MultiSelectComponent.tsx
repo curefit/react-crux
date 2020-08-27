@@ -12,6 +12,10 @@ const MultiValueLabel = (props: any) => {
 
 @autobind
 export class MultiSelectComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = { isValueChanged: false }
+    }
     render() {
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
@@ -82,7 +86,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                    <TitleComponent field={this.props.field} />
+                    <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
                     <br /></div>
             }
             <Select isMulti={this.props.isMulti}
@@ -115,6 +119,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
     }
 
     select = (field: any, eventKey: any) => {
+        this.setState({
+            isValueChanged: true
+        })
         if (eventKey && this.props.isMulti) {
             let fieldList = []
             fieldList = eventKey.map((event: any) => event.value)

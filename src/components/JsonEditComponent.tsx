@@ -6,13 +6,16 @@ import { TitleComponent } from "./TitleComponent"
 
 @autobind
 export class JsonEditComponent extends React.Component<InlineComponentProps, any> {
-
+    constructor(props: any) {
+        super(props)
+        this.state = { isValueChanged: false }
+    }
     render() {
         const { field, currentModel } = this.props;
         return (
             <div>
                 {field.title && <span>
-                    <TitleComponent field={field} />
+                    <TitleComponent modalType={this.props.modalType}  field={field} isValueChanged={this.state.isValueChanged}/>
                     <br /></span>}
 
                 <ReactJson
@@ -28,6 +31,9 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
     }
 
     handleModify = (addPayload: InteractionProps) => {
+        this.setState({
+            isValueChanged: true
+        })
         if (this.props.readonly) {
             return false
         }

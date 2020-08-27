@@ -6,6 +6,10 @@ import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
 @autobind
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = { isValueChanged: false }
+    }
     render() {
         let selected = undefined
         let optionsData = []
@@ -35,7 +39,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                 this.props.showTitle &&
                 !(this.props.field.style && this.props.field.style.hideLabel) &&
                 <div>
-                    <TitleComponent field={this.props.field} />
+                    <TitleComponent field={this.props.field} isValueChanged={this.state.isValueChanged} />
                     {this.props.field.showRefresh &&
                         <span style={{ float: "right", fontSize: "10px" }}>
                             <span style={{ marginLeft: "20px", color: "grey" }}
@@ -58,6 +62,9 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
     }
 
     handleChange = (selected: any) => {
+        this.setState({
+            isValueChanged: true
+        })
         if (!isEmpty(selected)) {
             const newObject = selected[0]
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])

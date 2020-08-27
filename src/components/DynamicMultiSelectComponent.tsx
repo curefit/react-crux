@@ -20,7 +20,8 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
         this.state = {
             isLoading: false,
             options: props.options || [],
-            selected: props.currentModel || undefined
+            selected: props.currentModel || undefined,
+            isValueChanged : false
         }
     }
 
@@ -135,7 +136,7 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                <TitleComponent field={this.props.field} />
+                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
                 
                 <br /></div>
             }
@@ -171,6 +172,9 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
     }
 
     select = (field: any, eventKey: any) => {
+        this.setState({
+            isValueChanged : true
+        })
         if (eventKey) {
             let fieldList = []
             fieldList = eventKey.map((event: any) => event.value)
