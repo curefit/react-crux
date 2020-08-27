@@ -170,17 +170,29 @@ export class CruxComponentCreator {
                     if (searchId && searchField) {
                         const searchData = data.filter((x: any) => x[searchField] === searchId)
                         if (searchData.length) {
-                            this.setState({
-                                showEditModal: true,
-                                model: searchData[0]
+                            this.setState({ showEditModal: true, model: searchData[0] })
+                            const { showCreateModalArray } = this.state
+                            showCreateModalArray.push({
+                                constants: constants,
+                                model: searchData[0],
+                                additionalModels: this.props.additionalModels,
+                                type: "EDIT"
                             })
+                            this.setState({ showModalComponent: true, showCreateModalArray })
+                            openModal('ModalName', showCreateModalArray)
                         } else {
                             this.props.searchModel(constants.modelName, searchId, (searchModel: any) => {
                                 if (searchModel) {
-                                    this.setState({
-                                        showEditModal: true,
-                                        model: searchModel
+                                    this.setState({ showEditModal: true, model: searchModel })
+                                    const { showCreateModalArray } = this.state
+                                    showCreateModalArray.push({
+                                        constants: constants,
+                                        model: searchModel,
+                                        additionalModels: this.props.additionalModels,
+                                        type: "EDIT"
                                     })
+                                    this.setState({ showModalComponent: true, showCreateModalArray })
+                                    openModal('ModalName', showCreateModalArray)
                                 }
                             })
                         }
@@ -271,7 +283,7 @@ export class CruxComponentCreator {
                 this.setState({ showCustomModal: false, model: {} })
             }
 
-          
+
 
             createOrEditSuccess = (data?: any, index?: any, constantsModal?: any) => {
                 const constNew = constantsModal ? constantsModal : constants
