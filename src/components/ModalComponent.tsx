@@ -25,6 +25,7 @@ interface ModalComponentProps {
     additionalProps?: any
     setValueInArray?: any
     showModalComponent?: boolean
+    showMinimize?: boolean
 }
 
 @autobind
@@ -152,12 +153,12 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     {this.props.modalType === "CUSTOM" &&
                         <Modal.Title id="contained-modal-title">{"Custom " + this.props.constants.creationTitle + " - " + this.props.item[this.getRepField().field]}</Modal.Title>}
 
-                    <div className="minimise_icon" onClick={() => {
+                  {this.props.showMinimize ?  <div className="minimise_icon" onClick={() => {
                         this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
                         this.setState({
                             showModal: false
                         })
-                    }}>-</div>
+                    }}>-</div> : null}
                 </Modal.Header>
                 <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-height">
                     {this.state.error &&
