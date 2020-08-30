@@ -15,7 +15,8 @@ const now = moment()
 export class TimePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { isValueChanged: false }
+        this.state = { isValueChanged: false , previousValue
+            : this.props.currentModel}
     }
 
     render() {
@@ -39,9 +40,15 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleChange = (value: any) => {
-        this.setState({
-            isValueChanged: true
-        })
+        if (value.format(format) === this.state.previousValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         this.props.modelChanged(this.props.field, value.format(format))
     }
 }

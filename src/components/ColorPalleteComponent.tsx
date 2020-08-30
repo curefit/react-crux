@@ -11,7 +11,8 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         super(props)
         this.state = {
             displayColorPicker: false,
-            isValueChanged : false
+            isValueChanged: false,
+            previousValue: this.props.currentModel
         }
     }
 
@@ -24,8 +25,17 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
     }
 
     handleColorChange = (color: any) => {
+        if (this.state.previousValue === color.hex) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         this.setState({
-            isValueChanged : true
+            isValueChanged: true
         })
         this.props.modelChanged(this.props.field, color.hex)
     }
@@ -78,18 +88,18 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         return <div>
             <div>
 
-                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
+                <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
 
             </div>
             <div style={styles.swatch} onClick={this.handleClick}>
                 <div style={styles.color} />
             </div>
             {this.state.displayColorPicker ?
-            <div style={styles.popover}>
-                <div onClick={this.handleClose} style={styles.cover} />
-                <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}}
-                    onChange={this.handleColorChange} />
-            </div> : null}
+                <div style={styles.popover}>
+                    <div onClick={this.handleClose} style={styles.cover} />
+                    <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100) }}
+                        onChange={this.handleColorChange} />
+                </div> : null}
         </div>
     }
 }

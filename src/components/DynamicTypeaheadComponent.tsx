@@ -20,6 +20,8 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             isLoading: false,
             options: props.options || [],
             isValueChanged: false,
+            previousValue
+            : this.props.currentModel || undefined,
             selected: props.currentModel || undefined
         }
     }
@@ -108,13 +110,32 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                 this.props.modelChanged(this.props.field, value, currentOption)
             } else {
                 this.props.modelChanged(this.props.field, value)
+            } if (value === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
             }
         } else {
+            if (undefined === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
+
             this.setState({
                 selected: undefined,
                 isValueChanged: true
             })
         }
+
     }
 
     handleBlurChange = () => {
@@ -161,7 +182,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
                 {
                     this.props.showTitle && !isEmpty(this.props.field.title) && !(this.props.field.style && this.props.field.style.hideLabel) &&
                     <div>
-                        <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
+                        <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                         <br /></div>
                 }
                 <AsyncTypeahead

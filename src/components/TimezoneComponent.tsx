@@ -10,7 +10,9 @@ export class TimezoneComponent extends React.Component<InlineComponentProps, any
         const timezone = props.currentModel || "Asia/Kolkata"
         this.state = {
             timezone: timezone,
-            isValueChanged: false
+            isValueChanged: false,
+            previousValue
+            : this.props.currentModel
         }
     }
 

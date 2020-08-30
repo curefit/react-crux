@@ -8,7 +8,10 @@ import { TitleComponent } from "./TitleComponent"
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { isValueChanged: false }
+        this.state = {
+            isValueChanged: false,
+            previousValue: this.props.currentModel
+        }
     }
     render() {
         let selected = undefined
@@ -39,7 +42,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                 this.props.showTitle &&
                 !(this.props.field.style && this.props.field.style.hideLabel) &&
                 <div>
-                    <TitleComponent field={this.props.field} isValueChanged={this.state.isValueChanged} />
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                     {this.props.field.showRefresh &&
                         <span style={{ float: "right", fontSize: "10px" }}>
                             <span style={{ marginLeft: "20px", color: "grey" }}
@@ -62,13 +65,34 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
     }
 
     handleChange = (selected: any) => {
-        this.setState({
-            isValueChanged: true
-        })
+
+
+
         if (!isEmpty(selected)) {
             const newObject = selected[0]
+            console.log(newObject[this.props.field.foreign.key], this.state.previousValue)
+            if (newObject[this.props.field.foreign.key] === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
         } else {
+
+            console.log("Empty", this.state.previousValue)
+            if ("" === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(this.props.field, "")
         }
     }

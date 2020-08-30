@@ -9,15 +9,18 @@ export class CheckboxComponent extends React.Component<InlineComponentProps, any
         super(props)
         this.state = {
             displayColorPicker: false,
-            isValueChanged : false
+            isValueChanged: false,
+            previousValue
+                : (this.props.currentModel === true)
+
         }
     }
-    
+
     render() {
         return <div>
             <div>
-                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged} />
-                
+                <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+
                 <br />
             </div>
             <Checkbox bsClass="custom-checkbox"
@@ -28,10 +31,16 @@ export class CheckboxComponent extends React.Component<InlineComponentProps, any
     }
 
     handleCheckbox = () => {
-        this.setState({
-            isValueChanged : true
-        })
         const newValue = (this.props.currentModel !== true)
+        if (!!this.state.previousValue === !!newValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         this.props.modelChanged(this.props.field, newValue)
     }
 }

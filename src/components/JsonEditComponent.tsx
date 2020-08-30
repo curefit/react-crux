@@ -8,7 +8,8 @@ import { TitleComponent } from "./TitleComponent"
 export class JsonEditComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { isValueChanged: false }
+        this.state = { isValueChanged: false , previousValue
+            : this.props.currentModel}
     }
     render() {
         const { field, currentModel } = this.props;
@@ -31,9 +32,17 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
     }
 
     handleModify = (addPayload: InteractionProps) => {
-        this.setState({
-            isValueChanged: true
-        })
+   
+
+        if (addPayload.updated_src === this.state.previousValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         if (this.props.readonly) {
             return false
         }

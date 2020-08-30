@@ -21,6 +21,8 @@ import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadCom
 import { v4 } from "uuid"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 import { TitleComponent } from "./TitleComponent"
+import InputComponent from "./InputComponent"
+import TextAreaComponent from "./TextAreaComponent"
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
 }
@@ -204,7 +206,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     fontSize: "10px",
                     marginRight: "10px"
                 }}>
-                    <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged} />
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                 </div>
             }
             <div
@@ -228,7 +230,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <SelectComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         readonly={readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
@@ -255,7 +257,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         readonly={readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
@@ -283,7 +285,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DynamicMultiSelectComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         readonly={readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
@@ -311,7 +313,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <MultiSelectComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         readonly={readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
@@ -339,7 +341,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <ImageUploadComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         constants={this.props.constants}
                                         readonly={readonly}
                                         width={this.props.width}
@@ -365,7 +367,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <DatePickerComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -392,7 +394,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TimePickerComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
                                         field={this.props.field.iterabletype}
@@ -419,7 +421,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TimezoneComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         field={this.props.field.iterabletype}
                                         readonly={readonly}
                                         additionalModels={this.props.additionalModels}
@@ -469,7 +471,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <div style={this.props.field.iterabletype.style ?
                                     Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
                                     <TypeaheadComponent
-                                      modalType={this.props.modalType}
+                                        modalType={this.props.modalType}
                                         readonly={readonly}
                                         constants={this.props.constants}
                                         currentModel={currentModel}
@@ -487,7 +489,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
                             return <IterableDynamicTypeaheadComponent
-                            
+
                                 key={"iterable" + this.props.field.iterabletype.type + index + this.state.newModel[index]}
                                 index={index}
                                 readonly={readonly}
@@ -571,7 +573,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <ColorPalleteComponent
-                                  modalType={this.props.modalType}
+                                    modalType={this.props.modalType}
                                     field={this.props.field.iterabletype}
                                     modelChanged={this.fieldChanged(index)}
                                     additionalModels={this.props.additionalModels}
@@ -586,19 +588,21 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <textarea
+                                <TextAreaComponent
                                     disabled={readonly}
                                     value={currentModel}
-                                    onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }} />
+                                    onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }} 
+                                    
+                                    />
+                                
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
-
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <input
+                                <InputComponent
                                     disabled={readonly}
                                     type="number"
                                     value={currentModel}
@@ -608,11 +612,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
-
                         return <div key={"iterable" + this.props.field.iterabletype.type + index}
                             onMouseEnter={this.showIterableButtons.bind(this, index)}
                             onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                            <input
+                            <InputComponent
                                 disabled={readonly}
                                 type="text"
                                 value={currentModel}

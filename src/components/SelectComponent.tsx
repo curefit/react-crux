@@ -8,10 +8,12 @@ import { TitleComponent } from "./TitleComponent"
 export class SelectComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { isValueChanged: false }
+        this.state = {
+            isValueChanged: false, previousValue
+                : this.props.currentModel
+        }
     }
     render() {
-        console.log(this.props, 'this.props')
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
             console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
@@ -68,7 +70,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                    <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
             }
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
                 title={foreignTitle}
@@ -92,9 +94,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
                         return <MenuItem onSelect={(eventKey: any) => {
-                            this.setState({
-                                isValueChanged: true
-                            })
+
                             this.select(this.props.field, eventKey)
                         }} key={index} eventKey={eventKey}>
                             {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
@@ -105,6 +105,16 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
     }
 
     select = (field: any, eventKey: any) => {
+        if (eventKey === this.state.previousValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
+
         this.props.modelChanged(field, eventKey)
     }
 }

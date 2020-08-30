@@ -14,7 +14,9 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         this.state = {
             inProgress: false,
             percentageDone: 0,
-            isValueChanged: false 
+            isValueChanged: false,
+            previousValue
+            : this.props.currentModel
         }
     }
 
