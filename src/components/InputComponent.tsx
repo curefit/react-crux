@@ -3,7 +3,7 @@ import { TitleComponent } from "./TitleComponent"
 import { omit, isEmpty } from "lodash"
 function InputComponent(props: any) {
     const [isValueChanged, toggleIsValueChanged] = React.useState(false)
-    const [previousValue, togglePreviousValue] = React.useState(props.value)
+    const [previousValue, togglePreviousValue] = React.useState(props.value ? props.value : "")
     if (previousValue !== props.value && !isValueChanged) {
         toggleIsValueChanged(true)
     } else if (previousValue === props.value && isValueChanged) {

@@ -3,12 +3,7 @@ import ReactTooltip from 'react-tooltip';
 export const TitleComponent = (props: any) => {
     const { field, isValueChanged, modalType } = props
     return (
-        <label className="small mr-2" style={isValueChanged && modalType === "EDIT"  ? {
-            background: '#0080008a',
-            padding: 5,
-            borderRadius: 10
-
-        } : null}>{field.title.toUpperCase()}
+        <label className="small mr-2">{field.title.toUpperCase()}
             {field.required ?
                 <span className="text-danger" style={{
                     fontSize: 24,
@@ -25,6 +20,11 @@ export const TitleComponent = (props: any) => {
                 fontSize: 13,
                 opacity: 0.5
             }}>?</span> : null}
+            {isValueChanged && modalType === "EDIT" ?
+                <img src="https://icons.iconarchive.com/icons/custom-icon-design/office/256/edit-icon.png" style={{
+                    height: 15,
+                    marginLeft: 5
+            }}/> : null}
             <ReactTooltip />
         </label>
     )
