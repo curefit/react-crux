@@ -70,7 +70,6 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
 
         if (!isEmpty(selected)) {
             const newObject = selected[0]
-            console.log(newObject[this.props.field.foreign.key], this.state.previousValue)
             if (newObject[this.props.field.foreign.key] === this.state.previousValue) {
                 this.setState({
                     isValueChanged: false
@@ -82,8 +81,6 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
             }
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
         } else {
-
-            console.log("Empty", this.state.previousValue)
             if ("" === this.state.previousValue) {
                 this.setState({
                     isValueChanged: false

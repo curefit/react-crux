@@ -2,7 +2,6 @@ import * as React from "react"
 import ReactTooltip from 'react-tooltip';
 export const TitleComponent = (props: any) => {
     const { field, isValueChanged, modalType } = props
-    console.log(isValueChanged , modalType, 'isValueChanged && modalType')
     return (
         <label className="small mr-2">{field.title.toUpperCase()}
             {field.required ?

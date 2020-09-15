@@ -19,7 +19,6 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             previousValue
                 : this.props.currentModel
         }
-        console.log('MultiSelectComponent')
     }
     render() {
 
@@ -101,7 +100,6 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 components={{ MultiValueLabel }}
                 closeMenuOnSelect={!this.props.isMulti}
                 onChange={(eventKey: any) => {
-                    console.log('onChange called', eventKey)
                     this.select(this.props.field, eventKey)
                 }}
                 value={multiSelectValue}
@@ -128,13 +126,10 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
     }
 
     select = (field: any, eventKey: any) => {
-        console.log("select called")
-
         if (eventKey && this.props.isMulti) {
             let fieldList = []
 
             fieldList = eventKey.map((event: any) => event.value)
-            console.log(fieldList, this.state.previousValue, "fieldList")
             if (JSON.stringify(fieldList) === JSON.stringify(this.state.previousValue)) {
                 this.setState({
                     isValueChanged: false
@@ -155,7 +150,6 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                     isValueChanged: true
                 })
             }
-            console.log(this.state.previousValue, "[]")
             this.props.modelChanged(field, [])
         } else {
             if (eventKey.value === this.state.previousValue) {
@@ -167,7 +161,6 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                     isValueChanged: true
                 })
             }
-            console.log(this.state.previousValue, eventKey.value, "[]")
             this.props.modelChanged(field, eventKey.value)
         }
     }

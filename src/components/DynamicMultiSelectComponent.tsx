@@ -8,7 +8,7 @@ import { fetchDynamicTypeaheadResults } from "../Actions"
 import { TitleComponent } from "./TitleComponent"
 const MultiValueLabel = (props: any) => {
     return (
-        <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title : props.data.label})} />
+        <components.MultiValueLabel {...props} innerProps={Object.assign({}, props.innerProps, { title: props.data.label })} />
     )
 }
 
@@ -21,7 +21,7 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
             isLoading: false,
             options: props.options || [],
             selected: props.currentModel || undefined,
-            isValueChanged : false
+            isValueChanged: false
         }
     }
 
@@ -46,8 +46,15 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
 
     handleSearch = (query: string, callback: Function) => {
         this.setState({ isLoading: true })
-        const item = {
-            [this.props.field.foreign.title]: query, limit: 10
+        let item = {}
+        if (this.props.field.foreign.saperateQuery) {
+            item = {
+                [this.props.field.foreign.saperateQuery]: query, limit: 10
+            }
+        } else {
+            item = {
+                [this.props.field.foreign.title]: query, limit: 10
+            }
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
             const newOptions = uniqBy(concat(data.results, this.state.options), v => {
@@ -136,9 +143,9 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
-                
-                <br /></div>
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+
+                    <br /></div>
             }
             <AsyncSelect isMulti={true}
                 isClearable={this.props.field.multiClear || false}
@@ -173,7 +180,7 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
 
     select = (field: any, eventKey: any) => {
         this.setState({
-            isValueChanged : true
+            isValueChanged: true
         })
         if (eventKey) {
             let fieldList = []

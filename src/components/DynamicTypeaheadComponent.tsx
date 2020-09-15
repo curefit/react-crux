@@ -88,8 +88,15 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
     }
 
     handleSearch = (query: string) => {
-        const item = {
-            [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(query),
+        let item = {}
+        if (this.props.field.foreign.saperateQuery) {
+            item = {
+                [this.props.field.foreign.saperateQuery]: query, limit: 10, ...this.getDynamicPayload(query),
+            }
+        } else {
+            item = {
+                [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(query),
+            }
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
             this.setState({

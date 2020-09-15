@@ -19,7 +19,6 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
             currentDateTime: props.currentModel ? moment(props.currentModel.date) : undefined,
             currentTimeZone: props.currentModel ? moment(props.currentModel.date) : undefined,
         }
-        console.log('DateTimezoneComponent render')
     }
 
     render() {

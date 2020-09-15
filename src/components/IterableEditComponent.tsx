@@ -191,7 +191,6 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
 
     render() {
         const totalLength = this.state.model.length
-        // console.log("iterable",  this.props.field.title, " Parent ", this.props.parentModel)
         if (!this.props.field.iterabletype) {
             console.error("Did you forget to add a iterabletype to the field ? Possible culprit:", this.props.field)
         }
