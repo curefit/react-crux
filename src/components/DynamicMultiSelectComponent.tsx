@@ -47,9 +47,9 @@ export class DynamicMultiSelectComponent extends React.Component<InlineComponent
     handleSearch = (query: string, callback: Function) => {
         this.setState({ isLoading: true })
         let item = {}
-        if (this.props.field.foreign.saperateQuery) {
+        if (this.props.field.foreign.separateQuery) {
             item = {
-                [this.props.field.foreign.saperateQuery]: query, limit: 10
+                [this.props.field.foreign.separateQuery]: query, limit: 10
             }
         } else {
             item = {
