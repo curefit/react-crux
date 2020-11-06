@@ -46,6 +46,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
     handleChange = (selected: any) => {
         this.setState({ dateTime: selected })
         if (moment(selected).isValid()) {
+            moment.tz.setDefault(this.state.timezone)
             this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
         } else {
             this.props.modelChanged(this.props.field, undefined)
