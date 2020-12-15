@@ -691,7 +691,11 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         })
         const modelCopy = JSON.parse(JSON.stringify(this.state.model))
         pullAt(modelCopy, index)
-        this.props.modelChanged(modelCopy)
+        if (modelCopy.length) {
+            this.props.modelChanged(modelCopy)
+        } else {
+            this.props.modelChanged(undefined)
+        }
     }
 
     collapseToggle = () => {
