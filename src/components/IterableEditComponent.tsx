@@ -590,10 +590,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 <TextAreaComponent
                                     disabled={readonly}
                                     value={currentModel}
-                                    onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }} 
-                                    
-                                    />
-                                
+                                    onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }}
+
+                                />
+
                                 {this.iterableButtons(index, totalLength)}
                             </div>
                         }
@@ -640,7 +640,11 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             isValueChanged: true
         })
         const modelCopy = JSON.parse(JSON.stringify(this.state.model))
-        modelCopy[index] = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
+        if (event.target.value) {
+            modelCopy[index] = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
+        } else {
+            modelCopy[index] = undefined
+        }
         this.props.modelChanged(modelCopy)
     }
 

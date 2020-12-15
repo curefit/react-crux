@@ -507,7 +507,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     handleFieldChange = (event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
-        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
+        let newModel = ""
+        if (value) {
+            newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
+        } else {
+            newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: undefined })
+        }
         if (this.props.index >= 0) {
             this.props.modelChanged(this.props.index, newModel)
         } else {
