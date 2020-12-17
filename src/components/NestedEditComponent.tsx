@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { includes, has, isEmpty, map, isEqual, filter } from "lodash"
+import { includes, has, isEmpty, map, isEqual, filter, isNaN } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
@@ -508,7 +508,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     handleFieldChange = (event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
         let newModel = ""
-        if (!isEmpty(value)) {
+        if (!isEmpty(value) || !isNaN(value)) {
             newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
         } else {
             newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: undefined })
