@@ -10,7 +10,9 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
     constructor(props: any) {
         super(props)
         this.state = {
-            displayColorPicker: false
+            displayColorPicker: false,
+            isValueChanged: false,
+            previousValue: this.props.currentModel
         }
     }
 
@@ -23,6 +25,18 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
     }
 
     handleColorChange = (color: any) => {
+        if (this.state.previousValue === color.hex) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
+        this.setState({
+            isValueChanged: true
+        })
         this.props.modelChanged(this.props.field, color.hex)
     }
 
@@ -44,8 +58,8 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         const styles = reactCSS({
             "default": {
                 color: {
-                    width: "36px",
-                    height: "14px",
+                    width: "200px",
+                    height: "24px",
                     borderRadius: "2px",
                     background: `${this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}`,
                 },
@@ -74,18 +88,18 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
         return <div>
             <div>
 
-                <TitleComponent field={this.props.field} />
+                <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
 
             </div>
             <div style={styles.swatch} onClick={this.handleClick}>
                 <div style={styles.color} />
             </div>
             {this.state.displayColorPicker ?
-            <div style={styles.popover}>
-                <div onClick={this.handleClose} style={styles.cover} />
-                <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100)}}
-                    onChange={this.handleColorChange} />
-            </div> : null}
+                <div style={styles.popover}>
+                    <div onClick={this.handleClose} style={styles.cover} />
+                    <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100) }}
+                        onChange={this.handleColorChange} />
+                </div> : null}
         </div>
     }
 }

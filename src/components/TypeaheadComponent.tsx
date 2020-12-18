@@ -6,6 +6,13 @@ import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
 @autobind
 export class TypeaheadComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isValueChanged: false,
+            previousValue: this.props.currentModel
+        }
+    }
     render() {
         let selected = undefined
         let optionsData = []
@@ -35,7 +42,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                 this.props.showTitle &&
                 !(this.props.field.style && this.props.field.style.hideLabel) &&
                 <div>
-                    <TitleComponent field={this.props.field} />
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                     {this.props.field.showRefresh &&
                         <span style={{ float: "right", fontSize: "10px" }}>
                             <span style={{ marginLeft: "20px", color: "grey" }}
@@ -58,10 +65,31 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
     }
 
     handleChange = (selected: any) => {
+
+
+
         if (!isEmpty(selected)) {
             const newObject = selected[0]
+            if (newObject[this.props.field.foreign.key] === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(this.props.field, newObject[this.props.field.foreign.key])
         } else {
+            if ("" === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(this.props.field, "")
         }
     }

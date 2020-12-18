@@ -12,7 +12,16 @@ const MultiValueLabel = (props: any) => {
 
 @autobind
 export class MultiSelectComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isValueChanged: false,
+            previousValue
+                : this.props.currentModel
+        }
+    }
     render() {
+
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
             console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
@@ -82,7 +91,7 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                    <TitleComponent field={this.props.field} />
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                     <br /></div>
             }
             <Select isMulti={this.props.isMulti}
@@ -90,7 +99,9 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
                 isSearchable={true}
                 components={{ MultiValueLabel }}
                 closeMenuOnSelect={!this.props.isMulti}
-                onChange={(eventKey: any) => this.select(this.props.field, eventKey)}
+                onChange={(eventKey: any) => {
+                    this.select(this.props.field, eventKey)
+                }}
                 value={multiSelectValue}
                 options={optionsData}
                 isDisabled={this.props.readonly}
@@ -117,11 +128,39 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
     select = (field: any, eventKey: any) => {
         if (eventKey && this.props.isMulti) {
             let fieldList = []
+
             fieldList = eventKey.map((event: any) => event.value)
+            if (JSON.stringify(fieldList) === JSON.stringify(this.state.previousValue)) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(field, fieldList)
         } else if (this.props.isMulti) {
+            if (JSON.stringify([]) === JSON.stringify(this.state.previousValue)) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(field, [])
         } else {
+            if (eventKey.value === this.state.previousValue) {
+                this.setState({
+                    isValueChanged: false
+                })
+            } else {
+                this.setState({
+                    isValueChanged: true
+                })
+            }
             this.props.modelChanged(field, eventKey.value)
         }
     }

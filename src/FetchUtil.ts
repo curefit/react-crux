@@ -66,7 +66,6 @@ export class FetchUtil {
                 })
             } else {
                 console.error("Status: " + response.status + " StatusText: " + response.statusText)
-                console.log(response.body)
                 if (response.status == 401) {
                     console.error("Call failed with 401, throwing auth error")
                     throw new AuthError(response.status)
