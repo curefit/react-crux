@@ -1,5 +1,4 @@
 import * as React from "react"
-import ReactTooltip from 'react-tooltip';
 
 export const TitleComponent = (props: any) => {
     const { field } = props
@@ -13,7 +12,6 @@ export const TitleComponent = (props: any) => {
                 padding: 5,
                 borderRadius: 5
             }}>?</span> : null}
-            <ReactTooltip />
         </label>
     )
 }
