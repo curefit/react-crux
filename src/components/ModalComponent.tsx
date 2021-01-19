@@ -136,6 +136,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
             onHide={this.closeModal}
             container={this}
             aria-labelledby="contained-modal-title"
+            backdrop={this.props.constants.disableModalOutsideClick ? "static" : true}
             dialogClassName={this.props.constants.largeEdit ? `${errorClassName} large-modal` : `${errorClassName}`}>
             <Modal.Header closeButton>
                 {this.props.modalType === "CREATE" &&
