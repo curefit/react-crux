@@ -40,6 +40,7 @@ export interface InlineComponentProps {
     iterableNested?: boolean
     nestedIterableModelChanged?: any
     additionalProps?: any
+    dynamicFileName?: any
 }
 
 export { ModalComponent } from "./components/ModalComponent"
