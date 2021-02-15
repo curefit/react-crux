@@ -28,8 +28,8 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         }
 
         let uploadedFileName = ''
-        if (this.props.field.dynamicFileName && typeof this.props.field.dynamicFileName === "function") {
-            uploadedFileName = this.props.field.dynamicFileName({ parentModel: this.props.parentModel })
+        if (this.props.field.dynamicFileNameFn && typeof this.props.field.dynamicFileNameFn === "function") {
+            uploadedFileName = this.props.field.dynamicFileNameFn({ parentModel: this.props.parentModel })
         }
 
         if (uploadedFileName) {
