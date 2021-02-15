@@ -64,7 +64,6 @@
     "build": "tsc",
     "watch": "tsc --project tsconfig.json -w",
     "prepublish": "rm -rf dist && tsc",
-    "postversion": "git push origin master && git push origin master --tags && npm publish",
-    "postpublish": "npm publish --registry https://npm.pkg.github.com/ --ignore-scripts"
+    "postversion": "git push origin master && git push origin master --tags && npm publish"
   }
 }
