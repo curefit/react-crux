@@ -9,6 +9,7 @@ import { ImageUploadComponent } from "./ImageUploadComponent"
 import { IterableEditComponent } from "./IterableEditComponent"
 import { CheckboxComponent } from "./CheckboxComponent"
 import { MultiSelectComponent } from "./MultiSelectComponent"
+import { SelectWithStylesComponent } from "./SelectWithStylesComponent"
 import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
@@ -72,6 +73,19 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     isMulti={false}
                 />
             )
+        } else if (field.type === "selectWithStyles") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
+            return (
+                <SelectWithStylesComponent field={field}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={field.isMulti}
+                />
+            )
         } else if (field.type === "multiselect") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
@@ -85,7 +99,23 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     isMulti={true}
                 />
             )
-        } else if (field.type === "dynamicMultiselect") {
+        }
+        else if (field.type === "selectWithStyles") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
+            return (
+                <SelectWithStylesComponent field={field}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={field.isMulti}
+                />
+            )
+        }
+
+        else if (field.type === "dynamicMultiselect") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <DynamicMultiSelectComponent field={field}
