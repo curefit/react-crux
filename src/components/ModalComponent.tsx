@@ -133,6 +133,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
         const errorClassName = this.state.error ? "error-animate" : ""
         return <Modal
             show={this.props.showModal}
+            backdrop={'static'}
             onHide={this.closeModal}
             container={this}
             aria-labelledby="contained-modal-title"
@@ -190,6 +191,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     <>
                         <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, true)}>Update</button>
                         {this.props.constants.saveAsNew &&
+
                             <button disabled={requestInProgress} className="btn btn-primary" onClick={this.modalPerformOperation(this.props.modalType, false)}>Save as New</button>}
                     </> : null}
                 {this.props.modalType === "CREATE" || this.props.modalType === "CUSTOM" ? (
