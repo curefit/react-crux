@@ -32,6 +32,16 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         if (height) {
             formData.append("height", height)
         }
+
+        let uploadedFileName = ''
+        if (this.props.field.dynamicFileNameFn && typeof this.props.field.dynamicFileNameFn === "function") {
+            uploadedFileName = this.props.field.dynamicFileNameFn({ parentModel: this.props.parentModel })
+        }
+
+        if (uploadedFileName) {
+            formData.append("fileName", uploadedFileName)
+        }
+
         this.setState(Object.assign({}, this.state, { inProgress: true }))
         if (this.props.item && this.props.item["contentType"] && this.props.item["contentType"] !== contentType) {
             contentType = this.props.item["contentType"]
