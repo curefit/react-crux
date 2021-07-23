@@ -70,7 +70,12 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 Object.assign(this.props.item, newItem)
                 this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError, this.props.queryParams)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
-
+                try {
+                    this.validateItem(this.state.item, this.props.constants)
+                } catch (e) {
+                    this.createOrEditError(e)
+                    return
+                }
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
         }
@@ -97,7 +102,9 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     createOrEditError = (err: any) => {
         this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
         this.closeDeleteModal()
-        this.modalBodyRef.scrollTop = 0
+        if (this.modalBodyRef) {
+            this.modalBodyRef.scrollTop = 0
+        }
     }
 
     closeModal = () => {
@@ -121,6 +128,22 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     deleteModel = () => {
         this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
+    }
+
+    validateItem(data: any, schema: any): boolean {
+        // data - this.state.item
+        // schema - this.field
+        for (const field of schema.fields??[]) {
+            if (field.required === true) {
+                if (!data[field.field]) {
+                    throw new Error(`${field.field} is a required field`)
+                }
+            }
+            if (field.type === "nested") {
+                return schema.fields.forEach((x: any) => this.validateItem(data[x.field], x))
+            }
+        }
+        return true
     }
 
     render() {

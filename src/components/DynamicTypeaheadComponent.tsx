@@ -20,8 +20,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             isLoading: false,
             options: props.options || [],
             isValueChanged: false,
-            previousValue
-            : this.props.currentModel || undefined,
+            previousValue: this.props.currentModel || undefined,
             selected: props.currentModel || undefined
         }
     }
