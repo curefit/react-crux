@@ -59,9 +59,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
-            this.setState({
-                requestInProgress: true
-            })
+            this.setState({requestInProgress: true})
             if (modalType === "FILTER") {
                 const newItem = Object.assign({}, this.state.item,
                     { skip: 0, paginate: Object.assign({}, this.state.item.paginate, { currentPage: 1 }) })
@@ -70,38 +68,41 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 Object.assign(this.props.item, newItem)
                 this.props.filter(this.props.constants.modelName, newItem, this.filterSuccess, this.filterError, this.props.queryParams)
             } else if (modalType === "CREATE" || modalType === "EDIT" || modalType === "CUSTOM") {
-
+                try {
+                    this.validateItem(this.state.item, this.props.constants)
+                } catch (e) {
+                    this.createOrEditError(e)
+                    return
+                }
                 this.props.createOrModify(this.props.constants.modelName, this.state.item, edit, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
             }
         }
     }
 
     createOrEditSuccess = (data: any) => {
-        this.setState({
-            requestInProgress: false
-        })
+        this.setState({requestInProgress: false})
         this.props.createOrEditSuccess(this.props.modalIndex)
     }
 
     filterSuccess(data: any) {
-        this.setState({
-            requestInProgress: false
-        })
+        this.setState({requestInProgress: false})
         this.props.filterSuccess()
     }
 
     filterError(err: any) {
-        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
+        this.setState({ error: err, requestInProgress: false })
     }
 
     createOrEditError = (err: any) => {
-        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
+        this.setState({ error: err, requestInProgress: false })
         this.closeDeleteModal()
-        this.modalBodyRef.scrollTop = 0
+        if (this.modalBodyRef) {
+            this.modalBodyRef.scrollTop = 0
+        }
     }
 
     closeModal = () => {
-        this.setState(Object.assign({}, this.state, omit(this.state, "error")))
+        this.setState({error: undefined})
         this.props.closeModal(this.props.modalIndex)
     }
 
@@ -112,15 +113,29 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     openDeleteModal = () => {
-        this.setState(Object.assign({}, this.state, { deleteModal: true }))
+        this.setState({ deleteModal: true })
     }
 
     closeDeleteModal = () => {
-        this.setState(Object.assign({}, this.state, { deleteModal: false }))
+        this.setState({ deleteModal: false })
     }
 
     deleteModel = () => {
         this.props.deleteModel(this.props.constants.modelName, this.state.item, this.createOrEditSuccess, this.createOrEditError, this.props.queryParams)
+    }
+
+    validateItem(data: any, schema: any): boolean {
+        for (const field of schema.fields??[]) {
+            if (field.required === true) {
+                if (!data[field.field]) {
+                    throw new Error(`${field.field} is a required field`)
+                }
+            }
+            if (field.type === "nested") {
+                return schema.fields.forEach((x: any) => this.validateItem(data[x.field], x))
+            }
+        }
+        return true
     }
 
     render() {
@@ -155,9 +170,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
                   {this.props.showMinimize ?  <div className="minimise_icon" onClick={() => {
                         this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
-                        this.setState({
-                            showModal: false
-                        })
+                        this.setState({showModal: false})
                     }}>-</div> : null}
                 </Modal.Header>
                 <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-height">
@@ -214,9 +227,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 </Modal.Footer>
             </Modal>,
             !this.state.showModal ? <div onClick={() => {
-                this.setState({
-                    showModal: true
-                })
+                this.setState({showModal: true})
             }} className="bottomTabsCss">
                 {this.props.constants.creationTitle} - {this.state.item ? this.state.item[this.getRepField().field] : ""}
                 <img src="https://cdn2.iconfinder.com/data/icons/lucid-generic/24/expand_maximise_send_transfer_share-512.png" style={{
