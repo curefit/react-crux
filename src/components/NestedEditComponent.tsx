@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { includes, has, isEmpty, map, isEqual, filter, isNaN } from "lodash"
+import { includes, has, isEmpty, map, isEqual, filter, isNaN, pullAt } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
