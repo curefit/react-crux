@@ -87,7 +87,10 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
                         return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
-                            {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
+                            {doc.image ? <img src={doc.image} style={{
+                                height: 30,
+                                width: 30
+                            }} /> : null} {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
                         </MenuItem>
                     }))
                 }
