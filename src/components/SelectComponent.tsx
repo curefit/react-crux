@@ -6,6 +6,13 @@ import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
 @autobind
 export class SelectComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            isValueChanged: false, previousValue
+                : this.props.currentModel
+        }
+    }
     render() {
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
@@ -63,7 +70,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
-                    <TitleComponent field={this.props.field} /><br /></div>
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
             }
             <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
                 title={foreignTitle}
@@ -86,7 +93,10 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                         } else {
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
-                        return <MenuItem onSelect={(eventKey: any) => this.select(this.props.field, eventKey)} key={index} eventKey={eventKey}>
+                        return <MenuItem onSelect={(eventKey: any) => {
+
+                            this.select(this.props.field, eventKey)
+                        }} key={index} eventKey={eventKey}>
                             {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
                         </MenuItem>
                     }))
@@ -95,6 +105,16 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
     }
 
     select = (field: any, eventKey: any) => {
+        if (eventKey === this.state.previousValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
+
         this.props.modelChanged(field, eventKey)
     }
 }

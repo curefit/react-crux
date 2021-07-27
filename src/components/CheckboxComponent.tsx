@@ -5,11 +5,22 @@ import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
 @autobind
 export class CheckboxComponent extends React.Component<InlineComponentProps, any> {
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            displayColorPicker: false,
+            isValueChanged: false,
+            previousValue
+                : (this.props.currentModel === true)
+
+        }
+    }
+
     render() {
         return <div>
             <div>
-                <TitleComponent field={this.props.field} />
-                
+                <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+
                 <br />
             </div>
             <Checkbox bsClass="custom-checkbox"
@@ -21,6 +32,15 @@ export class CheckboxComponent extends React.Component<InlineComponentProps, any
 
     handleCheckbox = () => {
         const newValue = (this.props.currentModel !== true)
+        if (!!this.state.previousValue === !!newValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         this.props.modelChanged(this.props.field, newValue)
     }
 }

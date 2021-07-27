@@ -13,11 +13,17 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         super(props)
         this.state = {
             inProgress: false,
-            percentageDone: 0
+            percentageDone: 0,
+            isValueChanged: false,
+            previousValue
+            : this.props.currentModel
         }
     }
 
     onDrop(files: any, width: string, height: string, contentType: string) {
+        this.setState({
+            isValueChanged : true
+        })
         const formData = new FormData()
         formData.append("images", files[0])
         if (width) {

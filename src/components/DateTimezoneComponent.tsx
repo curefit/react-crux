@@ -14,7 +14,10 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         this.state = {
             interval: 30,
             dateTime: props.currentModel ? moment(props.currentModel.date) : undefined,
-            timezone: timezone
+            timezone: timezone,
+            isValueChanged: false,
+            currentDateTime: props.currentModel ? moment(props.currentModel.date) : undefined,
+            currentTimeZone: props.currentModel ? moment(props.currentModel.date) : undefined,
         }
     }
 
@@ -22,7 +25,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         return (
             <div style={{ display: "flex" }}>
                 <div style={{ display: "flex", flexDirection: "column", width: "250px" }}>
-                <TitleComponent field={this.props.field} />
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
                     <Datetime
                         value={this.state.dateTime}
                         dateFormat={"LL"}
@@ -44,7 +47,12 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
     }
 
     handleChange = (selected: any) => {
-        this.setState({ dateTime: selected })
+
+        if (selected === this.state.currentDateTime) {
+            this.setState({ dateTime: selected, isValueChanged: false })
+        } else {
+            this.setState({ dateTime: selected, isValueChanged: true })
+        }
         if (moment(selected).isValid()) {
             moment.tz.setDefault(this.state.timezone)
             this.props.modelChanged(this.props.field, { date: selected, timezone: this.state.timezone })
@@ -54,7 +62,12 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
     }
 
     handleTimezoneChange = (field: any, timezone: string) => {
-        this.setState({ timezone, dateTime: moment(this.state.dateTime).tz(timezone) })
+        if (timezone === this.state.currentTimeZone) {
+            this.setState({ dateTime: timezone, isValueChanged: false })
+        } else {
+            this.setState({ dateTime: timezone, isValueChanged: true })
+        }
+        this.setState({ timezone, dateTime: moment(this.state.dateTime).tz(timezone), isValueChanged: true })
         this.props.modelChanged(this.props.field, { date: this.state.dateTime, timezone })
     }
 }

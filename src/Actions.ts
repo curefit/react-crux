@@ -25,11 +25,11 @@ export function getMyDetails(success?: any, error?: any) {
 
 export function filterModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
-        dispatch({ type: "FETCH_" + model +  "_STARTED", model: model , item: item, isFilters: true})
+        dispatch({ type: "FETCH_" + model + "_STARTED", model: model, item: item, isFilters: true })
         const modalQueryParams = queryString.parseUrl(model)
         const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}/filter?${queryParamsString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: {results : data.results ? data.results : data, metadata: data.metadata}, model: model})
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: { results: data.results ? data.results : data, metadata: data.metadata }, model: model })
             if (success) success(data.results ? data.results : data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
@@ -49,7 +49,7 @@ export function fetchModel(model: string, success?: any, error?: any, queryParam
         const modalQueryParams = queryString.parseUrl(model)
         const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}?${queryParamsString}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
-            dispatch({ type: "FETCH_" + model + "_COMPLETED", data : data.results ? data.results : data, model: model})
+            dispatch({ type: "FETCH_" + model + "_COMPLETED", data: data.results ? data.results : data, model: model })
             if (success) success(data)
         }).catch((err: any) => {
             if (err.name === "AuthError") {
@@ -140,6 +140,12 @@ export function successCustomModal(data: any, type: string, model: string) {
     }
 }
 
+export function putData(data: any, model: string) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ data, type: "SET_MODAL_DATA", model })
+    }
+}
+
 export function failureCustomModal(err: any, model: string, type: string) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type, err, model })
@@ -153,5 +159,12 @@ export const fetchDynamicTypeaheadResults = async (model: string, item: any) => 
     }
     catch (err) {
         throw new Error(err.message)
+    }
+}
+
+
+export const openModal = async (model: string, data: any) => {
+    return (dispatch: Dispatch<any>) => {
+        dispatch({ type: "OPEN_" + model + "_MODAL", model: model, data: data })
     }
 }
