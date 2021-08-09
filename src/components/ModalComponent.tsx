@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { omit, isEmpty } from "lodash"
+import { omit, isEmpty, isObject, isArray, isNil } from "lodash"
 import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
@@ -59,9 +59,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     modalPerformOperation(modalType: ModalType, edit: boolean) {
         return () => {
-            this.setState({
-                requestInProgress: true
-            })
+            this.setState({requestInProgress: true})
             if (modalType === "FILTER") {
                 const newItem = Object.assign({}, this.state.item,
                     { skip: 0, paginate: Object.assign({}, this.state.item.paginate, { currentPage: 1 }) })
@@ -82,25 +80,21 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     createOrEditSuccess = (data: any) => {
-        this.setState({
-            requestInProgress: false
-        })
+        this.setState({requestInProgress: false})
         this.props.createOrEditSuccess(this.props.modalIndex)
     }
 
     filterSuccess(data: any) {
-        this.setState({
-            requestInProgress: false
-        })
+        this.setState({requestInProgress: false})
         this.props.filterSuccess()
     }
 
     filterError(err: any) {
-        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
+        this.setState({ error: err, requestInProgress: false })
     }
 
     createOrEditError = (err: any) => {
-        this.setState(Object.assign({}, this.state, { error: err, requestInProgress: false }))
+        this.setState({ error: err, requestInProgress: false })
         this.closeDeleteModal()
         if (this.modalBodyRef) {
             this.modalBodyRef.scrollTop = 0
@@ -108,7 +102,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     closeModal = () => {
-        this.setState(Object.assign({}, this.state, omit(this.state, "error")))
+        this.setState({error: undefined})
         this.props.closeModal(this.props.modalIndex)
     }
 
@@ -119,11 +113,11 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     openDeleteModal = () => {
-        this.setState(Object.assign({}, this.state, { deleteModal: true }))
+        this.setState({ deleteModal: true })
     }
 
     closeDeleteModal = () => {
-        this.setState(Object.assign({}, this.state, { deleteModal: false }))
+        this.setState({ deleteModal: false })
     }
 
     deleteModel = () => {
@@ -131,16 +125,24 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     }
 
     validateItem(data: any, schema: any): boolean {
-        // data - this.state.item
-        // schema - this.field
         for (const field of schema.fields??[]) {
             if (field.required === true) {
-                if (!data[field.field]) {
-                    throw new Error(`${field.field} is a required field`)
+                if (isObject(data[field.field]) && isEmpty(data[field.field])) {
+                    throw new Error(`${field.title ?? field.field} is a required field`)
+                } else if (isArray(data[field.field]) && data[field.field].lenght === 0) {
+                    throw new Error(`${field.title ?? field.field} is a required field`)
+                } else if (isNil(data[field.field])) {
+                    throw new Error(`${field.title ?? field.field} is a required field`)
                 }
             }
             if (field.type === "nested") {
                 return schema.fields.forEach((x: any) => this.validateItem(data[x.field], x))
+            } else if (field.type === "iterable") {
+                if (data[field.field] && data[field.field].length > 0) {
+                    for (const x of data[field.field]) {
+                        this.validateItem(x, field.iterabletype)
+                    }
+                }
             }
         }
         return true
@@ -178,9 +180,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
                   {this.props.showMinimize ?  <div className="minimise_icon" onClick={() => {
                         this.props.setValueInArray ? this.props.setValueInArray(this.props.modalIndex, this.state.item) : null
-                        this.setState({
-                            showModal: false
-                        })
+                        this.setState({showModal: false})
                     }}>-</div> : null}
                 </Modal.Header>
                 <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-height">
@@ -237,9 +237,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 </Modal.Footer>
             </Modal>,
             !this.state.showModal ? <div onClick={() => {
-                this.setState({
-                    showModal: true
-                })
+                this.setState({showModal: true})
             }} className="bottomTabsCss">
                 {this.props.constants.creationTitle} - {this.state.item ? this.state.item[this.getRepField().field] : ""}
                 <img src="https://cdn2.iconfinder.com/data/icons/lucid-generic/24/expand_maximise_send_transfer_share-512.png" style={{
