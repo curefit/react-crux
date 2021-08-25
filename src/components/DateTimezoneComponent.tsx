@@ -38,7 +38,7 @@ export class DateTimezoneComponent extends React.Component<DateTimezoneComponent
                         utc={false}
                         timeFormat={"HH:mm"}
                         inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
-                        input={this.props.hideInput ? false : true}
+                        input={this.props.hideInput ? true : false}
                     />
                 </div>
                 <TimezoneComponent
