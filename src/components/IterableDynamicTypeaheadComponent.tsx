@@ -1,26 +1,27 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { NestedEditComponent, InlineComponentProps } from "../CruxComponent"
+import { InlineComponentProps } from "../CruxComponent"
+import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
+import { isEmpty } from "lodash"
 
-interface IterableNestedComponentProps extends InlineComponentProps {
+interface IterableDynamicTypeaheadComponentProps extends InlineComponentProps {
     collapsable: boolean
     totalLength: number
-    collapseNestedToggle: Function
-    getIterableNestedTitle: Function
     remove: Function
     addAtIndex: Function
     reorder: Function
+    type?: string
+    options?: any
 }
-@autobind
-export class IterableNestedComponent extends React.Component<IterableNestedComponentProps, any> {
 
+@autobind
+export class IterableDynamicTypeaheadComponent extends React.Component<IterableDynamicTypeaheadComponentProps, any> {
     constructor(props: any) {
         super(props)
-        this.state = { showIterableButton: false }
-    }
-
-    collapseNestedToggle = () => {
-        this.props.collapseNestedToggle(this.props.index)
+        this.state = {
+            showIterableButton: false,
+            options: props.options || []
+        }
     }
 
     showIterableButtons = () => {
@@ -39,12 +40,16 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
         this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
     }
 
+    customButtonAction = () => {
+        this.props.field.additionalButtons.customButtonAction(this.props.currentModel)
+    }
+
     remove = () => {
         this.props.remove(this.props.index)
     }
 
-    customButtonAction = () => {
-        this.props.field.additionalButtons.customButtonAction(this.props.currentModel)
+    iterableChange = (field: any, value: any, currentOption: any) => {
+        this.props.modelChanged(this.props.index, value, currentOption)
     }
 
     iterableButtons = () => {
@@ -84,51 +89,40 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
         return null
     }
 
-    render() {
-        const titleStyle: any = { fontSize: "14px", fontWeight: "bold", marginBottom: "10px", color: "black", display: "flex" }
-        if (this.props.field.iterabletype.nestedIterableCollapse) {
-            titleStyle["cursor"] = "pointer"
+    componentWillReceiveProps(nextProps: any) {
+        if (!isEmpty(nextProps.options) && isEmpty(this.state.options)) {
+            this.setState({ options: nextProps.options })
         }
-        return <div key={this.props.index}
-            style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                border: "1px solid #EEE",
-                padding: "10px",
-                marginTop: "10px"
-            }}
-            onMouseEnter={this.showIterableButtons}
-            onMouseLeave={this.hideIterableButtons}>
-            {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
-                <div onClick={this.collapseNestedToggle} style={titleStyle}>
-                    <div style={{ display: "inline-block", width: "90%" }}>
-                        {this.props.getIterableNestedTitle(this.props.index)}
-                    </div>
-                    {!this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-up" aria-hidden="true" />}
-                    {this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-down" aria-hidden="true" />}
-                </div>}
-            <div style={{ display: "inline-block" }}>
-                {!this.props.collapsable &&
-                    <NestedEditComponent
-                        index={this.props.index}
+    }
+
+    render() {
+        return (
+            <div key={this.props.index}
+                style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                    padding: "5px 0px",
+                    display: "inline-block",
+                    marginRight: "30px"
+                } : { padding: "5px 0px" }}
+                onMouseEnter={this.showIterableButtons}
+                onMouseLeave={this.hideIterableButtons}>
+                <div style={this.props.field.iterabletype.style ?
+                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                    <DynamicTypeaheadComponent
                         readonly={this.props.readonly}
+                        constants={this.props.constants}
                         currentModel={this.props.currentModel}
                         fetch={this.props.fetch}
                         field={this.props.field.iterabletype}
                         additionalModels={this.props.additionalModels}
-                        nestedIterableModelChanged={this.props.modelChanged}
-                        modelChanged={this.props.modelChanged}
+                        modelChanged={this.iterableChange}
                         showTitle={false}
-                        indent={false}
-                        iterableNested={true}
-                        modalType={this.props.modalType}
                         parentModel={this.props.parentModel}
-                    />}
+                        options={this.props.options}
+                        type={this.props.type}
+                    />
+                </div>
+                {this.iterableButtons()}
             </div>
-            {this.iterableButtons()}
-        </div>
+        )
     }
 }
-

@@ -2,19 +2,23 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import ReactJson, { InteractionProps } from "react-json-view"
-
+import { TitleComponent } from "./TitleComponent"
 
 @autobind
 export class JsonEditComponent extends React.Component<InlineComponentProps, any> {
-
+    constructor(props: any) {
+        super(props)
+        this.state = { isValueChanged: false , previousValue
+            : this.props.currentModel}
+    }
     render() {
-        const {field, currentModel} = this.props;
+        const { field, currentModel } = this.props;
         return (
             <div>
-                {field.title && <span><label style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>{field.title.toUpperCase()}</label><br /></span>}
+                {field.title && <span>
+                    <TitleComponent modalType={this.props.modalType}  field={field} isValueChanged={this.state.isValueChanged}/>
+                    <br /></span>}
+
                 <ReactJson
                     style={{ borderWidth: "2px" }}
                     name={field.field}
@@ -28,6 +32,17 @@ export class JsonEditComponent extends React.Component<InlineComponentProps, any
     }
 
     handleModify = (addPayload: InteractionProps) => {
+   
+
+        if (addPayload.updated_src === this.state.previousValue) {
+            this.setState({
+                isValueChanged: false
+            })
+        } else {
+            this.setState({
+                isValueChanged: true
+            })
+        }
         if (this.props.readonly) {
             return false
         }

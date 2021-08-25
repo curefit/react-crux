@@ -1,18 +1,18 @@
 import * as React from "react"
-import * as _ from "lodash"
+import { isEmpty, map, find } from "lodash"
 
 export const ListMultiSelectComponent = (props: any) => {
     let selectField = "Loading..."
     try {
-        if (_.isEmpty(props.model) || !Array.isArray(props.model)) {
+        if (isEmpty(props.model) || !Array.isArray(props.model)) {
             selectField = ""
         }
-        const finalString = _.map(props.model, (selectValue: string) => {
-            const foreignDoc = _.find(props.additionalModels[props.field.modelName], (doc: any) => {
+        const finalString = map(props.model, (selectValue: string) => {
+            const foreignDoc = find(props.additionalModels[props.field.modelName], (doc: any) => {
                 return doc[props.field.key] === selectValue
             })
             let foreignTitle
-            if (_.isEmpty(foreignDoc)) {
+            if (isEmpty(foreignDoc)) {
                 foreignTitle = selectValue + " Bad Value"
             } else {
                 foreignTitle = foreignDoc[props.field.title]

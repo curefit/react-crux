@@ -1,6 +1,6 @@
 {
   "name": "react-crux",
-  "version": "0.5.1-stage.1",
+  "version": "0.25.0",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,11 +12,12 @@
   "license": "MIT",
   "dependencies": {
     "autobind-decorator": "2.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",
     "query-string": "^6.2.0",
-    "react": "^16.4.2",
+    "rc-time-picker": "^3.7.3",
+    "react": "^16.14.0",
     "react-bootstrap": "^0.32.3",
     "react-bootstrap-typeahead": "^3.2.2",
     "react-color": "^2.17.0",
@@ -27,6 +28,7 @@
     "react-redux": "^5.0.7",
     "react-select": "^3.0.4",
     "react-timezone": "^2.3.0",
+    "react-tooltip": "^4.2.21",
     "reactcss": "^1.2.3",
     "superagent": "^3.8.3"
   },
@@ -48,11 +50,12 @@
     "@types/react-datepicker": "^1.1.7",
     "@types/react-dropzone": "^4.2.2",
     "@types/react-redux": "^6.0.6",
-    "@types/react-select": "^2.0.11",
+    "@types/react-select": "^3.0.4",
     "@types/reactcss": "^1.2.3",
     "@types/superagent": "^3.8.4",
+    "@types/uuid": "^3.4.5",
     "barrelsby": "^1.0.2",
-    "typescript": "^3.0.1",
+    "typescript": "^4.3.5",
     "webpack": "^4.28.3"
   },
   "scripts": {
@@ -60,8 +63,7 @@
     "generate-barrels": "rm -rf dist && barrelsby --delete -e node_modules/*",
     "build": "tsc",
     "watch": "tsc --project tsconfig.json -w",
-    "prepublish": "rm -rf dist && tsc",
-    "postversion": "git push origin master && git push origin master --tags && npm publish",
-    "postpublish": "npm publish --registry https://npm.pkg.github.com/ --ignore-scripts --tag stage"
+    "prepublishOnly": "rm -rf dist && tsc",
+    "postversion": "git push origin master && git push origin master --tags && npm publish"
   }
 }

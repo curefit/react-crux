@@ -1,8 +1,10 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import { isEmpty, sortBy, map, find, trim } from "lodash"
+import { isEmpty, map, find, concat, uniqBy } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
-import Select, { components } from "react-select"
+import { components } from "react-select"
+import AsyncSelect from "react-select/async"
+import { fetchDynamicTypeaheadResults } from "../Actions"
 import { TitleComponent } from "./TitleComponent"
 const MultiValueLabel = (props: any) => {
     return (
@@ -11,39 +13,74 @@ const MultiValueLabel = (props: any) => {
 }
 
 @autobind
-export class MultiSelectComponent extends React.Component<InlineComponentProps, any> {
+export class DynamicMultiSelectComponent extends React.Component<InlineComponentProps, any> {
+
     constructor(props: any) {
         super(props)
         this.state = {
-            isValueChanged: false,
-            previousValue
-                : this.props.currentModel
+            isLoading: false,
+            options: props.options || [],
+            selected: props.currentModel || undefined,
+            isValueChanged: false
         }
     }
-    render() {
 
-        const hideLabel = this.props.field.style && this.props.field.style.hideLabel
-        if (!this.props.field.title && !hideLabel) {
-            console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
-        }
-        let optionsData: any = []
-        if (this.props.field.foreign.transform) {
-            if (typeof this.props.field.foreign.transform === "function") {
-                optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+    componentDidMount() {
+        if (isEmpty(this.state.options)) {
+            const item: any = {}
+            if (!isEmpty(this.state.selected)) {
+                item[this.props.field.foreign.bulkKey] = this.state.selected
             } else {
-                console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+                item["limit"] = 10
+            }
+            fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
+                this.setState({
+                    isLoading: false,
+                    options: data.results
+                })
+            }).catch((error: any) => {
+                console.log("Error while fetching " + this.props.field.foreign.modelName, error)
+            })
+        }
+    }
+
+    handleSearch = (query: string, callback: Function) => {
+        this.setState({ isLoading: true })
+        let item = {}
+        if (this.props.field.foreign.separateQuery) {
+            item = {
+                [this.props.field.foreign.separateQuery]: query, limit: 10
             }
         } else {
-            optionsData = isEmpty(this.props.field.foreign.orderby)
-                ? this.props.additionalModels[this.props.field.foreign.modelName]
-                : sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+            item = {
+                [this.props.field.foreign.title]: query, limit: 10
+            }
         }
-
-        optionsData = optionsData.map((modelData: any) => {
-            return { label: this.getTitle(modelData), value: this.getModalValue(modelData) }
+        fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
+            const newOptions = uniqBy(concat(data.results, this.state.options), v => {
+                return v[this.props.field.foreign.key] || this.props.field.foreign.keys.map((value: string) => v[value]).join()
+            })
+            this.setState({
+                isLoading: false,
+                options: newOptions,
+            })
+            callback(this.loadOptionsData(newOptions))
+        }).catch((error: any) => {
+            console.log("Error while fetching " + this.props.field.foreign.modelName, error)
         })
+    }
 
-        const placeholderText = !hideLabel ? "Choose " + this.props.field.title : "Choose"
+    loadOptionsData(options: any[]) {
+        let optionsData: any = []
+        if (options.length) {
+            optionsData = this.state.options.map((modelData: any) => {
+                return { label: this.getTitle(modelData), value: this.getModalValue(modelData) }
+            })
+        }
+        return optionsData
+    }
+
+    loadSelectedValue(optionsData: any[]) {
         let multiSelectValue: any
         if (this.props.field.foreign) {
             if (!this.props.field.foreign.key && !this.props.field.foreign.keys) {
@@ -87,25 +124,41 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
-        return <div style={this.props.field.style || { width: "300px" }}>
+        return multiSelectValue
+    }
+
+
+    render() {
+        const hideLabel = this.props.field.style && this.props.field.style.hideLabel
+        if (!this.props.field.title && !hideLabel) {
+            console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
+        }
+
+        const optionsData: any[] = this.loadOptionsData(this.state.options)
+
+        const placeholderText = !hideLabel ? "Choose " + this.props.field.title : "Choose"
+        const multiSelectValue: any = this.loadSelectedValue(optionsData)
+
+        return <div style={{ width: "300px" }}>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
                     <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+
                     <br /></div>
             }
-            <Select isMulti={this.props.isMulti}
+            <AsyncSelect isMulti={true}
                 isClearable={this.props.field.multiClear || false}
                 isSearchable={true}
                 components={{ MultiValueLabel }}
                 closeMenuOnSelect={!this.props.isMulti}
-                onChange={(eventKey: any) => {
-                    this.select(this.props.field, eventKey)
-                }}
+                onChange={(eventKey: any) => this.select(this.props.field, eventKey)}
                 value={multiSelectValue}
-                options={optionsData}
                 isDisabled={this.props.readonly}
                 placeholder={placeholderText}
+                loadOptions={this.handleSearch}
+                defaultOptions={optionsData}
+                cacheOptions
             />
         </div>
     }
@@ -126,42 +179,15 @@ export class MultiSelectComponent extends React.Component<InlineComponentProps, 
     }
 
     select = (field: any, eventKey: any) => {
-        if (eventKey && this.props.isMulti) {
+        this.setState({
+            isValueChanged: true
+        })
+        if (eventKey) {
             let fieldList = []
-
             fieldList = eventKey.map((event: any) => event.value)
-            if (JSON.stringify(fieldList) === JSON.stringify(this.state.previousValue)) {
-                this.setState({
-                    isValueChanged: false
-                })
-            } else {
-                this.setState({
-                    isValueChanged: true
-                })
-            }
             this.props.modelChanged(field, fieldList)
-        } else if (this.props.isMulti) {
-            if (JSON.stringify([]) === JSON.stringify(this.state.previousValue)) {
-                this.setState({
-                    isValueChanged: false
-                })
-            } else {
-                this.setState({
-                    isValueChanged: true
-                })
-            }
-            this.props.modelChanged(field, [])
         } else {
-            if (eventKey.value === this.state.previousValue) {
-                this.setState({
-                    isValueChanged: false
-                })
-            } else {
-                this.setState({
-                    isValueChanged: true
-                })
-            }
-            this.props.modelChanged(field, eventKey.value)
+            this.props.modelChanged(field, [])
         }
     }
 }

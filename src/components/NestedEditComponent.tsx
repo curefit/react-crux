@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as _ from "lodash"
+import { includes, has, isEmpty, map, isEqual, filter, isNaN, pullAt } from "lodash"
 import { InlineComponentProps } from "../CruxComponent"
 import { SelectComponent } from "./SelectComponent"
 import { TypeaheadComponent } from "./TypeaheadComponent"
@@ -12,10 +12,14 @@ import { MultiSelectComponent } from "./MultiSelectComponent"
 import { JsonEditComponent } from "./JsonEditComponent"
 import { ColorPalleteComponent } from "./ColorPalleteComponent"
 import { DateTimezoneComponent } from "./DateTimezoneComponent"
+import { TimePickerComponent } from "./TimePickerComponent"
 import { DynamicTypeaheadComponent } from "./DynamicTypeaheadComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
-
+import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
+import { TitleComponent } from "./TitleComponent"
+import InputComponent from "./InputComponent"
+import TextAreaComponent from "./TextAreaComponent"
 @autobind
 export class NestedEditComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -24,7 +28,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     getEditable(field: any, modalType: string) {
-        if (modalType === "CREATE" && _.has(field, "creatable")) {
+        if (modalType === "CREATE" && has(field, "creatable")) {
             return field.creatable === true
         }
 
@@ -39,48 +43,72 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         return false
     }
 
+    checkReadonly = (readonly: boolean, currentModel: any) => {
+        return this.props.modalType !== "CREATE" && (getReadOnly(readonly, currentModel) || this.props.readonly)
+    }
+
     getComponentForField(field: any, currentModelWithParent: any) {
         if (field.type === "select") {
+            if (field.defaultValue && !(this.props.currentModel && this.props.currentModel[field.field])) {
+                this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: field.defaultValue }))
+            }
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (<SelectComponent field={field}
-                readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                readonly={this.checkReadonly(field.readonly, currentModel)}
                 additionalModels={this.props.additionalModels}
                 modelChanged={this.select}
                 currentModel={currentModel}
                 showTitle={true}
                 parentModel={currentModelWithParent}
+                modalType={this.props.modalType}
             />)
         } else if (field.type === "searcheableselect") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <MultiSelectComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                     isMulti={false}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "multiselect") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <MultiSelectComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
                     isMulti={true}
+                    modalType={this.props.modalType}
+                />
+            )
+        } else if (field.type === "dynamicMultiselect") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
+            return (
+                <DynamicMultiSelectComponent field={field}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    isMulti={true}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "imageUpload") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <ImageUploadComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     width={this.props.width}
                     height={this.props.height}
                     contentType={field.contentType}
@@ -89,48 +117,69 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "datepicker") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <DatePickerComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "datetimezonepicker") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <DateTimezoneComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
-        } else if (field.type === "timezone") {
+
+
+        }
+        else if (field.type === "timepicker") {
+            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
+            return (
+                <TimePickerComponent field={field}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
+                    additionalModels={this.props.additionalModels}
+                    modelChanged={this.select}
+                    currentModel={currentModel}
+                    showTitle={true}
+                    parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
+                />
+            )
+        }
+        else if (field.type === "timezone") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : undefined
             return (
                 <TimezoneComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "typeahead") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <TypeaheadComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select}
@@ -138,26 +187,28 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     showTitle={true}
                     style={field.style}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "dynamicTypeahead") {
-            const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
+            const currentModel = this.props.currentModel && this.props.currentModel[field.field] || ""
             return (
                 <DynamicTypeaheadComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
+                    modalType={this.props.modalType}
                 />
             )
         } else if (field.type === "nested") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : {}
             return (
                 <NestedEditComponent field={field} modalType={this.props.modalType}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select.bind(this, field)}
@@ -165,18 +216,20 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     currentModel={currentModel}
                     showTitle={true}
                     parentModel={currentModelWithParent}
+
                 />
             )
         } else if (field.type === "iterable") {
             const currentModel = (this.props.currentModel && this.props.currentModel[field.field]) ? this.props.currentModel[field.field] : []
             return (
                 <IterableEditComponent field={field} modalType={this.props.modalType}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     fetch={this.props.fetch}
                     modelChanged={this.select.bind(this, field)}
                     indent={true}
                     currentModel={currentModel}
+
                     parentModel={currentModelWithParent} anchors={this.props.anchors}
                 />
             )
@@ -184,11 +237,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = (this.props.currentModel !== undefined && this.props.currentModel[field.field] !== undefined) ? this.props.currentModel[field.field] : {}
             return (
                 <CheckboxComponent field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
                     showTitle={true}
+                    modalType={this.props.modalType}
                     parentModel={currentModelWithParent}
                 />
             )
@@ -196,22 +250,25 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!_.isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
-                    <textarea
+                    <TextAreaComponent
                         data-value={field.field}
-                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                        disabled={this.checkReadonly(field.readonly, currentModel)}
                         value={currentModel}
-                        onChange={this.handleFieldChange}
-                        style={{ width: 250 }} />
+                        onChange={(e: any) => {
+                            this.handleFieldChange(e)
+                        }}
+                        style={{ width: 250 }}
+                        title={field.title}
+                        field={field}
+                        modalType={this.props.modalType}
+                    />
                 </div>
             )
         } else if (field.type === "colorpallete") {
             return (
                 <ColorPalleteComponent
                     field={field}
+                    modalType={this.props.modalType}
                     modelChanged={this.select}
                     additionalModels={this.props.additionalModels}
                     currentModel={this.props.currentModel ? this.props.currentModel[field.field] : ""}
@@ -223,7 +280,8 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return (
                 <JsonEditComponent
                     field={field}
-                    readonly={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                    modalType={this.props.modalType}
+                    readonly={this.checkReadonly(field.readonly, currentModel)}
                     additionalModels={this.props.additionalModels}
                     modelChanged={this.select}
                     currentModel={currentModel}
@@ -235,15 +293,16 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!_.isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
-                    <input type="number"
+                    <InputComponent type="number"
                         data-value={field.field}
-                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                        disabled={this.checkReadonly(field.readonly, currentModel)}
                         value={currentModel}
-                        onChange={this.handleFieldChange}
+                        title={field.title}
+                        field={field}
+                        modalType={this.props.modalType}
+                        onChange={(e: any) => {
+                            this.handleFieldChange(e)
+                        }}
                         style={{ width: 200, paddingTop: 5 }}
                     />
                 </div>
@@ -252,14 +311,15 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const CustomEditComponent = field.customEditComponent
             return (
                 <div>
-                    {!_.isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
+                    {!isEmpty(field.title) && <span>
+                        <TitleComponent modalType={this.props.modalType} field={field} />
+                        <br /></span>}
                     <CustomEditComponent
+                        modalType={this.props.modalType}
                         currentModel={this.props.currentModel}
                         additionalModels={this.props.additionalModels}
                         parentModel={this.props.parentModel}
+                        additionalProps={this.props.additionalProps}
                         field={field}
                         handleChange={this.select} />
                 </div>
@@ -268,15 +328,17 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             const currentModel = this.props.currentModel ? this.props.currentModel[field.field] : ""
             return (
                 <div>
-                    {!_.isEmpty(field.title) && <span><label style={{
-                        fontSize: "10px",
-                        marginRight: "10px"
-                    }}>{field.title.toUpperCase()}</label><br /></span>}
-                    <input type="text"
+                    <InputComponent type="text"
                         data-value={field.field}
-                        disabled={getReadOnly(field.readonly, currentModel) || this.props.readonly}
+                        title={field.title}
+                        modalType={this.props.modalType}
+                        field={field}
+                        disabled={this.checkReadonly(field.readonly, currentModel)}
                         value={this.props.currentModel ? this.props.currentModel[field.field] : ""}
-                        onChange={this.handleFieldChange}
+                        onChange={(e: any) => {
+                            this.handleFieldChange(e)
+                        }
+                        }
                         style={field.type === "tinyinput" ? {
                             width: 64,
                             paddingTop: 5
@@ -288,17 +350,26 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     updateDefaultValue = (props: any) => {
-        const defaultValue: any = {}
-        _.map(props.field.fields, field => {
+        const newValue: any = {}
+
+        map(props.field.fields, field => {
             if (field.hasOwnProperty("defaultValueFn") && (!props.currentModel || !props.currentModel.hasOwnProperty(field.field))) {
-                defaultValue[field.field] = field.defaultValueFn()
+                newValue[field.field] = field.defaultValueFn(props)
+            }
+
+            if (field.hasOwnProperty("valueFn")) {
+                const resolvedValue = field.valueFn(props)
+                if (!isEqual(props.currentModel[field.field], resolvedValue)) {
+                    newValue[field.field] = resolvedValue
+                }
             }
         })
-        if (!_.isEmpty(defaultValue)) {
+
+        if (!isEmpty(newValue)) {
             if (props.iterableNested && props.nestedIterableModelChanged) {
-                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, defaultValue))
+                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, newValue))
             } else {
-                props.modelChanged(Object.assign({}, props.currentModel, defaultValue))
+                props.modelChanged(Object.assign({}, props.currentModel, newValue))
             }
         }
     }
@@ -312,12 +383,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     render(): any {
-        if (_.isEmpty(this.props) || _.isEmpty(this.props.field)) {
+        if (isEmpty(this.props) || isEmpty(this.props.field)) {
             console.error("Nested component got empty field prop. Check the parent component. Props:", this.props)
             return <div />
         }
 
-        if (_.isEmpty(this.props.field.fields)) {
+        if (isEmpty(this.props.field.fields)) {
             console.error("Attribute fields missing in the nested component config", this.props.field)
             return <div />
         }
@@ -325,13 +396,13 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         let fields
 
         if (this.props.modalType === "CREATE" || this.props.modalType === "EDIT" || this.props.modalType === "CUSTOM") {
-            fields = _.filter(this.props.field.fields, (field: any) => this.getEditable(field, this.props.modalType))
+            fields = filter(this.props.field.fields, (field: any) => this.getEditable(field, this.props.modalType))
         } else if (this.props.modalType === "FILTER") {
-            fields = _.filter(this.props.field.fields, (field: any) => field.filterParameter === true)
+            fields = filter(this.props.field.fields, (field: any) => field.filterParameter === true)
         }
 
         // Filter out the filed not matching specified conditional field
-        fields = _.filter(fields, (field: any) => {
+        fields = filter(fields, (field: any) => {
             if (field.conditionalField) {
                 if (Array.isArray(field.conditionalValue)) {
                     return this.props.currentModel && field.conditionalValue.includes(this.props.currentModel[field.conditionalField])
@@ -341,7 +412,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return true
         })
 
-        fields = _.filter(fields, (field: any) => {
+        fields = filter(fields, (field: any) => {
             if (field.shouldRender) {
                 if (typeof field.shouldRender === "function") {
                     if (field.shouldRender.length !== 4) {
@@ -357,23 +428,23 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
             return true
         })
 
-        const wysiwygFields = _.filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
+        const wysiwygFields = filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
         return <div style={this.props.indent ? { border: "1px solid #EEE", padding: "10px" } : { padding: 0 }}>
             {this.props.showTitle && !(this.props.field.style && this.props.field.style.hideLabel) &&
-                <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}><label
-                    style={{ fontSize: "10px", marginRight: "10px" }}>{this.props.field.title.toUpperCase()}</label>
+                <div onClick={this.collapseToggle} style={{ cursor: "pointer" }}>
+                    <TitleComponent modalType={this.props.modalType} field={this.props.field} />
                 </div>}
             <div style={this.state.collapsed ? { display: "none" } : { display: "block" }}>
                 <div style={{ display: "inline-block" }}>
                     {
-                        _.map(_.filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
+                        map(filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
                             const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
                             return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
                                 display: "inline-block",
-                                marginRight: "10px",
+                                marginRight: "30px",
                                 marginBottom: "30px",
-                                verticalAlign: "top"
-                            } : { marginBottom: "30px", marginRight: "10px" }}>
+                                verticalAlign: "top", ...field.wrapperStyles
+                            } : { marginBottom: "30px", marginRight: "30px", ...field.wrapperStyles }}>
                                 <div>
                                     {this.getComponentForField(field, currentModelWithParent)}
                                 </div>
@@ -382,7 +453,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                     }
                 </div>
                 {
-                    !_.isEmpty(wysiwygFields) &&
+                    !isEmpty(wysiwygFields) &&
                     <div style={{
                         display: "inline-block",
                         marginLeft: "50px",
@@ -390,15 +461,24 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
                         verticalAlign: "top"
                     }}>
                         {
-                            _.map(wysiwygFields, (field: any, index: number) => {
-                                const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel)
-                                return <div key={index}>
-                                    <label style={{
-                                        fontSize: "10px",
-                                        marginRight: "10px"
-                                    }}>{field.title.toUpperCase()}</label>
-                                    <CustomComponent key={index} />
-                                </div>
+                            map(wysiwygFields, (field: any, index: number) => {
+                                if (field.customComponent) {
+                                    const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
+                                    return <div key={index}>
+                                        <TitleComponent modalType={this.props.modalType} field={field} />
+                                        <CustomComponent key={index} />
+                                    </div>
+                                } else {
+                                    const CustomComponent = field.customViewComponent
+                                    return <div key={index}>
+                                        <TitleComponent modalType={this.props.modalType} field={field} />
+                                        <CustomComponent key={index}
+                                            currentModel={this.props.currentModel}
+                                            additionalModels={this.props.additionalModels}
+                                            parentModel={this.props.parentModel}
+                                            additionalProps={this.props.additionalProps} />
+                                    </div>
+                                }
                             })
                         }
                     </div>
@@ -427,7 +507,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
 
     handleFieldChange = (event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
-        const newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
+        let newModel = ""
+        if (!isEmpty(value) || !isNaN(value)) {
+            newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: value })
+        } else {
+            newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: undefined })
+        }
         if (this.props.index >= 0) {
             this.props.modelChanged(this.props.index, newModel)
         } else {

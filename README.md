@@ -4,15 +4,21 @@ CRUX is a simple to use client side library to create UI for CRUD operations on 
 
 It is not a replacement for React or Redux or Bootstrap but rather a higher level abstraction that lets you create simple UI for CRUD operations by just writing a JSON config. CRUX reads this config and creates a React Component that you can add to your app.
 
-Since its a client side library, it is completely agnostic to server side tech stack. 
+Since its a client side library, it is completely agnostic to server side tech stack.
 
 If you use CRUX, you would not have to write HTML/JSX/TSX code. Essentially it converts a config in JSON to a UI that creates a table with all objects and a model to create new objects or modify existing objects in a user friendly manner.
 
-### Quick Setup
-- yarn add react-crux
-- yarn add react-bootstrap bootstrap-sass
-- Add react crux css and bootstrap to your app.scss
+## Quick Setup
+
+1- Install `react-crux` and it's dependencies
+
+```bash
+yarn add react-crux react-bootstrap bootstrap-sass
 ```
+
+2- Add react crux css and bootstrap to your app.scss
+
+```scss
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 $bootstrap-sass-asset-helper: false;
 
@@ -20,9 +26,10 @@ $bootstrap-sass-asset-helper: false;
 @import "~@curefit/react-crux/scss/crux.scss";
 
 ```
-- Write the config and pass it to the factory method to create the component (config guide explained later)
-```
 
+3- Write the config and pass it to the factory method to create the component (config guide explained later)
+  
+```javascript
 import * as React from "react"
 import { CruxComponentCreator } from "@curefit/react-crux"
 
@@ -53,10 +60,12 @@ const constants = {
 }
 
 const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
-export {ServiceAccessComponent}
+export default ServiceAccessComponent
 ```
-- Create the CRUX reducer by using the factory method and it to your redux app
-```
+
+4- Create the CRUX reducer by using the factory method and it to your redux app
+
+```javascript
 import { applyMiddleware, combineReducers, createStore } from "redux"
 import { createLogger } from "redux-logger"
 import thunk from "redux-thunk"
@@ -73,11 +82,12 @@ const store = createStore(
     applyMiddleware(thunk, createLogger())
 )
 ```
-- Use the exported component in your react app like you do with any component.
 
+5- Use the exported component in your react app like you do with any component.
 
-### Dependencies
-```
+## Dependencies
+
+```json
   "dependencies": {
     "autobind-decorator": "^2.1.0", // Because binding manually is so 2017
     "lodash": "^4.17.10", // Used heavily for all list/object manipulations
@@ -98,12 +108,15 @@ const store = createStore(
     "reactcss": "^1.2.3" // Dynamic Css For Color Pallete
   }
 ```
-# Specification
+
+## Specification
+
 ### Information Flow (Where does crux fit in redux)
+
 ![alt text](https://s3.ap-south-1.amazonaws.com/react-crux-doc/images/redux.png "Redux flow")
 
-
 ### Basic Schema
+
 - **modelName**: The source name. Crux first looks for this locally in redux store. If not present, a http call to /model/:modelName will be made to fetch the list of models. For this to work, a controller on the server side needs to listen to this route
 - **title**: The title for the table
 - **creationTitle**: Title for the create button. (+ New <creationTitle>)
@@ -126,6 +139,7 @@ const store = createStore(
         - _nested_ - For objects which have fields of their own. Detailed explanation later. [Example](https://curefit.github.io/react-crux-examples/#/nested)
         - _typeahead_ - For searching within dropdown. Specification is same as select. It is a local search. Remote search is currently not supported.
         - _dynamicTypeahead_ - For searching within dropdown. Specification is same as select. It is a server search. Display in table is not supported.
+        - _dynamicMultiselect_ - For searching within dropdown. Specification is similar to multi select. It is a server search. Display in table is not supported.
         - _tinyinput_ - For very small texts. [Example](http://localhost:3000/#/bigtext) 
         - _bigtext_ - For large blobs of text. [Example](http://localhost:3000/#/bigtext)
         - _checkbox_ - For boolean fields. [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
@@ -135,6 +149,7 @@ const store = createStore(
         - _recursive_ - For fields that have recursive definition. Detailed spec later.
         - _custom_ - For injecting your own custom component to render this field. Requires another field called _customComponent_ (defined later)
         - _customedit_ - For injecting your own custom Editable component to render this field. Requires another field called _customEditComponent_ (defined later)
+        -  additionalProps - For passing your own props to CruxComponent, that may used as additional props details to render your component or custom component. 
     * _displayChildren_ - Supports only one value - "inline". Causes subfields to be rendered side by side instead of one below the other (which is the default behaviour if _displayChildren_ is not present in schema)
     * _wysiwyg_ - If present and true, adds support to show a live preview will editing the object. Requires another field called _customComponent_
     * _customComponent_ - Required for wysiwyg and for _type_ "custom".
@@ -142,9 +157,10 @@ const store = createStore(
 
 
 ### Filter Modal (Server Side Filtering)
+
 This helps us to filter records from the table. The fields with filterParameter=true will be displayed inside filter modal.
 
-```
+```javascript
 const constants = {
     modelName: "serviceAccess",
     title: "Service Access",
@@ -178,21 +194,23 @@ export {ServiceAccessComponent}
 ```
 
 ### Select/Typeahead fields
+
 Most common use case after text fields is to have a field whose value is restricted to a set of values. This set might be small and static and so might be hardcoded as enums or constants. This set might be big and dynamic so its values might come from another api or collection in the database. For CRUX schema it does not matter. 
 
 For fields with _type_: "select", another field _foreign_ is mandatory. This field tells CRUX where to get the options for select from. Three fields are mandatory in foreign
- - _modelName_: where to get the options from. The logic for this is same. Initially find it in redux store. If not found, fetch it by making http get call to /model/:modelName
- - _title_: Which field in the foreign object to use to show title in the option
- - _key_: @deprecated(use keys) - Which field in the foreign object to use to store the value (typically some sort of id field)
- - _keys_: array of fields in the foreign object to use to store the value
- - _titleTransform_: lambda fn to generate title for foreign object
- - _search_: if set, allows field level filtering
-    - _key_: identifier used for this field in filterModel
-    - _filterLocation_: `client | server` specifies whether to filter at client or server, defaults to `client`
+
+- _modelName_: where to get the options from. The logic for this is same. Initially find it in redux store. If not found, fetch it by making http get call to /model/:modelName
+- _title_: Which field in the foreign object to use to show title in the option
+- _key_: @deprecated(use keys) - Which field in the foreign object to use to store the value (typically some sort of id field)
+- _keys_: array of fields in the foreign object to use to store the value
+- _titleTransform_: lambda fn to generate title for foreign object
+- _search_: if set, allows field level filtering
+  - _key_: identifier used for this field in filterModel
+  - _filterLocation_: `client | server` specifies whether to filter at client or server, defaults to `client`
 
 [Example](https://curefit.github.io/react-crux-examples/#/select)
 
-```
+```javascript
 {
     title: "Media Type",
     field: "mediaType",
@@ -220,10 +238,11 @@ For fields with _type_: "select", another field _foreign_ is mandatory. This fie
 ]
 ```
 
-###MultiSelect Field
+### MultiSelect Field
+
 This helps us to select multiple values in List. multiClear will allow us to clear multi values
 
-```
+```javascript
 {
     title: "Media Type",
     field: "mediaType",
@@ -239,10 +258,11 @@ This helps us to select multiple values in List. multiClear will allow us to cle
 }
 ```
 
-###Color Pallete Field
+### Color Pallete Field
+
 This helps us to select color in Color Pallete.
 
-```
+```javascript
 {
     title: "Text Color",
     field: "textColor",
@@ -252,10 +272,11 @@ This helps us to select color in Color Pallete.
 }
 ```
 
-###Searcheable Select Field
+### Searcheable Select Field
+
 This helps us to select multiple values in List.
 
-```
+```javascript
 {
     title: "Media Type",
     field: "mediaType",
@@ -270,9 +291,11 @@ This helps us to select multiple values in List.
 }
 ```
 
-###Select Field with Custom Filter
+### Select Field with Custom Filter
+
 Select Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
-```
+
+```javascript
 {
    editable: true,
    title: "Attribute Name",
@@ -286,7 +309,7 @@ Select Field with Customized Filter Option. Modal Values can be filtered in that
    }
 }
 
-Example: 
+// Example
 function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
     const cohortEventMetas = additionalModels[dataSource]
     let attributes
@@ -295,9 +318,11 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 }
 ```
 
-###Typeahead Field with Custom Filter
+### Typeahead Field with Custom Filter
+
 Typeahead Field with Customized Filter Option. Modal Values can be filtered in that Custom Filter Function based on the requirement
-```
+
+```javascript
 {
    editable: true,
    title: "Attribute Name",
@@ -311,7 +336,7 @@ Typeahead Field with Customized Filter Option. Modal Values can be filtered in t
    }
 }
 
-Example: 
+// Example
 function customFilter(dataSource: any, currentModel: any, additionalModels: any, parentModel: any ) {
     const cohortEventMetas = additionalModels[dataSource]
     let attributes
@@ -320,9 +345,10 @@ function customFilter(dataSource: any, currentModel: any, additionalModels: any,
 }
 ```
 
-###Typeahead Field with Dynamic Server Fetch
+### Typeahead Field with Dynamic Server Fetch
 Dynamic Typeahead Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
-```
+
+```javascript
 {
    editable: true,
    title: "Attribute Name",
@@ -332,15 +358,62 @@ Dynamic Typeahead Field which will query based on user typings. It is not suppor
        modelName: "cohortEventMeta",
        key: "id",
        title: "name",
-       transform: customFilter
+       dynamicPayloadFn: ({parentModel}) => parentModel.data
+   }
+}
+```
+
+### Iterable Typeahead Field with Dynamic Server Fetch
+Iterable Dynamic Typeahead Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
+
+bulkKey in foreign object => will contain all the ids to fetch initially
+
+```javascript
+{
+        title: "Nicknames",
+        field: "nicknames",
+        type: "iterable",
+        editable: true,
+        iterabletype: {
+            title: "Nickname",
+            type: "dynamicTypeahead",
+            foreign: {
+                bulkKey: "ids",
+                modelName: "names",
+                key: "id",
+                title: "name"
+            }
+        }
+    }
+```
+
+
+### Dynamic MultiSelect Field with Dynamic Server Fetch
+Iterable Dynamic MultiSelect Field which will query based on user typings. It is not supported to show these values in table. As it leads more Db hit
+
+bulkKey in foreign object => will contain all the ids to fetch initially
+
+```javascript
+{
+   editable: true,
+   title: "Attribute Name",
+   type: "dynamicMultiselect",
+   field: "id",
+   foreign: {
+       bulkKey: "ids",
+       modelName: "cohortEventMeta",
+       key: "id",
+       title: "name"
    }
 }
 ```
 
 ### Iterable fields
+
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-```
+
+```javascript
 {
     title: "Nicknames",
     field: "nicknames",
@@ -354,9 +427,11 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 ```
 
 ### Iterable fields with Reorder Buttons
+
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have re-order button
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-```
+
+```javascript
 {
     title: "Nicknames",
     field: "nicknames",
@@ -373,9 +448,11 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 ```
 
 ### Iterable fields with Add At Index Buttons
+
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above . Iterable Field will have Add At Index Button
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-```
+
+```javascript
 {
     title: "Nicknames",
     field: "nicknames",
@@ -392,10 +469,12 @@ Whenever one of fields is a list of other objects/strings, set _type_: "iterable
 ```
 
 ### Iterable fields with Custom Button
+
 Whenever one of fields is a list of other objects/strings, set _type_: "iterable". To define the underlying type use the field _iterabletype_. It follows the same schema as field and supports all features mentioned above
 Iterable Field will also have re-order buttons
 [Example](https://curefit.github.io/react-crux-examples/#/iterable)
-```
+
+```javascript
 {
     title: "Nicknames",
     field: "nicknames",
@@ -417,9 +496,11 @@ function customIterableButtonAction(data: any) {
 ```
 
 ### Nested Fields
+
 If the field is itself an object containing more fields, its _type_ should be "nested". A field with "nested" _type_ should have another mandatory field called _fields_. This is a list of all fields inside the nested object and each field follows the same schema as above.
 [Example](https://curefit.github.io/react-crux-examples/#/nested)
-```
+
+```javascript
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -485,10 +566,11 @@ If the field is itself an object containing more fields, its _type_ should be "n
 ```
 
 ### Default Value Support for our components
+
 This is to support default values for our components. In each config, we can represent a defaultValueFn key. Custom Function will be called, when the
 component does not have value.
 
-```
+```javascript
 {
     "title": "Text",
     "editable": true,
@@ -513,10 +595,12 @@ component does not have value.
 ```
 
 ### Recursive fields (To be documented)
+
 ### Checkbox
+
 This is to support boolean fields. If the field is not present in the object, the edit modal shows it "unchecked" and saving does not set it. Otherwise that field is set as true or false (based on state). [Example](https://curefit.github.io/react-crux-examples/#/checkbox)
 
-```
+```json
 {
   "title": "Is Part Time ?",
   "editable": true,
@@ -527,10 +611,11 @@ This is to support boolean fields. If the field is not present in the object, th
 ```
 
 ### Datepickers
+
 Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors.
 [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
 
-```
+```json
 {
   "title": "Date Of Joining",
   "editable": true,
@@ -541,10 +626,11 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
 ```
 
 ### Datepickers With Time Select
+
 Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datepicker to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors. Datepicker will also time select option
 [Example](https://curefit.github.io/react-crux-examples/#/datepicker)
 
-```
+```json
 {
   "title": "Date Of Joining",
   "editable": true,
@@ -556,11 +642,12 @@ Datepicker is a cool widget to show fields which are dates and to modify them. W
 ```
 
 ### Datepickers With Time Zone Selection and Time Selection
+
 Datepicker is a cool widget to show fields which are dates and to modify them. We use react-datetime to render dates. The underlying api needs to return the value which moment understands. If moment(<value>).format() returns a properly formatted date, CRUX will be able to handle it. Otherwise it will lead to errors. Datepicker will also time select option
 
 Here data will be stored as an object with ( date and timezone ) ex: joiningDate = { date: 2019-03-06 05:30:00.000Z, timezone: "Asia/Kolkata" }
 
-```
+```json
 {
   "title": "Date Of Joining",
   "editable": true,
@@ -571,8 +658,10 @@ Here data will be stored as an object with ( date and timezone ) ex: joiningDate
 ```
 
 ### File/Image upload
+
 This is to support fields that require a image/file upload. When _type_ is _imageUpload_, another field called _contentType_ becomes mandatory. Finally for upload a http post call to /content/:contentType/upload/ is made. If _width_ and _height_ are specified in the schema, they are also sent as part of form data with the file.
-```
+
+```javascript
 {
     editable: true,
     width: 100,
@@ -584,11 +673,11 @@ This is to support fields that require a image/file upload. When _type_ is _imag
 },
 ```
 
-
 ### Custom Modal
+
 This is to support that require a Custom Modal with Custom Button in Table. 
 
-```
+```javascript
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -609,7 +698,7 @@ This is to support that require a Custom Modal with Custom Button in Table.
       "display": true
     },
   ],
-  "createModal": true
+  "createModal": true,
   "customModal": true,
   "customModalIcon": "glyphicon glyphicon-trash",
   "customModalComponent": CustomModalComponent
@@ -634,9 +723,10 @@ class CustomModalComponent extends React.Component<any, any> {
 ```
 
 ### Custom Components
+
 This is to support Custom Components with our edit/create Modal. 
 
-```
+```javascript
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -653,13 +743,15 @@ This is to support Custom Components with our edit/create Modal.
     {
         title: "Address",
         type: "custom",
-        customComponent: customComponentView
+        customComponent: customComponentFn, // Deprecated
+        customViewComponent: CustomViewComponent
     }
   ],
   "createModal": true
 }
 
-function customComponentView(model: model, additionalModels: any) {
+// @Deprecated
+function customComponentFn(currentModal: model, additionalModels: any, parentModel: any, addtionalProps: any, modal: any) {
     class CustomComponent extends React.Component<{}, {}> {
         render() {
             return <p>{model.address}</p>
@@ -667,12 +759,19 @@ function customComponentView(model: model, additionalModels: any) {
     }
     return CustomComponent
 }
+
+class CustomViewComponent extends React.Component<{}, {}> {
+    render() {
+        return <p>{this.props.currentModal.address}</p>
+    }
+}
 ```
 
 ### Custom Edit Components
+
 This is to support Custom Components with our edit/create Modal. This will allow us to create our own support with our own state.
 
-```
+```javascript
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -697,7 +796,7 @@ This is to support Custom Components with our edit/create Modal. This will allow
   "createModal": true
 }
 
-// Props for this CustomEditComponent is currentModal, additionalModels, parentModel, field, handleChange
+// Props for this CustomEditComponent is currentModal, additionalModels, parentModel, addtionalProps, field, handleChange
 
 export class CustomEditComponent extends React.Component<any, any> {
 
@@ -724,8 +823,10 @@ export class CustomEditComponent extends React.Component<any, any> {
 ```
 
 ### Default Models
+
 For a lot of values (e.g. enums, constants), typically its not desired to fetch them from the API server via http call. To support this, CRUX supports injecting of default models through the CRUX reducer. e.g.
-```
+
+```javascript
 // DefaultModels.tsx
 
 const DefaultModels = {
@@ -764,9 +865,12 @@ const store = createStore(
     applyMiddleware(thunk, createLogger())
 )
 ```
+
 ### Filtering and Ordering
+
 Filtering and Ordering (Client Side) will be performed. Search Bar will shown above the Table. Based on search value, data will be loaded in Table
-```
+
+```json
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -795,9 +899,11 @@ Filtering and Ordering (Client Side) will be performed. Search Bar will shown ab
 ### Refreshing other models in creation / modification mode
 
 ### Dependent Dynamic Modelling
+
 The Field will have conditionalField and ConditionalValue as their Attributes. The Field will be rendered only when conditionalValue matched with Conditional
 Field Value
-```
+
+```json
 {
   "modelName": "employees",
   "title": "Employees with list of free-form Tags",
@@ -865,10 +971,14 @@ Field Value
   "createModal": true
 }
 ```
+
 ### Styles
+
 Config Based Styles Can be Applied to Components. 
 
-#Hide Label
+#### Hide Label
+
+```javascript
 {
     title: "",
     field: "units",
@@ -884,8 +994,11 @@ Config Based Styles Can be Applied to Components.
         title: "title"
     }
 }
+```
 
-#Border
+#### Border
+
+```javascript
 {
     title: "",
     field: "units",
@@ -909,8 +1022,11 @@ Config Based Styles Can be Applied to Components.
         ]
     }
 }
+```
 
-#Force Indent
+#### Force Indent
+
+```javascript
 {
     title: "",
     field: "units",
@@ -930,11 +1046,13 @@ Config Based Styles Can be Applied to Components.
         }
     ]
 }
+```
 
 ### Query Param Support With React Crux
+
 We can give queryParams in config. It will append queryparams with every fetch call.
 
-```
+```javascript
 import * as React from "react"
 import { CruxComponentCreator } from "@curefit/react-crux"
 
@@ -975,25 +1093,74 @@ class ComponentWithQueryParams extends React.Component<{}, {}> {
 export {ComponentWithQueryParams}
 ```
 
+### Passing Additional Props to cruxComponent
+
+We can pass props to crux component as below.
+
+```javascript
+import * as React from "react"
+import { CruxComponentCreator } from "@curefit/react-crux"
+
+const constants = {
+    modelName: "serviceAccess",
+    title: "Service Access",
+    creationTitle: "Service Access",
+    createModal: true,
+    editModal: true,
+    largeEdit: true,
+    stateRoot: "none",
+    fields: [
+        {
+            title: "Service",
+            field: "serviceName",
+            representative: true,
+        },
+        {
+            title: "Users",
+            field: "users",
+            type: "iterable",
+            iterabletype: {
+                title: "User",
+                inlineEdit: true
+            }
+        }
+    ]
+}
+
+const ServiceAccessComponent = CruxComponentCreator.create<ServiceAccess, ServiceAccessProps>(constants)
+
+class ComponentWithProps extends React.Component<{}, {}> {
+    render() {
+        return (<ServiceAccessComponent {...this.props} options={{ queryParams: { data: "1", title: "check" }, additionalProps: {...this.props}} />)
+    }
+}
+
+export {ComponentWithProps}
+```
+
 
 ### Fetching logic in CRUX
+
 A crux component when mounted does the following in order
+
 1. Parse the whole config.
 2. Collects all modelNames (normal or foreign)
 3. Filters distinct modelNames
 4. Filters out those which are already present in redux store
 5. Fetches the filtered models by making http calls to /model/:modelName in no particular order
 
-# Examples
+#### Examples
+
 All the live examples can be found at https://curefit.github.io/react-crux-examples
 The code for the examples can be found at https://github.com/curefit/react-crux-examples
 
 Some example snippets have been copied below for convenience.
 
 #### Table + Basic form with text inputs for create/modify/delete
-Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify and delete employees 
 
-```
+Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify and delete employees
+
+```javascript
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1030,9 +1197,10 @@ export { Employees }
 ```
 
 #### Table + Basic form with text inputs for create/modify/delete/Save As New
-Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify, save as new and delete employees 
 
-```
+Lets say we want to show a table of employees with 3 fields (name, employeeId, emailId) with a functionality to create, modify, save as new and delete employees
+
+```javascript
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1070,9 +1238,10 @@ export { Employees }
 ```
 
 #### Table + Basic form with Readonly inputs for create/modify/delete
+
 Lets say we want to show a table of employees with 4 fields (name, joiningDate, isPartTime, nicknames) with a functionality to create, modify and delete employees. Readonly attribute is applicable for all the components.
 
-```
+```javascript
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1120,12 +1289,12 @@ const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema
 export { Employees }
 ```
 
-
 #### Dynamic Readonly based on the data
+
 Readonly attribute is applicable for all the components. Readonly value can either be boolean or Function. For Example. You can write your own
 function to dynamic set readonly for a particular input. Return of that function has to be boolean
 
-```
+```javascript
  {
      title: "Name",
      field: "name",
@@ -1142,10 +1311,10 @@ function to dynamic set readonly for a particular input. Return of that function
 ```
 
 #### Multiple CRUX components on same page
+
 Since components created using CRUX are actual react components, you can render as many CRUX components on a page or inside another component. Since they are all backed by same Redux store, they also share all the models and dont make redundant http requests if some of the underlying models are same.
 
-```
-
+```javascript
 const employeeSchema = {
     modelName: "employees",
     ...
@@ -1169,10 +1338,12 @@ export class EmployeeContainer extends React.Component<{}, {}> {
 }
 
 ```
+
 #### Iterable of nested
+
 One very common pattern is to have a field which is a list of objects. In CRUX terminology that translates to iterable of nested. The example below shows how to model it. The example if for products which typically have list of media attached to them. Each media object can either be a image or video and have a url.
 
-```
+```javascript
 {
     title: "Media",
     field: "media",
@@ -1205,10 +1376,12 @@ One very common pattern is to have a field which is a list of objects. In CRUX t
     }
 }
 ```
+
 #### Iterable of nested ( Collapse Support)
+
 Addition of Support for Collapsed Nested Iterable Component. Each Iterable component can be expanded based on necessity.
 
-```
+```javascript
 {
     title: "Media",
     field: "media",
@@ -1246,11 +1419,13 @@ Addition of Support for Collapsed Nested Iterable Component. Each Iterable compo
     }
 }
 ```
+
 #### Pagination (Server Side Pagination)
+
 Lets say we want to show a table of employees with 3 fields (name, age, emailAddress) with a functionality to create, modify and delete employees with server
 side pagination. (i.e. server call will be pointed to /filter rather than /fetch)
 
-```
+```javascript
 const schema = {
     modelName: "employees", // http call to /model/employees
     title: "Employees", // Title for the table
@@ -1290,7 +1465,8 @@ const Employees = CruxComponentCreator.create<Employee, EmployeeWodProps>(schema
 export { Employees }
 ```
 
-# TBD
+## TBD
+
 - Typings for schema
 - Refactoring of schema into (displayOptions, editOptions, createOptions, deleteOptions)
 - Defragment style options into one uniform way of specifying styles

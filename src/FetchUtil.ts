@@ -15,7 +15,7 @@ export class FetchUtil {
         return {
             method: "GET",
             headers: concatHeaders,
-            credentials: "same-origin"
+            credentials: "include"
         }
     }
 
@@ -28,7 +28,7 @@ export class FetchUtil {
             method: "POST",
             headers: concatHeaders,
             body: JSON.stringify(body),
-            credentials: "same-origin"
+            credentials: "include"
         }
     }
 
@@ -41,7 +41,7 @@ export class FetchUtil {
             method: "PUT",
             headers: concatHeaders,
             body: JSON.stringify(body),
-            credentials: "same-origin"
+            credentials: "include"
         }
     }
 
@@ -54,7 +54,7 @@ export class FetchUtil {
             method: "DELETE",
             headers: concatHeaders,
             body: JSON.stringify(body),
-            credentials: "same-origin"
+            credentials: "include"
         }
     }
 
@@ -66,7 +66,6 @@ export class FetchUtil {
                 })
             } else {
                 console.error("Status: " + response.status + " StatusText: " + response.statusText)
-                console.log(response.body)
                 if (response.status == 401) {
                     console.error("Call failed with 401, throwing auth error")
                     throw new AuthError(response.status)

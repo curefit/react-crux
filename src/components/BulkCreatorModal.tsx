@@ -1,7 +1,6 @@
-import * as _ from "lodash"
+import { omit, isEmpty } from "lodash"
 import * as React from "react"
 import { Alert, ControlLabel, FormControl, FormGroup, Modal } from "react-bootstrap"
-import { NestedEditComponent } from "./NestedEditComponent"
 
 interface BulkCreateModalProps {
     createOrModify: any
@@ -9,6 +8,7 @@ interface BulkCreateModalProps {
     createOrEditSuccess: any
     closeModal: any
     showModal: any
+    additionalProps?: any
 }
 
 interface BulkCreateModalState {
@@ -17,7 +17,7 @@ interface BulkCreateModalState {
 }
 
 export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkCreateModalState> {
-    constructor(props: any){
+    constructor(props: any) {
         super(props)
         this.state = {
             syncUrl: "",
@@ -39,7 +39,7 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
     }
 
     closeModal = () => {
-        this.setState(Object.assign({}, this.state, _.omit(this.state, "error")))
+        this.setState(Object.assign({}, this.state, omit(this.state, "error")))
         this.props.closeModal()
     }
 
@@ -53,7 +53,7 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
 
     render () {
         let errorType, errorMessage
-        if (this.state.error && !_.isEmpty(this.state.error.message)) {
+        if (this.state.error && !isEmpty(this.state.error.message)) {
             try {
                 const error: any = JSON.parse(this.state.error.message)
                 errorType = error.type
