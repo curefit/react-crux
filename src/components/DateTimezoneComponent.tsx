@@ -7,7 +7,7 @@ import { TimezoneComponent } from "./TimezoneComponent"
 import { TitleComponent } from "./TitleComponent"
 
 export interface DateTimezoneComponentProps extends InlineComponentProps {
-    hideInput: boolean
+    hideInput?: boolean
 }
 
 @autobind
