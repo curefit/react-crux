@@ -5,8 +5,13 @@ import * as Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { TitleComponent } from "./TitleComponent"
+
+export interface DateTimezoneComponentProps extends InlineComponentProps {
+    hideInput: boolean
+}
+
 @autobind
-export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {
+export class DateTimezoneComponent extends React.Component<DateTimezoneComponentProps, any> {
     constructor(props: any) {
         super(props)
         const timezone = props.currentModel && props.currentModel.timezone || "Asia/Kolkata"
@@ -33,6 +38,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         utc={false}
                         timeFormat={"HH:mm"}
                         inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
+                        input={this.props.hideInput ? false : true}
                     />
                 </div>
                 <TimezoneComponent
