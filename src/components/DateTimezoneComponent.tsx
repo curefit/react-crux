@@ -5,6 +5,7 @@ import * as Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { TitleComponent } from "./TitleComponent"
+
 @autobind
 export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -32,6 +33,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         onChange={this.handleChange}
                         utc={false}
                         timeFormat={"HH:mm"}
+                        input={this.props.readonly ? true : false}
                         inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
