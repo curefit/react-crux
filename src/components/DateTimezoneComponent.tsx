@@ -22,22 +22,6 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         }
     }
 
-    renderInput = ( props: any, openCalendar: any ) => {
-        function clear(){
-            props.onChange({target: {value: ''}});
-        }
-        return (
-            <div>
-                <input {...props} />
-                {!props.readOnly &&
-                <>
-                    <button onClick={openCalendar}>Open</button>
-                    <button onClick={clear}>clear</button>
-                </>}
-            </div>
-        );
-    }
-
     render() {
         return (
             <div style={{ display: "flex" }}>
@@ -49,8 +33,8 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         onChange={this.handleChange}
                         utc={false}
                         timeFormat={"HH:mm"}
-                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: true, readOnly: this.props.readonly }}
-                        renderInput={this.renderInput}
+                        input={false}
+                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
                 <TimezoneComponent
