@@ -1,9 +1,11 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as moment from "moment"
 import DatePicker from "react-datepicker"
 import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
+
+const moment = require("moment")
+
 @autobind
 export class DatePickerComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {

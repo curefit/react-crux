@@ -1,10 +1,11 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as moment from "moment-timezone"
-import * as Datetime from "react-datetime"
+import Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { TitleComponent } from "./TitleComponent"
+
+const moment = require("moment-timezone")
 
 @autobind
 export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {

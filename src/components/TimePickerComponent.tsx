@@ -1,9 +1,10 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as moment from "moment-timezone"
 import { InlineComponentProps } from "../CruxComponent"
 import TimePicker from 'rc-time-picker';
 import { TitleComponent } from "./TitleComponent"
+
+const moment = require("moment-timezone")
 
 const format = 'h:mm a';
 

@@ -1,6 +1,6 @@
 {
   "name": "react-crux",
-  "version": "0.26.0",
+  "version": "0.26.2",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -64,6 +64,7 @@
     "build": "tsc",
     "watch": "tsc --project tsconfig.json -w",
     "prepublishOnly": "rm -rf dist && tsc",
-    "postversion": "git push origin master && git push origin master --tags && npm publish"
+    "postversion": "git push origin master && git push origin master --tags && npm publish",
+    "release-alpha": "npm run build && npm publish --tag alpha"
   }
 }
