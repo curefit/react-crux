@@ -1,10 +1,11 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
-import * as moment from "moment-timezone"
-import * as Datetime from "react-datetime"
+import Datetime from "react-datetime"
 import { InlineComponentProps } from "../CruxComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { TitleComponent } from "./TitleComponent"
+
+const moment = require("moment-timezone")
 
 @autobind
 export class DateTimezoneComponent extends React.Component<InlineComponentProps, any> {
@@ -22,22 +23,6 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
         }
     }
 
-    renderInput = ( props: any, openCalendar: any ) => {
-        function clear(){
-            props.onChange({target: {value: ''}});
-        }
-        return (
-            <div>
-                <input {...props} />
-                {!props.readOnly &&
-                <>
-                    <button onClick={openCalendar}>Open</button>
-                    <button onClick={clear}>clear</button>
-                </>}
-            </div>
-        );
-    }
-
     render() {
         return (
             <div style={{ display: "flex" }}>
@@ -49,8 +34,8 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         onChange={this.handleChange}
                         utc={false}
                         timeFormat={"HH:mm"}
-                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: true, readOnly: this.props.readonly }}
-                        renderInput={this.renderInput}
+                        input={this.props.readonly ? true : false}
+                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
                     />
                 </div>
                 <TimezoneComponent
