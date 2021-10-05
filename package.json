@@ -1,5 +1,5 @@
 {
-  "name": "@curefit/react-crux",
+  "name": "react-crux",
   "version": "0.26.3-stage.1",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
