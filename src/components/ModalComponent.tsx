@@ -140,14 +140,12 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                     throw new Error(`${field.title ?? field.field} is a required field`)
                 }
             }
-            if (field.type === "nested") {
+            if (field.type === "nested" && data) {
                 return this.validateItem(data[field.field], field)
             }
-            else if (field.type === "iterable") {
-                if (data[field.field] && data[field.field].length > 0) {
-                    for (const x of data[field.field]) {
-                        this.validateItem(x, field.iterabletype)
-                    }
+            else if (field.type === "iterable" && data && data[field.field] && data[field.field].length > 0) {
+                for (const x of data[field.field]) {
+                    this.validateItem(x, field.iterabletype)
                 }
             }
         }
