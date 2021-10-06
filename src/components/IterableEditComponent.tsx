@@ -747,25 +747,41 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         }
     }
 
-    reorder(index: any, flag: number) {
+    reorder(index: any, flag: number, moveAtPosition?: number) {
         this.setState({
             isValueChanged: true
         })
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
-        let tempArr
-        if (flag === 0) {
-            tempArr = clone[index - 1]
-            clone[index - 1] = clone[index]
-            newModel[index - 1] = v4()
+        let tempArr, tempData
+        if (String(moveAtPosition)) {
+            tempData = clone[index]
+            let i
+            clone.splice(index, 1)
+            if(index > moveAtPosition-1) {
+                clone.splice(moveAtPosition-1, 0, tempData)
+                i = moveAtPosition-1
+            } else {
+                clone.splice(moveAtPosition-2, 0, tempData)
+                i = moveAtPosition-2
+            }
+            for (i; i < this.state.newModel.length; i++) {
+                newModel[index] = v4()
+            }
+        } else {
+            if (flag === 0) {
+                tempArr = clone[index - 1]
+                clone[index - 1] = clone[index]
+                newModel[index - 1] = v4()
+            }
+            else if (flag === 1) {
+                tempArr = clone[index + 1]
+                clone[index + 1] = clone[index]
+                newModel[index + 1] = v4()
+            }
+            clone[index] = tempArr
+            newModel[index] = v4()
         }
-        else if (flag === 1) {
-            tempArr = clone[index + 1]
-            clone[index + 1] = clone[index]
-            newModel[index + 1] = v4()
-        }
-        clone[index] = tempArr
-        newModel[index] = v4()
         this.setState({ newModel })
         this.props.modelChanged(clone)
     }
