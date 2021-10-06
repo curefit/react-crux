@@ -127,21 +127,25 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
     validateItem(data: any, schema: any): boolean {
         for (const field of schema.fields??[]) {
             if (field.required === true) {
-                if (isObject(data[field.field]) && isEmpty(data[field.field])) {
+                if(!data) {
+                    throw new Error(`${schema.title ?? schema.field} is required as "${field.title ?? field.field}" is a required field`)
+                }
+                else if(field.type === "nested" && (!isObject(data[field.field]) || isEmpty(data[field.field]))) {
                     throw new Error(`${field.title ?? field.field} is a required field`)
-                } else if (isArray(data[field.field]) && data[field.field].lenght === 0) {
+                }
+                else if(field.type === "iterable" && (!isArray(data[field.field]) || data[field.field].length === 0)) {
                     throw new Error(`${field.title ?? field.field} is a required field`)
-                } else if (isNil(data[field.field])) {
+                }
+                else if(isNil(data[field.field])) {
                     throw new Error(`${field.title ?? field.field} is a required field`)
                 }
             }
-            if (field.type === "nested") {
-                return schema.fields.forEach((x: any) => this.validateItem(data[x.field], x))
-            } else if (field.type === "iterable") {
-                if (data[field.field] && data[field.field].length > 0) {
-                    for (const x of data[field.field]) {
-                        this.validateItem(x, field.iterabletype)
-                    }
+            if (field.type === "nested" && data) {
+                return this.validateItem(data[field.field], field)
+            }
+            else if (field.type === "iterable" && data && data[field.field] && data[field.field].length > 0) {
+                for (const x of data[field.field]) {
+                    this.validateItem(x, field.iterabletype)
                 }
             }
         }
