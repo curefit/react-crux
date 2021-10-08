@@ -80,7 +80,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     data-value={0}
                                     className="glyphicon glyphicon-chevron-up" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
-                                {this.props.field.additionalButtons.reorderClicked && 
+                                {this.state.reorderClicked && 
                                     <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength - 1} />
                                 }
                             </>
@@ -91,7 +91,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     data-value={1}
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
-                                {this.props.field.additionalButtons.reorderClicked && 
+                                {this.state.reorderClicked && 
                                     <input type="number" value={this.state.moveAtPosition} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength - 1} />
                                 }
                             </>
