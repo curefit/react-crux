@@ -75,26 +75,19 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     className="glyphicon glyphicon-plus" aria-hidden="true"
                                     onClick={this.addAtIndex} />}
                             {this.props.field.additionalButtons.reorder && this.props.index != 0 &&
-                            <>
                                 <span style={iterableButtonStyle}
                                     data-value={0}
                                     className="glyphicon glyphicon-chevron-up" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
-                                {this.state.reorderClicked && 
-                                    <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength - 1} />
-                                }
-                            </>
                             }
                             {this.props.field.additionalButtons.reorder && this.props.index != this.props.totalLength - 1 &&
-                            <>
                                 <span style={iterableButtonStyle}
                                     data-value={1}
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
-                                {this.state.reorderClicked && 
-                                    <input type="number" value={this.state.moveAtPosition} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength - 1} />
-                                }
-                            </>
+                            }
+                            {this.state.reorderClicked && 
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength - 1} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
