@@ -96,7 +96,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder.bind(this, index, 0, this.state.moveAtPosition)} min="1" max={totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder.bind(this, index, undefined, this.state.moveAtPosition)} min="1" max={totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
@@ -758,7 +758,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.setState({ moveAtPosition: event.target.value })
     }
 
-    reorder(index: any, flag: number, moveAtPosition?: number) {
+    reorder(index: any, flag: number|undefined, moveAtPosition?: number) {
         this.setState({
             isValueChanged: true
         })
@@ -766,7 +766,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
         let tempArr, tempData
-        if (moveAtPosition !== undefined && moveAtPosition) {
+        if (moveAtPosition !== undefined && !!Number(moveAtPosition)) {
             tempData = clone[index]
             let i
             clone.splice(index, 1)
@@ -782,7 +782,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     newModel[index] = v4()
                 }
             }
-        } else {
+        } else if (flag !== undefined) {
             if (flag === 0) {
                 tempArr = clone[index - 1]
                 clone[index - 1] = clone[index]
