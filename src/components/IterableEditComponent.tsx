@@ -96,7 +96,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder.bind(this, index, undefined, this.state.moveAtPosition)} min="1" max={totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={() => this.reorderAtPosition(index, this.state.moveAtPosition)} min="1" max={totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
@@ -507,6 +507,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 remove={this.remove}
                                 addAtIndex={this.addAtIndex}
                                 reorder={this.reorder}
+                                reorderAtPosition={this.reorderAtPosition}
                                 type={"iterable"}
                                 options={this.state.dynamicTypeaheadOptions}
                             />
@@ -532,7 +533,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 getIterableNestedTitle={this.getIterableNestedTitle}
                                 remove={this.remove}
                                 addAtIndex={this.addAtIndex}
-                                reorder={this.reorder} />
+                                reorder={this.reorder}
+                                reorderAtPosition={this.reorderAtPosition} />
                         }
 
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
@@ -758,15 +760,39 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.setState({ moveAtPosition: event.target.value })
     }
 
-    reorder(index: any, flag: number|undefined, moveAtPosition?: number) {
+    reorder(index: any, flag: number) {
+        this.setState({ reorderClicked: false })
         this.setState({
             isValueChanged: true
         })
-        this.setState({ reorderClicked: false })
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
-        let tempArr, tempData
+        let tempArr
+        if (flag === 0) {
+            tempArr = clone[index - 1]
+            clone[index - 1] = clone[index]
+            newModel[index - 1] = v4()
+        }
+        else if (flag === 1) {
+            tempArr = clone[index + 1]
+            clone[index + 1] = clone[index]
+            newModel[index + 1] = v4()
+        }
+        clone[index] = tempArr
+        newModel[index] = v4()
+        this.setState({ newModel })
+        this.props.modelChanged(clone)
+    }
+
+    reorderAtPosition = (index: any, moveAtPosition: number) => {
+        this.setState({ reorderClicked: false })
         if (moveAtPosition !== undefined && !!Number(moveAtPosition)) {
+            let tempData
+            this.setState({
+                isValueChanged: true
+            })
+            const newModel = this.state.newModel
+            const clone = cloneDeep(this.state.model)
             tempData = clone[index]
             let i
             clone.splice(index, 1)
@@ -782,21 +808,8 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     newModel[index] = v4()
                 }
             }
-        } else if (flag !== undefined) {
-            if (flag === 0) {
-                tempArr = clone[index - 1]
-                clone[index - 1] = clone[index]
-                newModel[index - 1] = v4()
-            }
-            else if (flag === 1) {
-                tempArr = clone[index + 1]
-                clone[index + 1] = clone[index]
-                newModel[index + 1] = v4()
-            }
-            clone[index] = tempArr
-            newModel[index] = v4()
+            this.setState({ newModel })
+            this.props.modelChanged(clone)
         }
-        this.setState({ newModel })
-        this.props.modelChanged(clone)
     }
 }

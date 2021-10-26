@@ -10,6 +10,7 @@ interface IterableNestedComponentProps extends InlineComponentProps {
     remove: Function
     addAtIndex: Function
     reorder: Function
+    reorderAtPosition: Function
 }
 @autobind
 export class IterableNestedComponent extends React.Component<IterableNestedComponentProps, any> {
@@ -36,13 +37,13 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
     }
 
     reorder = (event: any) => {
-        if(this.state.reorderClicked) {
-            this.setState({ reorderClicked: false })
-            this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")), this.state.moveAtPosition)
-        } else {
-            this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
-        }
-        
+        this.setState({ reorderClicked: false })
+        this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
+    }
+
+    reorderAtPosition = () => {
+        this.setState({ reorderClicked: false })
+        this.props.reorderAtPosition(this.props.index, this.state.moveAtPosition)
     }
 
     remove = () => {
@@ -87,7 +88,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
                             }
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder} min="1" max={this.props.totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorderAtPosition} min="1" max={this.props.totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}

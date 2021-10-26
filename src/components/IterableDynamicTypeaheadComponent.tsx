@@ -10,6 +10,7 @@ interface IterableDynamicTypeaheadComponentProps extends InlineComponentProps {
     remove: Function
     addAtIndex: Function
     reorder: Function
+    reorderAtPosition: Function
     type?: string
     options?: any
 }
@@ -37,13 +38,13 @@ export class IterableDynamicTypeaheadComponent extends React.Component<IterableD
     }
 
     reorder = (event: any) => {
-        if(this.state.reorderClicked) {
-            this.setState({ reorderClicked: false })
-            this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")), this.state.moveAtPosition)
-        } else {
-            this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
-        }
-        
+        this.setState({ reorderClicked: false })
+        this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
+    }
+
+    reorderAtPosition = () => {
+        this.setState({ reorderClicked: false })
+        this.props.reorderAtPosition(this.props.index, this.state.moveAtPosition)
     }
 
     customButtonAction = () => {
@@ -90,7 +91,7 @@ export class IterableDynamicTypeaheadComponent extends React.Component<IterableD
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />}
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder} min="1" max={this.props.totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorderAtPosition} min="1" max={this.props.totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
