@@ -96,7 +96,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder.bind(this, index, 0, this.state.moveAtPosition)} min="1" max={totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
@@ -762,10 +762,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         this.setState({
             isValueChanged: true
         })
-        if(!moveAtPosition && this.state.reorderClicked) {
-            this.setState({ reorderClicked: false })
-            moveAtPosition = this.state.moveAtPosition
-        }
+        this.setState({ reorderClicked: false })
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
         let tempArr, tempData
