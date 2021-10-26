@@ -87,7 +87,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
                             }
                             {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={this.props.totalLength} />
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorder} min="1" max={this.props.totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
