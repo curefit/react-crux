@@ -766,7 +766,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
         let tempArr, tempData
-        if (moveAtPosition !== undefined) {
+        if (moveAtPosition !== undefined && moveAtPosition) {
             tempData = clone[index]
             let i
             clone.splice(index, 1)
