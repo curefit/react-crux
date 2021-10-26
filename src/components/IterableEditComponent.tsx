@@ -90,11 +90,14 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             {this.props.field.additionalButtons.reorder && index != 0 &&
                                 <span style={iterableButtonStyle}
                                     className="glyphicon glyphicon-chevron-up" aria-hidden="true"
-                                    onClick={this.reorder.bind(this, index, 0)} />}
+                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 0)}/>}
                             {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
                                 <span style={iterableButtonStyle}
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
-                                    onClick={this.reorder.bind(this, index, 1)} />}
+                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
+                            {this.state.reorderClicked && 
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} min="0" max={totalLength} />
+                            }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
                                     className="glyphicon glyphicon-eye-open" aria-hidden="true"
@@ -747,10 +750,22 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         }
     }
 
+    handleReorderClick = () => {
+        this.setState({ reorderClicked: true })
+    }
+
+    handleIntervalChange = (event: any) => {
+        this.setState({ moveAtPosition: event.target.value })
+    }
+
     reorder(index: any, flag: number, moveAtPosition?: number) {
         this.setState({
             isValueChanged: true
         })
+        if(!moveAtPosition && this.state.reorderClicked) {
+            this.setState({ reorderClicked: false })
+            moveAtPosition = this.state.moveAtPosition
+        }
         const newModel = this.state.newModel
         const clone = cloneDeep(this.state.model)
         let tempArr, tempData
