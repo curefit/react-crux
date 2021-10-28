@@ -80,8 +80,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
     previewUpload = () => {
         if(Array.isArray(this.props.currentModel)) {
                 this.props.currentModel.map((urlValue: string) => 
-                 this.fetchElement(urlValue);
-                ) 
+                 this.fetchElement(urlValue)); 
         } else {
             return this.fetchElement(this.props.currentModel);
         }
@@ -91,7 +90,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         if (this.props.contentType === "video") {
             return <video width="240px" height="200px" controls src={this.getUrl(url, this.props.field)} />
         } else if(this.props.contentType === "audio") {
-            return <audio width="150px" height="30px" controls src={this.getUrl(url, this.props.field)} />
+            return <audio controls src={this.getUrl(url, this.props.field)} />
         }
         return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(url, this.props.field)} />
     }
