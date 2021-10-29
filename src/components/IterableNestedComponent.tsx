@@ -10,6 +10,7 @@ interface IterableNestedComponentProps extends InlineComponentProps {
     remove: Function
     addAtIndex: Function
     reorder: Function
+    reorderAtPosition: Function
 }
 @autobind
 export class IterableNestedComponent extends React.Component<IterableNestedComponentProps, any> {
@@ -36,7 +37,13 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
     }
 
     reorder = (event: any) => {
+        this.setState({ reorderClicked: false })
         this.props.reorder(this.props.index, Number(event.target.getAttribute("data-value")))
+    }
+
+    reorderAtPosition = () => {
+        this.setState({ reorderClicked: false })
+        this.props.reorderAtPosition(this.props.index, this.state.moveAtPosition)
     }
 
     remove = () => {
@@ -45,6 +52,14 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
 
     customButtonAction = () => {
         this.props.field.additionalButtons.customButtonAction(this.props.currentModel)
+    }
+
+    handleReorderClick = () => {
+        this.setState({ reorderClicked: true })
+    }
+
+    handleIntervalChange = (event: any) => {
+        this.setState({ moveAtPosition: event.target.value })
     }
 
     iterableButtons = () => {
@@ -64,12 +79,17 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                 <span style={iterableButtonStyle}
                                     data-value={0}
                                     className="glyphicon glyphicon-chevron-up" aria-hidden="true"
-                                    onClick={this.reorder} />}
+                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
+                            }
                             {this.props.field.additionalButtons.reorder && this.props.index != this.props.totalLength - 1 &&
                                 <span style={iterableButtonStyle}
                                     data-value={1}
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
-                                    onClick={this.reorder} />}
+                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
+                            }
+                            {this.state.reorderClicked && 
+                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorderAtPosition} min="1" max={this.props.totalLength} />
+                            }
                             {this.props.field.additionalButtons.customButton &&
                                 <span style={iterableButtonStyle}
                                     className="glyphicon glyphicon-eye-open" aria-hidden="true"

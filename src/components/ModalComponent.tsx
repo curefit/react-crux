@@ -139,13 +139,14 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 else if(isNil(data[field.field])) {
                     throw new Error(`${field.title ?? field.field} is a required field`)
                 }
-            }
-            if (field.type === "nested" && data) {
-                return this.validateItem(data[field.field], field)
-            }
-            else if (field.type === "iterable" && data && data[field.field] && data[field.field].length > 0) {
-                for (const x of data[field.field]) {
-                    this.validateItem(x, field.iterabletype)
+
+                if (field.type === "nested" && data) {
+                    return this.validateItem(data[field.field], field)
+                }
+                else if (field.type === "iterable" && data && data[field.field] && data[field.field].length > 0) {
+                    for (const x of data[field.field]) {
+                        this.validateItem(x, field.iterabletype)
+                    }
                 }
             }
         }
@@ -171,6 +172,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                 onHide={this.closeModal}
                 container={this}
                 aria-labelledby="contained-modal-title"
+                backdrop={this.props.constants.disableModalOutsideClick ? "static" : true}
                 dialogClassName={this.props.constants.largeEdit ? `${errorClassName} large-modal` : `${errorClassName}`}>
                 <Modal.Header closeButton>
                     {this.props.modalType === "CREATE" &&
