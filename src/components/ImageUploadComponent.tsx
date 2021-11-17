@@ -67,7 +67,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                 }
                 else {
                     const data = JSON.parse(res.text)
-                    this.props.modelChanged(this.props.field, data.url)
+                    this.props.modelChanged(this.props.field, data)
                     alert("File uploaded successfully")
                 }
             })
