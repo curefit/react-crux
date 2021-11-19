@@ -82,7 +82,6 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
     }
 
-
     render() {
         const { percentageDone } = this.state
         return (
