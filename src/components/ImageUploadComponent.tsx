@@ -25,11 +25,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
             isValueChanged : true
         })
         const formData = new FormData()
-        if(files.length > 1) {
-                formData.append("images", files)
-        } else {
-            formData.append("images", files[0])
-        }
+        formData.append("images", files[0])
         if (width) {
             formData.append("width", width)
         }
@@ -67,7 +63,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                 }
                 else {
                     const data = JSON.parse(res.text)
-                    this.props.modelChanged(this.props.field, data)
+                    this.props.modelChanged(this.props.field, data.url)
                     alert("File uploaded successfully")
                 }
             })
@@ -78,22 +74,14 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
     }
 
     previewUpload = () => {
-        if(Array.isArray(this.props.currentModel)) {
-                this.props.currentModel.map((urlValue: string) => 
-                 this.fetchElement(urlValue)); 
-        } else {
-            return this.fetchElement(this.props.currentModel);
+        if (this.props.contentType === "video") {
+            return <video width="240px" height="200px" controls src={this.getUrl(this.props.currentModel, this.props.field)} />
+        } else if(this.props.contentType === "audio") {
+            return <audio controls src={this.getUrl(this.props.currentModel, this.props.field)} />
         }
+        return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(this.props.currentModel, this.props.field)} />
     }
 
-    fetchElement = (url: string) => {
-        if (this.props.contentType === "video") {
-            return <video width="240px" height="200px" controls src={this.getUrl(url, this.props.field)} />
-        } else if(this.props.contentType === "audio") {
-            return <audio controls src={this.getUrl(url, this.props.field)} />
-        }
-        return <img style={{ maxWidth: "150px", height: "75px", objectFit: "contain" }} src={this.getUrl(url, this.props.field)} />
-    }
 
     render() {
         const { percentageDone } = this.state
