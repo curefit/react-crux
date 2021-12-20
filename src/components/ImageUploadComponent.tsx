@@ -90,7 +90,13 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     disabled={this.props.readonly}
                     onDrop={(data: any) => {
                         this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
-                    }} multiple={true}>
+                    }}
+                    maxSize={52428800}
+                    multiple={true}
+                    onDropRejected={(fileRejections: any) => {
+                        console.log("file rejected")
+                        console.log(fileRejections)
+                    }}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
                         <div>
