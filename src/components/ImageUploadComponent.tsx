@@ -90,7 +90,17 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                     disabled={this.props.readonly}
                     onDrop={(data: any) => {
                         this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
-                    }} multiple={true}>
+                    }}
+                    maxSize={this.props.field.maxUploadSize || Infinity}
+                    multiple={true}
+                    onDropRejected={(fileRejections: any) => {
+                        const uploadedSize = fileRejections[0].size
+                        if(uploadedSize > this.props.field.maxUploadSize) {
+                            alert(`File size exceeded. Limit is ${this.props.field.maxUploadSize/1000000} mb.`)
+                        } else {
+                            alert("File rejected. Please try again.")
+                        }
+                    }}>
                     <div style={{ textAlign: "left", color: "#E2356F" }}>Upload {this.props.field.title}</div>
                     {this.state.inProgress &&
                         <div>
