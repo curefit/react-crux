@@ -34,7 +34,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                         onChange={this.handleChange}
                         utc={false}
                         timeFormat={"HH:mm"}
-                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly }}
+                        inputProps={{ placeholder: "Select " + this.props.field.title, disabled: this.props.readonly, readOnly: true }}
                     />
                 </div>
                 <TimezoneComponent
