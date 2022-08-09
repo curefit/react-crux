@@ -113,8 +113,6 @@ const store = createStore(
 
 ### Information Flow (Where does crux fit in redux)
 
-![alt text](https://s3.ap-south-1.amazonaws.com/react-crux-doc/images/redux.png "Redux flow")
-
 ### Basic Schema
 
 - **modelName**: The source name. Crux first looks for this locally in redux store. If not present, a http call to /model/:modelName will be made to fetch the list of models. For this to work, a controller on the server side needs to listen to this route
