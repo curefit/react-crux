@@ -23,12 +23,22 @@ export class ListNestedComponent extends React.Component<any, any> {
 
     render(): any {
         if (this.props.field.conditionalField) {
-            if (Array.isArray(this.props.field.conditionalValue)) {
-                if (!includes(this.props.field.conditionalValue, this.props.model[this.props.field.conditionalField])) {
+            if(this.props.field.negateConditionalValue){
+                if (Array.isArray(this.props.field.conditionalValue)) {
+                    if (includes(this.props.field.conditionalValue, this.props.model[this.props.field.conditionalField])) {
+                        return <div />
+                    }
+                } else if (this.props.field.conditionalValue === this.props.model[this.props.field.conditionalField]) {
                     return <div />
                 }
-            } else if (this.props.field.conditionalValue !== this.props.model[this.props.field.conditionalField]) {
-                return <div />
+            }else{
+                if (Array.isArray(this.props.field.conditionalValue)) {
+                    if (!includes(this.props.field.conditionalValue, this.props.model[this.props.field.conditionalField])) {
+                        return <div />
+                    }
+                } else if (this.props.field.conditionalValue !== this.props.model[this.props.field.conditionalField]) {
+                    return <div />
+                }
             }
         }
 
