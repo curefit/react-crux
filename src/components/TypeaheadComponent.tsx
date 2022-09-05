@@ -90,7 +90,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                     isValueChanged: true
                 })
             }
-            this.props.modelChanged(this.props.field, "")
+            this.props.modelChanged(this.props.field, undefined)
         }
     }
 }

@@ -1,9 +1,9 @@
 import * as React from "react"
 import ReactTooltip from 'react-tooltip';
 export const TitleComponent = (props: any) => {
-    const { field, isValueChanged, modalType } = props
+    const { field, isValueChanged, modalType, title } = props
     return (
-        <label className="small mr-2">{field.title.toUpperCase()}
+        <label className="title_label mr-2">{title ?? field.title}
             {field.required ?
                 <span className="text-danger" style={{
                     fontSize: 24,

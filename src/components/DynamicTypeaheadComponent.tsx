@@ -21,14 +21,15 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
             options: props.options || [],
             isValueChanged: false,
             previousValue: this.props.currentModel || undefined,
-            selected: props.currentModel || undefined
+            selected: props.currentModel || undefined,
+            fetchLimit: props.field.fetchLimit ?? 10
         }
     }
 
     componentDidMount() {
         if (isEmpty(this.state.options) && this.props.type !== "iterable") {
             const item: any = {
-                limit: 10, ...this.getDynamicPayload(""),
+                limit: this.state.fetchLimit, ...this.getDynamicPayload(""),
             }
             if (!isEmpty(this.state.selected)) {
                 if (this.props.field.foreign.keys) {
@@ -90,11 +91,11 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         let item = {}
         if (this.props.field.foreign.separateQuery) {
             item = {
-                [this.props.field.foreign.separateQuery]: query, limit: 10, ...this.getDynamicPayload(query),
+                [this.props.field.foreign.separateQuery]: query, limit: this.state.fetchLimit, ...this.getDynamicPayload(query),
             }
         } else {
             item = {
-                [this.props.field.foreign.title]: query, limit: 10, ...this.getDynamicPayload(query),
+                [this.props.field.foreign.title]: query, limit: this.state.fetchLimit, ...this.getDynamicPayload(query),
             }
         }
         fetchDynamicTypeaheadResults(this.props.field.foreign.modelName, item).then((data: any) => {
