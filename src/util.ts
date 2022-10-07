@@ -1,26 +1,5 @@
 import { isEmpty, forEach, flatten, map, filter, concat, uniq } from "lodash"
 
-export function getAnchors(field: any): any {
-    const anchors: any = {}
-
-    if (field.anchor) {
-        anchors[field.anchor] = field
-    }
-
-    if (!isEmpty(field.fields)) {
-        forEach(field.fields, (field: any) => this.getAnchors(field, anchors))
-    }
-
-    if (!isEmpty(field.iterabletype)) {
-        this.getAnchors(field.iterabletype, anchors)
-    }
-
-    if (!isEmpty(field.nestedtype)) {
-        this.getAnchors(field.nestedtype, anchors)
-    }
-    return anchors
-}
-
 export function getAdditionalModelsSingle(field: any): string[] {
     if (field.type === "dynamicTypeahead" || field.type === "dynamicMultiselect") return []
     if (field.modelName) return [field.modelName]

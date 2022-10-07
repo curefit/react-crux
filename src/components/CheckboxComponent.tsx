@@ -10,9 +10,7 @@ export class CheckboxComponent extends React.Component<InlineComponentProps, any
         this.state = {
             displayColorPicker: false,
             isValueChanged: false,
-            previousValue
-                : (this.props.currentModel === true)
-
+            previousValue: (this.props.currentModel === true)
         }
     }
 

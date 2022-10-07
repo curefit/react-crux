@@ -23,6 +23,7 @@ import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
 import { TitleComponent } from "./TitleComponent"
 import InputComponent from "./InputComponent"
 import TextAreaComponent from "./TextAreaComponent"
+import { NestedEditModalComponent } from "./NestedEditModalComponent"
 export interface IterableEditComponentProps extends InlineComponentProps {
     anchors: any
 }
@@ -40,6 +41,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         const collapsedIndexArray: any = []
         collapsedIndexArray.length = modalValue.length
         this.state = {
+            collapsed: this.props.field.collapsed,
             model: modalValue,
             checkIterableButton: undefined,
             dynamicTypeaheadOptions: [],
@@ -79,35 +81,38 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             const iterableButtonStyle = { marginLeft: "10px", color: "grey", cursor: "pointer" }
             const visibility = this.state.checkIterableButton && this.state.checkIterableButton[index] ? "visible" : "hidden"
             return (
-                <span style={{ visibility }}>
-                    {
-                        this.props.field.additionalButtons &&
-                        <>
-                            {this.props.field.additionalButtons.addAtIndex &&
-                                <span style={iterableButtonStyle}
-                                    className="glyphicon glyphicon-plus" aria-hidden="true"
-                                    onClick={this.addAtIndex.bind(this, index)} />}
-                            {this.props.field.additionalButtons.reorder && index != 0 &&
-                                <span style={iterableButtonStyle}
-                                    className="glyphicon glyphicon-chevron-up" aria-hidden="true"
-                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 0)}/>}
-                            {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
-                                <span style={iterableButtonStyle}
-                                    className="glyphicon glyphicon-chevron-down" aria-hidden="true"
-                                    onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
-                            {this.state.reorderClicked && 
-                                <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={() => this.reorderAtPosition(index, this.state.moveAtPosition)} min="1" max={totalLength} />
-                            }
-                            {this.props.field.additionalButtons.customButton &&
-                                <span style={iterableButtonStyle}
-                                    className="glyphicon glyphicon-eye-open" aria-hidden="true"
-                                    onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
-                        </>
-                    }
-                    <span style={iterableButtonStyle}
-                        className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                        onClick={this.remove.bind(this, index)} />
-                </span>)
+                <>
+                    <span style={{ visibility }}>
+                        {
+                            this.props.field.additionalButtons &&
+                            <>
+                                {this.props.field.additionalButtons.addAtIndex &&
+                                    <span style={iterableButtonStyle}
+                                          className="glyphicon glyphicon-plus" aria-hidden="true"
+                                          onClick={this.addAtIndex.bind(this, index)} />}
+                                {this.props.field.additionalButtons.reorder && index != 0 &&
+                                    <span style={iterableButtonStyle}
+                                          className="glyphicon glyphicon-chevron-up" aria-hidden="true"
+                                          onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 0)}/>}
+                                {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
+                                    <span style={iterableButtonStyle}
+                                          className="glyphicon glyphicon-chevron-down" aria-hidden="true"
+                                          onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
+                                {this.state.reorderClicked &&
+                                    <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={() => this.reorderAtPosition(index, this.state.moveAtPosition)} min="1" max={totalLength} />
+                                }
+                                {this.props.field.additionalButtons.customButton &&
+                                    <span style={iterableButtonStyle}
+                                          className="glyphicon glyphicon-eye-open" aria-hidden="true"
+                                          onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
+                            </>
+                        }
+                    </span>
+                    <div className="iterable_remove" onClick={this.remove.bind(this, index)}>
+                        <span style={{display: "table-cell", verticalAlign: "middle"}}>✖</span>
+                    </div>
+                </>
+                )
         }
         return null
     }
@@ -176,7 +181,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     getIterableNestedTitle(index: number) {
 
         const subTitle = this.getRepIterableField(index)
-        return this.props.field.iterabletype.nestedIterableCollapse.title.toUpperCase() + "  " + (index + 1) + (subTitle ? " - " + subTitle : "")
+        return (this.props.field.iterabletype.nestedIterableCollapse?.title ?? "") + "  #" + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
 
     componentDidUpdate() {
@@ -202,17 +207,27 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             console.error("Did you forget to add a title to the iterabletype ? Possible culprit:", this.props.field.iterabletype)
         }
 
-        return <div>
-            {!(this.props.field.style && this.props.field.style.hideLabel) &&
-                <div onClick={this.collapseToggle} style={{
-                    fontSize: "10px",
-                    marginRight: "10px"
-                }}>
-                    <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+        return <div style={{ border: "1px solid #ccc", position: "relative" }}>
+            <div style={{borderBottom: "1px solid #ccc", cursor: "pointer", background: "#eee"}}>
+                <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
+            </div>
+            {this.props.field.collapsable && this.state.collapsed &&
+                <div className="iterableEdit_maximise" onClick={this.collapseToggle}>
+                    <span style={{display: "table-cell", verticalAlign: "middle"}}>➕</span>
                 </div>
             }
-            <div
-                style={this.state.collapsed ? { display: "none" } : (!isEmpty(this.state.model) ? ({ padding: 0 }) : { padding: 0 })}>
+            {this.props.field.collapsable && !this.state.collapsed &&
+                <div className="iterableEdit_minimise" onClick={this.collapseToggle}>
+                    <span style={{display: "table-cell", verticalAlign: "middle"}}>➖</span>
+                </div>
+            }
+            {this.props.field.nullable &&
+                <div className="iterableEdit_remove" onClick={() => this.props.modelChanged(undefined)}>
+                    <span style={{display: "table-cell", verticalAlign: "middle"}}>✖</span>
+                </div>
+            }
+            {this.state.collapsed === true ? null :
+                <div style={{ padding: "10px" }}>
                 {
                     map(this.state.model, ((currentModel: any, index: any) => {
                         const parentModel = {
@@ -223,14 +238,13 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
+                                    padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd",
                                     display: "inline-block",
                                     marginRight: "30px"
-                                } : { padding: "5px 0px" }}
+                                } : { padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                <div style={Object.assign({}, this.props.field.iterabletype.style ?? {}, { display: "inline-block" })}>
                                     <SelectComponent
                                         modalType={this.props.modalType}
                                         readonly={readonly}
@@ -527,7 +541,9 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 indent={false}
                                 modalType={this.props.modalType}
                                 parentModel={parentModel}
-                                collapsable={this.state.collapsedIndex[index] || false}
+                                collapsable={true}
+                                collapsed={this.state.collapsedIndex[index] || false}
+                                nullable={this.props.field.nullable}
                                 totalLength={totalLength}
                                 collapseNestedToggle={this.collapseNestedToggle}
                                 getIterableNestedTitle={this.getIterableNestedTitle}
@@ -542,12 +558,16 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                                 style={{ border: "1px solid #EEE", padding: "10px" }}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <NestedEditComponent currentModel={currentModel}
+                                <NestedEditModalComponent
+                                    currentModel={currentModel}
                                     readonly={readonly}
                                     fetch={this.props.fetch}
                                     field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
                                     additionalModels={this.props.additionalModels}
                                     modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                    collapsable={this.props.field.iterabletype.collapsable ?? true}
+                                    expandable={this.props.field.iterabletype.expandable ?? false}
+                                    nullable={this.props.field.iterabletype.nullable ?? false}
                                     showTitle={true} indent={true}
                                     modalType={this.props.modalType}
                                     parentModel={parentModel} />
@@ -634,6 +654,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                     }))
                 }
             </div>
+            }
             {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
                 <div className="btn btn-xs btn-passive" style={{ marginTop: "5px" }} onClick={this.createNew}>
                     +Add {this.props.field.iterabletype.title}</div>}
@@ -712,13 +733,11 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     collapseNestedToggle = (index: number) => {
-        if (this.props.field.iterabletype.nestedIterableCollapse) {
-            let collapsedIndexArray: any = []
-            collapsedIndexArray.length = this.state.model.length
-            collapsedIndexArray = collapsedIndexArray.fill(this.props.field.iterabletype.nestedIterableCollapse.default ? true : false, 0)
-            collapsedIndexArray[index] = !this.state.collapsedIndex[index]
-            this.setState(Object.assign({}, this.state, { collapsedIndex: collapsedIndexArray }))
-        }
+        let collapsedIndexArray: any = []
+        collapsedIndexArray.length = this.state.model.length
+        collapsedIndexArray = collapsedIndexArray.fill(true, 0)
+        collapsedIndexArray[index] = !this.state.collapsedIndex[index]
+        this.setState(Object.assign({}, this.state, { collapsedIndex: collapsedIndexArray }))
     }
 
     addAtIndex = (index: any) => {

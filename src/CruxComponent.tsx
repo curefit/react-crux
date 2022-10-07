@@ -5,7 +5,7 @@ import {
     searchModel, bulkCreate, openModal, putData
 } from "./Actions"
 import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
-import { getAdditionalModels, getAnchors } from "./util"
+import { getAdditionalModels } from "./util"
 import autobind from "autobind-decorator"
 import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
@@ -34,6 +34,10 @@ export interface InlineComponentProps {
     constants?: any,
     anchors?: any,
     readonly?: boolean,
+    nullable?: boolean,
+    collapsable?: boolean
+    collapsed?: boolean
+    expandable?: boolean
     isMulti?: boolean,
     index?: number
     style?: any
@@ -48,7 +52,6 @@ export { NestedEditComponent } from "./components/NestedEditComponent"
 
 export class CruxComponentCreator {
     static create<M, P>(constants: any): any {
-        let anchors: any = {}
 
         function mapStateToProps(state: any, ownProps: any): any {
             const additionalModels = getAdditionalModels(constants)
@@ -135,7 +138,6 @@ export class CruxComponentCreator {
 
             componentDidMount() {
                 this.fetchModels(this.props)
-                anchors = getAnchors(constants)
             }
 
             fetchModels = (props: any) => {

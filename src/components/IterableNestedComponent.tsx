@@ -1,9 +1,12 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { NestedEditComponent, InlineComponentProps } from "../CruxComponent"
+import { NestedEditModalComponent } from "./NestedEditModalComponent"
+import { TitleComponent } from "./TitleComponent"
 
 interface IterableNestedComponentProps extends InlineComponentProps {
     collapsable: boolean
+    collapsed: boolean
     totalLength: number
     collapseNestedToggle: Function
     getIterableNestedTitle: Function
@@ -12,6 +15,7 @@ interface IterableNestedComponentProps extends InlineComponentProps {
     reorder: Function
     reorderAtPosition: Function
 }
+
 @autobind
 export class IterableNestedComponent extends React.Component<IterableNestedComponentProps, any> {
 
@@ -96,10 +100,8 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     onClick={this.customButtonAction} />}
                         </>
                     }
-                    <span style={iterableButtonStyle}
-                        className="glyphicon glyphicon-remove-circle" aria-hidden="true"
-                        onClick={this.remove} />
-                </span>)
+                </span>
+            )
         }
         return null
     }
@@ -109,29 +111,13 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
         if (this.props.field.iterabletype.nestedIterableCollapse) {
             titleStyle["cursor"] = "pointer"
         }
-        return <div key={this.props.index}
-            style={this.props.field.iterabletype.style && this.props.field.iterabletype.style.border === "none" ? {} : {
-                border: "1px solid #EEE",
-                padding: "10px",
-                marginTop: "10px"
-            }}
-            onMouseEnter={this.showIterableButtons}
-            onMouseLeave={this.hideIterableButtons}>
-            {this.props.field.iterabletype.nestedIterableCollapse && this.props.field.iterabletype.nestedIterableCollapse.title &&
-                <div onClick={this.collapseNestedToggle} style={titleStyle}>
-                    <div style={{ display: "inline-block", width: "90%" }}>
-                        {this.props.getIterableNestedTitle(this.props.index)}
-                    </div>
-                    {!this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-up" aria-hidden="true" />}
-                    {this.props.collapsable &&
-                        <span style={{ marginLeft: "10px", color: "grey", cursor: "pointer" }}
-                            className="glyphicon glyphicon-chevron-down" aria-hidden="true" />}
-                </div>}
-            <div style={{ display: "inline-block" }}>
-                {!this.props.collapsable &&
-                    <NestedEditComponent
+        return <div key={this.props.index} style={{marginTop: "10px", border: "1px solid #ccc", position: "relative"}} onMouseEnter={this.showIterableButtons} onMouseLeave={this.hideIterableButtons}>
+            <div style={{borderBottom: "1px solid #ccc", cursor: "pointer", background: "#eee"}}>
+                <label className="title_label mr-2">{this.props.getIterableNestedTitle(this.props.index)}</label>
+            </div>
+            <div style={{ display: "inline-block", padding: "10px" }}>
+                {!this.props.collapsed &&
+                    <NestedEditModalComponent
                         index={this.props.index}
                         readonly={this.props.readonly}
                         currentModel={this.props.currentModel}
@@ -142,11 +128,25 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                         modelChanged={this.props.modelChanged}
                         showTitle={false}
                         indent={false}
+                        collapsed={this.props.field.iterabletype.collapsed ?? false}
+                        collapsable={this.props.field.iterabletype.collapsable ?? true}
+                        expandable={this.props.field.iterabletype.expandable ?? false}
+                        nullable={this.props.field.iterabletype.nullable ?? false}
                         iterableNested={true}
                         modalType={this.props.modalType}
                         parentModel={this.props.parentModel}
-                    />}
+                    />
+                }
             </div>
+            {this.props.collapsable && this.props.collapsed &&
+                <div className="iterableNested_maximise" onClick={this.collapseNestedToggle}><span>➕</span></div>
+            }
+            {this.props.collapsable && !this.props.collapsed &&
+                <div className="iterableNested_minimise" onClick={this.collapseNestedToggle}><span>➖</span></div>
+            }
+            {this.props.nullable &&
+                <div className="iterableNested_remove" onClick={this.remove}><span>✖</span></div>
+            }
             {this.iterableButtons()}
         </div>
     }

@@ -5,6 +5,7 @@ import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
 import * as ReactDOM from "react-dom"
+import { NestedEditModalComponent } from "./NestedEditModalComponent"
 
 interface ModalComponentProps {
     constants: any,
@@ -200,12 +201,17 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                             }
                         </Alert>
                     }
-                    <NestedEditComponent field={this.props.constants} modalType={this.props.modalType}
+                    <NestedEditModalComponent
+                        field={this.props.constants} modalType={this.props.modalType}
                         readonly={this.props.modalType !== "CREATE" && this.props.constants.readonly === true}
                         additionalModels={this.props.additionalModels} fetch={this.props.fetch}
                         modelChanged={this.modelChanged} currentModel={this.state.item}
                         additionalProps={this.props.additionalProps}
                         showTitle={false}
+                        expandable={false}
+                        collapsable={true}
+                        collapsed={false}
+                        nullable={true}
                         parentModel={{}}
                     />
                 </Modal.Body>
