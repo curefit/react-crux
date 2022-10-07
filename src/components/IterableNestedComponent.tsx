@@ -128,6 +128,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                         modelChanged={this.props.modelChanged}
                         showTitle={false}
                         indent={false}
+                        collapsed={this.props.field.iterabletype.collapsed ?? false}
                         collapsable={this.props.field.iterabletype.collapsable ?? true}
                         expandable={this.props.field.iterabletype.expandable ?? false}
                         nullable={this.props.field.iterabletype.nullable ?? false}
