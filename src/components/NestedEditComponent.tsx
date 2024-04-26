@@ -370,11 +370,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         })
 
         if (!isEmpty(newValue)) {
-            if (props.iterableNested && props.nestedIterableModelChanged) {
-                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, newValue))
-            } else {
-                props.modelChanged(Object.assign({}, props.currentModel, newValue))
-            }
+            props.modelChanged(Object.assign({}, props.currentModel, newValue))
+            // if (props.iterableNested && props.nestedIterableModelChanged) {
+            //     props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, newValue))
+            // } else {
+            //     props.modelChanged(Object.assign({}, props.currentModel, newValue))
+            // }
         }
     }
 
@@ -383,7 +384,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     componentWillReceiveProps(nextProps: any) {
-        this.updateDefaultValue(nextProps)
+        if (!isEqual(this.props, nextProps)) {
+            this.updateDefaultValue(nextProps)
+        }
     }
 
     render(): any {
@@ -508,21 +511,23 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     select = (field: any, eventKey: any) => {
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
-        } else {
-            this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
-        }
+        this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        // if (this.props.index >= 0) {
+        //     this.props.modelChanged(this.props.index, Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        // } else {
+            // this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
+        // }
     }
 
     handleChange = (field: any, event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
         const newModel = Object.assign({}, this.props.currentModel, { [field.field]: value })
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, newModel)
-        } else {
-            this.props.modelChanged(newModel)
-        }
+        this.props.modelChanged(newModel)
+        // if (this.props.index >= 0) {
+        //     this.props.modelChanged(this.props.index, newModel)
+        // } else {
+            // this.props.modelChanged(newModel)
+        // }
     }
 
     handleFieldChange = (event: any) => {
@@ -533,11 +538,12 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         } else {
             newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: undefined })
         }
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, newModel)
-        } else {
-            this.props.modelChanged(newModel)
-        }
+        this.props.modelChanged(newModel)
+        // if (this.props.index >= 0) {
+        //     this.props.modelChanged(this.props.index, newModel)
+        // } else {
+            // this.props.modelChanged(newModel)
+        // }
     }
 
     collapseToggle = () => {

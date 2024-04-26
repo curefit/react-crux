@@ -100,6 +100,8 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     onClick={this.customButtonAction} />}
                         </>
                     }
+                    {!this.props.field.iterabletype.nullable && 
+                        <span style={iterableButtonStyle} className="glyphicon glyphicon-remove-circle" aria-hidden="true" onClick={this.remove} />}
                 </span>
             )
         }

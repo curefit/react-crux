@@ -13,7 +13,10 @@ export class NestedEditModalComponent extends React.Component<InlineComponentPro
     }
 
     modelChanged = (value: any) => {
-        if (this.props.index >= 0) {
+        // console.log("props.model", this.props.currentModel, this.props.parentModel)
+        // console.log("this.props.index", this.props?.index)
+        // console.log("changed value", value)
+        if (this.props.index !== null && this.props.index >= 0) {
             this.props.modelChanged(this.props.index, value)
         } else {
             this.props.modelChanged(value)
@@ -29,13 +32,13 @@ export class NestedEditModalComponent extends React.Component<InlineComponentPro
                 fetch={this.props.fetch}
                 field={this.props.field}
                 additionalModels={this.props.additionalModels}
-                nestedIterableModelChanged={this.props.modelChanged}
-                modelChanged={this.props.modelChanged}
+                nestedIterableModelChanged={this.modelChanged}
+                modelChanged={this.modelChanged}
                 showTitle={false}
                 indent={false}
                 collapsable={this.props.field.collapsable}
                 nullable={this.props.field.nullable}
-                iterableNested={true}
+                iterableNested={this.props.iterableNested ?? false}
                 modalType={this.props.modalType}
                 parentModel={this.props.parentModel}
             />
@@ -60,11 +63,11 @@ export class NestedEditModalComponent extends React.Component<InlineComponentPro
                     <div className="nestedEdit_minimise" onClick={this.collapseToggle}><span>➖</span></div>
                 }
                 {this.props.nullable &&
-                    <div className="nestedEdit_remove" onClick={() => this.props.modelChanged(undefined)}><span>✖</span></div>
+                    <div className="nestedEdit_remove" onClick={() => this.modelChanged(undefined)}><span>✖</span></div>
                 }
             </div>
-            {this.props.collapsable && !this.state.collapsed && this.getComponent()}
-            <Modal
+            {this.props.collapsable && !this.state.collapsed && !this.state.showModal && this.getComponent()}
+            {!!this.props.expandable && !!this.state.showModal && <Modal
                 show={this.props.expandable === true && this.state.showModal === true}
                 onHide={() => {
                     this.setState({showModal: false})
@@ -79,7 +82,7 @@ export class NestedEditModalComponent extends React.Component<InlineComponentPro
                 <Modal.Body className="modal-height">
                     {this.getComponent()}
                 </Modal.Body>
-            </Modal>
+            </Modal>}
         </div>
     }
 

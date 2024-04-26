@@ -16,7 +16,7 @@ import { DateTimezoneComponent } from "./DateTimezoneComponent"
 import { TimezoneComponent } from "./TimezoneComponent"
 import { getReadOnly } from "../util"
 import { fetchDynamicTypeaheadResults } from "../Actions"
-import { map, isEmpty, concat, pullAt, cloneDeep, get } from "lodash"
+import { map, isEmpty, concat, pullAt, cloneDeep, get, isEqual } from "lodash"
 import { IterableDynamicTypeaheadComponent } from "./IterableDynamicTypeaheadComponent"
 import { v4 } from "uuid"
 import { DynamicMultiSelectComponent } from "./DynamicMultiSelectComponent"
@@ -71,7 +71,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.currentModel) {
+        if (!isEqual(this.props.currentModel, nextProps.currentModel)) {
             this.setState({ model: JSON.parse(JSON.stringify(nextProps.currentModel)) })
         }
     }

@@ -54,7 +54,7 @@ export class TypeaheadComponent extends React.Component<InlineComponentProps, an
                 </div>
             }
             <Typeahead labelKey={this.props.field.foreign.title}
-                onChange={this.handleChange} options={optionsData}
+                onChange={this.handleChange} options={optionsData?.length ? optionsData : []}
                 disabled={this.props.readonly}
                 selected={selected ? [selected] : undefined} />
         </div>
