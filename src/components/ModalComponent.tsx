@@ -211,7 +211,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         expandable={false}
                         collapsable={true}
                         collapsed={false}
-                        nullable={true}
+                        nullable={this.props.constants.nullable ?? false}
                         parentModel={{}}
                     />
                 </Modal.Body>

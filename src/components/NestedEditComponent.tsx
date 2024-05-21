@@ -370,11 +370,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         })
 
         if (!isEmpty(newValue)) {
-            if (props.iterableNested && props.nestedIterableModelChanged) {
-                props.nestedIterableModelChanged(props.index, Object.assign({}, props.currentModel, newValue))
-            } else {
-                props.modelChanged(Object.assign({}, props.currentModel, newValue))
-            }
+            props.modelChanged(Object.assign({}, props.currentModel, newValue))
         }
     }
 
@@ -383,7 +379,9 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
     }
 
     componentWillReceiveProps(nextProps: any) {
-        this.updateDefaultValue(nextProps)
+        if (!isEqual(this.props, nextProps)) {
+            this.updateDefaultValue(nextProps)
+        }
     }
 
     render(): any {
@@ -442,87 +440,68 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         const wysiwygFields = filter(fields, (field: any) => (field.wysiwyg === true) && (field.type === "custom"))
         return (
             <div style={{ border: "1px solid #ddd", position: "relative" }}>
-                {this.state.collapsed !== true &&
-                    <div style={{ display: "block", padding: "10px" }}>
-                        <div style={{ display: "inline-block" }}>
-                            {
-                                map(filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
-                                    const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
-                                    return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
-                                        display: "inline-block",
-                                        marginRight: "30px",
-                                        marginBottom: "30px",
-                                        verticalAlign: "top", ...field.wrapperStyles
-                                    } : { marginBottom: "30px", marginRight: "30px", ...field.wrapperStyles }}>
-                                        <div>
-                                            {this.getComponentForField(field, currentModelWithParent)}
-                                        </div>
+                <div style={{ display: "block", padding: "10px" }}>
+                    <div style={{ display: "inline-block" }}>
+                        {
+                            map(filter(fields, (field: any) => this.getEditable(field, this.props.modalType) || field.filterParameter === true), (field: any, index: any) => {
+                                const currentModelWithParent = { data: this.props.currentModel, parentModel: this.props.parentModel }
+                                return <div key={index} style={(this.props.field.displayChildren === "inline") ? {
+                                    display: "inline-block",
+                                    marginRight: "30px",
+                                    marginBottom: "30px",
+                                    verticalAlign: "top", ...field.wrapperStyles
+                                } : { marginBottom: "30px", marginRight: "30px", ...field.wrapperStyles }}>
+                                    <div>
+                                        {this.getComponentForField(field, currentModelWithParent)}
                                     </div>
+                                </div>
+                            })
+                        }
+                    </div>
+                    {
+                        !isEmpty(wysiwygFields) &&
+                        <div style={{
+                            display: "inline-block",
+                            marginLeft: "50px",
+                            maxWidth: "300px",
+                            verticalAlign: "top"
+                        }}>
+                            {
+                                map(wysiwygFields, (field: any, index: number) => {
+                                    if (field.customComponent) {
+                                        const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
+                                        return <div key={index}>
+                                            <TitleComponent modalType={this.props.modalType} field={field} />
+                                            <CustomComponent key={index} />
+                                        </div>
+                                    } else {
+                                        const CustomComponent = field.customViewComponent
+                                        return <div key={index}>
+                                            <TitleComponent modalType={this.props.modalType} field={field} />
+                                            <CustomComponent key={index}
+                                                currentModel={this.props.currentModel}
+                                                additionalModels={this.props.additionalModels}
+                                                parentModel={this.props.parentModel}
+                                                additionalProps={this.props.additionalProps} />
+                                        </div>
+                                    }
                                 })
                             }
                         </div>
-                        {
-                            !isEmpty(wysiwygFields) &&
-                            <div style={{
-                                display: "inline-block",
-                                marginLeft: "50px",
-                                maxWidth: "300px",
-                                verticalAlign: "top"
-                            }}>
-                                {
-                                    map(wysiwygFields, (field: any, index: number) => {
-                                        if (field.customComponent) {
-                                            const CustomComponent = field.customComponent(this.props.currentModel, this.props.additionalModels, this.props.parentModel, this.props.additionalProps)
-                                            return <div key={index}>
-                                                <TitleComponent modalType={this.props.modalType} field={field} />
-                                                <CustomComponent key={index} />
-                                            </div>
-                                        } else {
-                                            const CustomComponent = field.customViewComponent
-                                            return <div key={index}>
-                                                <TitleComponent modalType={this.props.modalType} field={field} />
-                                                <CustomComponent key={index}
-                                                    currentModel={this.props.currentModel}
-                                                    additionalModels={this.props.additionalModels}
-                                                    parentModel={this.props.parentModel}
-                                                    additionalProps={this.props.additionalProps} />
-                                            </div>
-                                        }
-                                    })
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                {this.props.collapsable && this.state.collapsed &&
-                    <div className="nestedEdit_maximise" onClick={this.collapseToggle}><span>➕</span></div>
-                }
-                {this.props.collapsable && !this.state.collapsed &&
-                    <div className="nestedEdit_minimise" onClick={this.collapseToggle}><span>➖</span></div>
-                }
-                {this.props.nullable &&
-                    <div className="nestedEdit_remove" onClick={() => this.props.modelChanged(undefined)}><span>✖</span></div>
-                }
+                    }
+                </div>
             </div>
         )
     }
 
     select = (field: any, eventKey: any) => {
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
-        } else {
-            this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
-        }
+        this.props.modelChanged(Object.assign({}, this.props.currentModel, { [field.field]: eventKey }))
     }
 
     handleChange = (field: any, event: any) => {
         const value: any = event.target.type === "number" ? parseFloat(event.target.value) : event.target.value
         const newModel = Object.assign({}, this.props.currentModel, { [field.field]: value })
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, newModel)
-        } else {
-            this.props.modelChanged(newModel)
-        }
+        this.props.modelChanged(newModel)
     }
 
     handleFieldChange = (event: any) => {
@@ -533,11 +512,7 @@ export class NestedEditComponent extends React.Component<InlineComponentProps, a
         } else {
             newModel = Object.assign({}, this.props.currentModel, { [event.target.getAttribute("data-value")]: undefined })
         }
-        if (this.props.index >= 0) {
-            this.props.modelChanged(this.props.index, newModel)
-        } else {
-            this.props.modelChanged(newModel)
-        }
+        this.props.modelChanged(newModel)
     }
 
     collapseToggle = () => {
