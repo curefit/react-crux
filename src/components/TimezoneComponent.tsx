@@ -3,8 +3,11 @@ import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 const TimezonePicker = require("react-timezone")
 
+interface TimezoneComponentProps extends InlineComponentProps {
+    isDateTimeComponent?: boolean
+}
 @autobind
-export class TimezoneComponent extends React.Component<InlineComponentProps, any> {
+export class TimezoneComponent extends React.Component<TimezoneComponentProps, any> {
     constructor(props: any) {
         super(props)
         const timezone = props.currentModel || "Asia/Kolkata"
@@ -12,13 +15,13 @@ export class TimezoneComponent extends React.Component<InlineComponentProps, any
             timezone: timezone,
             isValueChanged: false,
             previousValue
-            : this.props.currentModel
+                : this.props.currentModel
         }
     }
 
     render() {
         return (
-            <div style={{ display: "flex", flexDirection: "column", marginLeft: "4px" }}>
+            <div style={{ display: this.props.field.displayTimezonePicker || !this.props.isDateTimeComponent ? "flex" : "none", flexDirection: "column", marginLeft: "4px" }}>
                 <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
                 <TimezonePicker.default
                     value={this.state.timezone}

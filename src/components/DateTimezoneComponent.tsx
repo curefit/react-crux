@@ -43,6 +43,7 @@ export class DateTimezoneComponent extends React.Component<InlineComponentProps,
                     field={this.props.field}
                     additionalModels={this.props.additionalModels}
                     parentModel={this.props.parentModel}
+                    isDateTimeComponent
                 />
             </div>
         )

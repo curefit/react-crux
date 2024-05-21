@@ -9,7 +9,7 @@ interface IterableNestedComponentProps extends InlineComponentProps {
     collapsed: boolean
     totalLength: number
     collapseNestedToggle: Function
-    getIterableNestedTitle: Function
+    iterableNestedTitle?: string
     remove: Function
     addAtIndex: Function
     reorder: Function
@@ -91,7 +91,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     className="glyphicon glyphicon-chevron-down" aria-hidden="true"
                                     onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder} />
                             }
-                            {this.state.reorderClicked && 
+                            {this.state.reorderClicked &&
                                 <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={this.reorderAtPosition} min="1" max={this.props.totalLength} />
                             }
                             {this.props.field.additionalButtons.customButton &&
@@ -100,7 +100,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                                     onClick={this.customButtonAction} />}
                         </>
                     }
-                    {!this.props.field.iterabletype.nullable && 
+                    {!this.props.field.iterabletype.nullable &&
                         <span style={iterableButtonStyle} className="glyphicon glyphicon-remove-circle" aria-hidden="true" onClick={this.remove} />}
                 </span>
             )
@@ -115,7 +115,7 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
         }
         return <div key={this.props.index} style={{marginTop: "10px", border: "1px solid #ccc", position: "relative"}} onMouseEnter={this.showIterableButtons} onMouseLeave={this.hideIterableButtons}>
             <div style={{borderBottom: "1px solid #ccc", cursor: "pointer", background: "#eee"}}>
-                <label className="title_label mr-2">{this.props.getIterableNestedTitle(this.props.index)}</label>
+                <label className="title_label mr-2">{this.props.iterableNestedTitle}</label>
             </div>
             <div style={{ display: "inline-block", padding: "10px" }}>
                 {!this.props.collapsed &&
@@ -140,15 +140,17 @@ export class IterableNestedComponent extends React.Component<IterableNestedCompo
                     />
                 }
             </div>
-            {this.props.collapsable && this.props.collapsed &&
-                <div className="iterableNested_maximise" onClick={this.collapseNestedToggle}><span>➕</span></div>
-            }
-            {this.props.collapsable && !this.props.collapsed &&
-                <div className="iterableNested_minimise" onClick={this.collapseNestedToggle}><span>➖</span></div>
-            }
-            {this.props.nullable &&
-                <div className="iterableNested_remove" onClick={this.remove}><span>✖</span></div>
-            }
+            <div className="remove_expand_close_Btn">
+                {this.props.collapsable && this.props.collapsed &&
+                    <div className="iterableNested_maximise" onClick={this.collapseNestedToggle}><span>➕</span></div>
+                }
+                {this.props.collapsable && !this.props.collapsed &&
+                    <div className="iterableNested_minimise" onClick={this.collapseNestedToggle}><span>➖</span></div>
+                }
+                {this.props.nullable &&
+                    <div className="iterableNested_remove" onClick={this.remove}><span>✖</span></div>
+                }
+            </div>
             {this.iterableButtons()}
         </div>
     }

@@ -88,23 +88,23 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                             <>
                                 {this.props.field.additionalButtons.addAtIndex &&
                                     <span style={iterableButtonStyle}
-                                          className="glyphicon glyphicon-plus" aria-hidden="true"
-                                          onClick={this.addAtIndex.bind(this, index)} />}
+                                        className="glyphicon glyphicon-plus" aria-hidden="true"
+                                        onClick={this.addAtIndex.bind(this, index)} />}
                                 {this.props.field.additionalButtons.reorder && index != 0 &&
                                     <span style={iterableButtonStyle}
-                                          className="glyphicon glyphicon-chevron-up" aria-hidden="true"
-                                          onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 0)}/>}
+                                        className="glyphicon glyphicon-chevron-up" aria-hidden="true"
+                                        onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 0)}/>}
                                 {this.props.field.additionalButtons.reorder && index != totalLength - 1 &&
                                     <span style={iterableButtonStyle}
-                                          className="glyphicon glyphicon-chevron-down" aria-hidden="true"
-                                          onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
+                                        className="glyphicon glyphicon-chevron-down" aria-hidden="true"
+                                        onClick={this.props.field.additionalButtons.moveAtIndex && !this.state.reorderClicked ? this.handleReorderClick : this.reorder.bind(this, index, 1)}/>}
                                 {this.state.reorderClicked &&
                                     <input type="number" value={this.state.index} onChange={this.handleIntervalChange} onBlur={() => this.reorderAtPosition(index, this.state.moveAtPosition)} min="1" max={totalLength} />
                                 }
                                 {this.props.field.additionalButtons.customButton &&
                                     <span style={iterableButtonStyle}
-                                          className="glyphicon glyphicon-eye-open" aria-hidden="true"
-                                          onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
+                                        className="glyphicon glyphicon-eye-open" aria-hidden="true"
+                                        onClick={this.props.field.additionalButtons.customButtonAction.bind(this, this.state.model[index])} />}
                             </>
                         }
                     </span>
@@ -112,7 +112,7 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
                         <span style={{display: "table-cell", verticalAlign: "middle"}}>✖</span>
                     </div>
                 </>
-                )
+            )
         }
         return null
     }
@@ -178,10 +178,10 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
         return subTitle
     }
 
-    getIterableNestedTitle(index: number) {
+    getIterableNestedTitle = (index: number) => {
 
         const subTitle = this.getRepIterableField(index)
-        return (this.props.field.iterabletype.nestedIterableCollapse?.title ?? "") + "  #" + (index + 1) + (subTitle ? " - " + subTitle : "")
+        return (this.props.field.iterabletype.nestedIterableCollapse?.title ?? this.props.field.iterabletype.title ?? "") + "  #" + (index + 1) + (subTitle ? " - " + subTitle : "")
     }
 
     componentDidUpdate() {
@@ -211,449 +211,451 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             <div style={{borderBottom: "1px solid #ccc", cursor: "pointer", background: "#eee"}}>
                 <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} />
             </div>
-            {this.props.field.collapsable && this.state.collapsed &&
-                <div className="iterableEdit_maximise" onClick={this.collapseToggle}>
-                    <span style={{display: "table-cell", verticalAlign: "middle"}}>➕</span>
-                </div>
-            }
-            {this.props.field.collapsable && !this.state.collapsed &&
-                <div className="iterableEdit_minimise" onClick={this.collapseToggle}>
-                    <span style={{display: "table-cell", verticalAlign: "middle"}}>➖</span>
-                </div>
-            }
-            {this.props.field.nullable &&
-                <div className="iterableEdit_remove" onClick={() => this.props.modelChanged(undefined)}>
-                    <span style={{display: "table-cell", verticalAlign: "middle"}}>✖</span>
-                </div>
-            }
+            <div className="remove_expand_close_Btn">
+                {this.props.field.collapsable && this.state.collapsed &&
+                    <div className="iterableEdit_maximise" onClick={this.collapseToggle}>
+                        <span style={{display: "table-cell", verticalAlign: "middle"}}>➕</span>
+                    </div>
+                }
+                {this.props.field.collapsable && !this.state.collapsed &&
+                    <div className="iterableEdit_minimise" onClick={this.collapseToggle}>
+                        <span style={{display: "table-cell", verticalAlign: "middle"}}>➖</span>
+                    </div>
+                }
+                {this.props.field.nullable &&
+                    <div className="iterableEdit_remove" onClick={() => this.props.modelChanged(undefined)}>
+                        <span style={{display: "table-cell", verticalAlign: "middle"}}>✖</span>
+                    </div>
+                }
+            </div>
             {this.state.collapsed === true ? null :
                 <div style={{ padding: "10px" }}>
-                {
-                    map(this.state.model, ((currentModel: any, index: any) => {
-                        const parentModel = {
-                            data: this.state.model,
-                            parentModel: this.props.parentModel
-                        }
-                        const readonly = this.checkReadonly(currentModel)
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={Object.assign({}, this.props.field.iterabletype.style ?? {}, { display: "inline-block" })}>
-                                    <SelectComponent
-                                        modalType={this.props.modalType}
-                                        readonly={readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                    />
+                    {
+                        map(this.state.model, ((currentModel: any, index: any) => {
+                            const parentModel = {
+                                data: this.state.model,
+                                parentModel: this.props.parentModel
+                            }
+                            const readonly = this.checkReadonly(currentModel)
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "select") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px", marginTop: "5px", position: "relative", border: "1px solid #ddd" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={Object.assign({}, this.props.field.iterabletype.style ?? {}, { display: "inline-block" })}>
+                                        <SelectComponent
+                                            modalType={this.props.modalType}
+                                            readonly={readonly}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "searcheableselect") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <MultiSelectComponent
-                                        modalType={this.props.modalType}
-                                        readonly={readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        isMulti={false}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "searcheableselect") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <MultiSelectComponent
+                                            modalType={this.props.modalType}
+                                            readonly={readonly}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                            isMulti={false}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicMultiselect") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <DynamicMultiSelectComponent
-                                        modalType={this.props.modalType}
-                                        readonly={readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        isMulti={false}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicMultiselect") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <DynamicMultiSelectComponent
+                                            modalType={this.props.modalType}
+                                            readonly={readonly}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                            isMulti={false}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "multiselect") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <MultiSelectComponent
-                                        modalType={this.props.modalType}
-                                        readonly={readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        isMulti={true}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "multiselect") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <MultiSelectComponent
+                                            modalType={this.props.modalType}
+                                            readonly={readonly}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                            isMulti={true}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <ImageUploadComponent
-                                        modalType={this.props.modalType}
-                                        constants={this.props.constants}
-                                        readonly={readonly}
-                                        width={this.props.width}
-                                        height={this.props.height} contentType={this.props.field.contentType}
-                                        currentModel={currentModel} field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels} modelChanged={this.fieldChanged(index)}
-                                        showTitle={false} parentModel={parentModel}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "imageUpload") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <ImageUploadComponent
+                                            modalType={this.props.modalType}
+                                            constants={this.props.constants}
+                                            readonly={readonly}
+                                            width={this.props.width}
+                                            height={this.props.height} contentType={this.props.field.contentType}
+                                            currentModel={currentModel} field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels} modelChanged={this.fieldChanged(index)}
+                                            showTitle={false} parentModel={parentModel}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datepicker") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <DatePickerComponent
-                                        modalType={this.props.modalType}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        readonly={readonly}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datepicker") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <DatePickerComponent
+                                            modalType={this.props.modalType}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                            readonly={readonly}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timepicker") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <TimePickerComponent
-                                        modalType={this.props.modalType}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                        readonly={readonly}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timepicker") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <TimePickerComponent
+                                            modalType={this.props.modalType}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                            readonly={readonly}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timezone") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <TimezoneComponent
-                                        modalType={this.props.modalType}
-                                        field={this.props.field.iterabletype}
-                                        readonly={readonly}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        currentModel={currentModel}
-                                        parentModel={parentModel}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "timezone") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <TimezoneComponent
+                                            modalType={this.props.modalType}
+                                            field={this.props.field.iterabletype}
+                                            readonly={readonly}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            currentModel={currentModel}
+                                            parentModel={parentModel}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datetimezonepicker") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <DateTimezoneComponent field={this.props.field.iterabletype}
-                                        readonly={readonly}
-                                        modalType={this.props.modalType}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        currentModel={currentModel}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "datetimezonepicker") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <DateTimezoneComponent field={this.props.field.iterabletype}
+                                            readonly={readonly}
+                                            modalType={this.props.modalType}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            currentModel={currentModel}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index + currentModel}
-                                style={this.props.field.iterabletype.displayChildren === "inline" ? {
-                                    padding: "5px 0px",
-                                    display: "inline-block",
-                                    marginRight: "30px"
-                                } : { padding: "5px 0px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <div style={this.props.field.iterabletype.style ?
-                                    Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
-                                    <TypeaheadComponent
-                                        modalType={this.props.modalType}
-                                        readonly={readonly}
-                                        constants={this.props.constants}
-                                        currentModel={currentModel}
-                                        fetch={this.props.fetch}
-                                        field={this.props.field.iterabletype}
-                                        additionalModels={this.props.additionalModels}
-                                        modelChanged={this.fieldChanged(index)}
-                                        showTitle={false}
-                                        parentModel={parentModel}
-                                    />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "typeahead") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index + currentModel}
+                                    style={this.props.field.iterabletype.displayChildren === "inline" ? {
+                                        padding: "5px 0px",
+                                        display: "inline-block",
+                                        marginRight: "30px"
+                                    } : { padding: "5px 0px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <div style={this.props.field.iterabletype.style ?
+                                        Object.assign({}, this.props.field.iterabletype.style, { display: "inline-block" }) : { display: "inline-block" }}>
+                                        <TypeaheadComponent
+                                            modalType={this.props.modalType}
+                                            readonly={readonly}
+                                            constants={this.props.constants}
+                                            currentModel={currentModel}
+                                            fetch={this.props.fetch}
+                                            field={this.props.field.iterabletype}
+                                            additionalModels={this.props.additionalModels}
+                                            modelChanged={this.fieldChanged(index)}
+                                            showTitle={false}
+                                            parentModel={parentModel}
+                                        />
+                                    </div>
+                                    {this.iterableButtons(index, totalLength)}
                                 </div>
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
-                            return <IterableDynamicTypeaheadComponent
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "dynamicTypeahead") {
+                                return <IterableDynamicTypeaheadComponent
 
-                                key={"iterable" + this.props.field.iterabletype.type + index + this.state.newModel[index]}
-                                index={index}
-                                readonly={readonly}
-                                currentModel={currentModel}
-                                fetch={this.props.fetch}
-                                field={this.props.field}
-                                additionalModels={this.props.additionalModels}
-                                modelChanged={this.iterableDynamicTypeaheadFieldChange}
-                                modalType={this.props.modalType}
-                                parentModel={parentModel}
-                                collapsable={this.state.collapsedIndex[index] || false}
-                                totalLength={totalLength}
-                                remove={this.remove}
-                                addAtIndex={this.addAtIndex}
-                                reorder={this.reorder}
-                                reorderAtPosition={this.reorderAtPosition}
-                                type={"iterable"}
-                                options={this.state.dynamicTypeaheadOptions}
-                            />
-                        }
-
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
-                            return <IterableNestedComponent
-                                key={"iterable" + this.props.field.iterabletype.type + index}
-                                index={index}
-                                readonly={readonly}
-                                currentModel={currentModel}
-                                fetch={this.props.fetch}
-                                field={this.props.field}
-                                additionalModels={this.props.additionalModels}
-                                modelChanged={this.nestedFieldChanged}
-                                showTitle={false}
-                                indent={false}
-                                modalType={this.props.modalType}
-                                parentModel={parentModel}
-                                collapsable={true}
-                                collapsed={this.state.collapsedIndex[index] || false}
-                                nullable={this.props.field.nullable}
-                                totalLength={totalLength}
-                                collapseNestedToggle={this.collapseNestedToggle}
-                                getIterableNestedTitle={this.getIterableNestedTitle}
-                                remove={this.remove}
-                                addAtIndex={this.addAtIndex}
-                                reorder={this.reorder}
-                                reorderAtPosition={this.reorderAtPosition} />
-                        }
-
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={{ border: "1px solid #EEE", padding: "10px" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <NestedEditModalComponent
-                                    currentModel={currentModel}
+                                    key={"iterable" + this.props.field.iterabletype.type + index + this.state.newModel[index]}
+                                    index={index}
                                     readonly={readonly}
+                                    currentModel={currentModel}
                                     fetch={this.props.fetch}
-                                    field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
+                                    field={this.props.field}
                                     additionalModels={this.props.additionalModels}
-                                    modelChanged={this.fieldChanged(index).bind(this, undefined)}
-                                    collapsable={this.props.field.iterabletype.collapsable ?? true}
-                                    expandable={this.props.field.iterabletype.expandable ?? false}
-                                    nullable={this.props.field.iterabletype.nullable ?? false}
-                                    showTitle={true} indent={true}
+                                    modelChanged={this.iterableDynamicTypeaheadFieldChange}
                                     modalType={this.props.modalType}
-                                    parentModel={parentModel} />
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                                    parentModel={parentModel}
+                                    collapsable={this.state.collapsedIndex[index] || false}
+                                    totalLength={totalLength}
+                                    remove={this.remove}
+                                    addAtIndex={this.addAtIndex}
+                                    reorder={this.reorder}
+                                    reorderAtPosition={this.reorderAtPosition}
+                                    type={"iterable"}
+                                    options={this.state.dynamicTypeaheadOptions}
+                                />
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "checkbox") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                style={{ display: "inline-block" }}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <CheckboxComponent
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "nested") {
+                                return <IterableNestedComponent
+                                    key={"iterable" + this.props.field.iterabletype.type + index}
+                                    index={index}
                                     readonly={readonly}
                                     currentModel={currentModel}
-                                    modalType={this.props.modalType}
-                                    field={this.props.field.iterabletype}
+                                    fetch={this.props.fetch}
+                                    field={this.props.field}
                                     additionalModels={this.props.additionalModels}
-                                    modelChanged={this.fieldChanged(index)} showTitle={false}
-                                    parentModel={parentModel} />
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
-
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "colorpallete") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <ColorPalleteComponent
+                                    modelChanged={this.nestedFieldChanged}
+                                    showTitle={false}
+                                    indent={false}
                                     modalType={this.props.modalType}
-                                    field={this.props.field.iterabletype}
-                                    modelChanged={this.fieldChanged(index)}
-                                    additionalModels={this.props.additionalModels}
-                                    currentModel={currentModel}
                                     parentModel={parentModel}
-                                />
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
+                                    collapsable={true}
+                                    collapsed={this.state.collapsedIndex[index] || false}
+                                    nullable={this.props.field.nullable}
+                                    totalLength={totalLength}
+                                    collapseNestedToggle={this.collapseNestedToggle}
+                                    iterableNestedTitle={this.getIterableNestedTitle(index)}
+                                    remove={this.remove}
+                                    addAtIndex={this.addAtIndex}
+                                    reorder={this.reorder}
+                                    reorderAtPosition={this.reorderAtPosition} />
+                            }
 
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "bigtext") {
-                            return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                                onMouseEnter={this.showIterableButtons.bind(this, index)}
-                                onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                                <TextAreaComponent
-                                    disabled={readonly}
-                                    value={currentModel}
-                                    onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }}
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "recursive") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={{ border: "1px solid #EEE", padding: "10px" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <NestedEditModalComponent
+                                        currentModel={currentModel}
+                                        readonly={readonly}
+                                        fetch={this.props.fetch}
+                                        field={Object.assign({}, this.props.anchors[this.props.field.iterabletype.recursivetype], this.props.field.iterabletype.recursiveOverrides)}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index).bind(this, undefined)}
+                                        collapsable={this.props.field.iterabletype.collapsable ?? true}
+                                        expandable={this.props.field.iterabletype.expandable ?? false}
+                                        nullable={this.props.field.iterabletype.nullable ?? false}
+                                        showTitle={true} indent={true}
+                                        modalType={this.props.modalType}
+                                        parentModel={parentModel} />
+                                    {this.iterableButtons(index, totalLength)}
+                                </div>
+                            }
 
-                                />
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "checkbox") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    style={{ display: "inline-block" }}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <CheckboxComponent
+                                        readonly={readonly}
+                                        currentModel={currentModel}
+                                        modalType={this.props.modalType}
+                                        field={this.props.field.iterabletype}
+                                        additionalModels={this.props.additionalModels}
+                                        modelChanged={this.fieldChanged(index)} showTitle={false}
+                                        parentModel={parentModel} />
+                                    {this.iterableButtons(index, totalLength)}
+                                </div>
+                            }
 
-                                {this.iterableButtons(index, totalLength)}
-                            </div>
-                        }
-                        if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "colorpallete") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <ColorPalleteComponent
+                                        modalType={this.props.modalType}
+                                        field={this.props.field.iterabletype}
+                                        modelChanged={this.fieldChanged(index)}
+                                        additionalModels={this.props.additionalModels}
+                                        currentModel={currentModel}
+                                        parentModel={parentModel}
+                                    />
+                                    {this.iterableButtons(index, totalLength)}
+                                </div>
+                            }
+
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "bigtext") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <TextAreaComponent
+                                        disabled={readonly}
+                                        value={currentModel}
+                                        onChange={this.handleChange.bind(this, index, "bigTextChanged")} style={{ width: 250 }}
+
+                                    />
+
+                                    {this.iterableButtons(index, totalLength)}
+                                </div>
+                            }
+                            if (this.props.field.iterabletype && this.props.field.iterabletype.type === "number") {
+                                return <div key={"iterable" + this.props.field.iterabletype.type + index}
+                                    onMouseEnter={this.showIterableButtons.bind(this, index)}
+                                    onMouseLeave={this.hideIterableButtons.bind(this, index)}>
+                                    <InputComponent
+                                        disabled={readonly}
+                                        type="number"
+                                        value={currentModel}
+                                        onChange={this.handleChange.bind(this, index, "numberChanged")}
+                                        style={{ width: 200, paddingTop: 5 }}
+                                    />
+                                    {this.iterableButtons(index, totalLength)}
+                                </div>
+                            }
                             return <div key={"iterable" + this.props.field.iterabletype.type + index}
                                 onMouseEnter={this.showIterableButtons.bind(this, index)}
                                 onMouseLeave={this.hideIterableButtons.bind(this, index)}>
                                 <InputComponent
                                     disabled={readonly}
-                                    type="number"
+                                    type="text"
                                     value={currentModel}
-                                    onChange={this.handleChange.bind(this, index, "numberChanged")}
-                                    style={{ width: 200, paddingTop: 5 }}
+                                    onChange={this.handleChange.bind(this, index)}
+                                    style={this.props.field.iterabletype === "tinyinput" ? {
+                                        width: 64,
+                                        paddingTop: 5
+                                    } : { width: 200, paddingTop: 5 }}
                                 />
                                 {this.iterableButtons(index, totalLength)}
                             </div>
-                        }
-                        return <div key={"iterable" + this.props.field.iterabletype.type + index}
-                            onMouseEnter={this.showIterableButtons.bind(this, index)}
-                            onMouseLeave={this.hideIterableButtons.bind(this, index)}>
-                            <InputComponent
-                                disabled={readonly}
-                                type="text"
-                                value={currentModel}
-                                onChange={this.handleChange.bind(this, index)}
-                                style={this.props.field.iterabletype === "tinyinput" ? {
-                                    width: 64,
-                                    paddingTop: 5
-                                } : { width: 200, paddingTop: 5 }}
-                            />
-                            {this.iterableButtons(index, totalLength)}
-                        </div>
-                    }))
-                }
-            </div>
+                        }))
+                    }
+                </div>
             }
             {this.props.field.iterabletype.readonly !== true && !this.props.readonly &&
                 <div className="btn btn-xs btn-passive" style={{ marginTop: "5px" }} onClick={this.createNew}>
@@ -815,15 +817,15 @@ export class IterableEditComponent extends React.Component<ImageUploadProps | It
             tempData = clone[index]
             let i
             clone.splice(index, 1)
-            clone.splice(moveAtPosition-1, 0, tempData)
-            if(index > moveAtPosition-1) {
-                i = moveAtPosition-1
+            clone.splice(moveAtPosition - 1, 0, tempData)
+            if (index > moveAtPosition - 1) {
+                i = moveAtPosition - 1
                 for (i; i <= index; i++) {
                     newModel[index] = v4()
                 }
             } else {
                 i = index
-                for (i; i <= moveAtPosition-1; i++) {
+                for (i; i <= moveAtPosition - 1; i++) {
                     newModel[index] = v4()
                 }
             }

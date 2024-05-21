@@ -109,8 +109,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
 
     modelChanged = (value: any) => {
         this.setState((prevState: any) => {
-            // console.log("modal component prev - check item", prevState)
-            // console.log("modal component curr", value)
             return { item: Object.assign({}, prevState.item, value) }
         })
     }
@@ -213,7 +211,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         expandable={false}
                         collapsable={true}
                         collapsed={false}
-                        nullable={true}
+                        nullable={this.props.constants.nullable ?? false}
                         parentModel={{}}
                     />
                 </Modal.Body>
