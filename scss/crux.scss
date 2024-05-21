@@ -141,11 +141,16 @@ mark {
   opacity: 1!important;
 }
 
-.iterableNested_remove, .iterableEdit_remove, .nestedEdit_remove, .iterable_remove {
-  cursor: pointer;
+.remove_expand_close_Btn {
   position: absolute;
   top:  0;
   right: 0;
+  display: flex;
+}
+
+.iterableNested_remove, .iterableEdit_remove, .nestedEdit_remove, .iterable_remove {
+  cursor: pointer;
+  margin-left: 10px;
   background: #ccc;
   width: 25px;
   height: 25px;
@@ -161,9 +166,7 @@ mark {
 
 .nestedEdit_maximise, .nestedEdit_minimise, .iterableEdit_maximise, .iterableEdit_minimise, .iterableNested_maximise, .iterableNested_minimise {
   cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: 30px;
+  margin-left: 10px;
   background: #ccc;
   width: 25px;
   height: 25px;
@@ -179,9 +182,7 @@ mark {
 
 .nestedEdit_expand {
   cursor: pointer;
-  position: absolute;
-  top:  0;
-  right: 60px;
+  margin-left: 10px;
   background: #ccc;
   width: 25px;
   height: 25px;
