@@ -4,6 +4,7 @@ import { isEmpty, sortBy, trim, find, map, isNil, isObject } from "lodash"
 import { DropdownButton, MenuItem } from "react-bootstrap"
 import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
+import Select from 'react-select';
 @autobind
 export class SelectComponent extends React.Component<InlineComponentProps, any> {
     constructor(props: any) {
@@ -13,6 +14,10 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 : this.props.currentModel
         }
     }
+
+
+
+
     render() {
         const hideLabel = this.props.field.style && this.props.field.style.hideLabel
         if (!this.props.field.title && !hideLabel) {
@@ -66,42 +71,36 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
+        const options = optionsData.map(doc => {
+            let value;
+            if (this.props.field.valueType === "object") {
+                value = doc;
+            } else if (this.props.field.foreign.keys) {
+                value = {};
+                for (const key of this.props.field.foreign.keys) {
+                    value[key] = doc[key];
+                }
+            } else if (this.props.field.foreign.key) {
+                value = doc[this.props.field.foreign.key];
+            } else {
+                console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`);
+            }
+            const label = this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title];
+            return { value, label };
+        });
         return <div>
             {
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
                     <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
             }
-            <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
-                title={foreignTitle}
-                disabled={this.props.readonly}>
-                <MenuItem onSelect={() => this.select(this.props.field, undefined)}>
-                    -Select-
-                </MenuItem>
-                {
-                    map(optionsData, ((doc: any, index: any) => {
-                        let eventKey = doc
-                        if (this.props.field.valueType === "object") {
-                            eventKey = doc
-                        } else if (this.props.field.foreign.keys) {
-                            eventKey = {}
-                            for (const key of this.props.field.foreign.keys) {
-                                eventKey[key] = doc[key]
-                            }
-                        } else if (this.props.field.foreign.key) {
-                            eventKey = doc[this.props.field.foreign.key]
-                        } else {
-                            console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
-                        }
-                        return <MenuItem onSelect={(eventKey: any) => {
-
-                            this.select(this.props.field, eventKey)
-                        }} key={index} eventKey={eventKey}>
-                            {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
-                        </MenuItem>
-                    }))
-                }
-            </DropdownButton></div>
+            <Select
+                isDisabled={this.props.readonly}
+                options={options}
+                onChange={(selectedOption) => this.select(this.props.field, selectedOption.value)}
+                value={foreignTitle}
+            />
+            </div>
     }
 
     select = (field: any, eventKey: any) => {
