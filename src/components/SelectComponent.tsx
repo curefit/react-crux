@@ -90,7 +90,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
         });
         return <div>
             {
-                console.log("options", options)
+
                 this.props.showTitle && !isEmpty(this.props.field.title) && !hideLabel &&
                 <div>
                     <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
@@ -100,10 +100,8 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 isDisabled={this.props.readonly}
                 options={options}
                 onChange={(selectedOption) => {
-                    console.log("changes") 
                     this.select(this.props.field, selectedOption)
                 }}
-
             />
             </div>
     }
