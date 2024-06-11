@@ -102,17 +102,20 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             </div>
     }
 
-    select = (field: any, eventKey: any) => {
+    select = (field: any, selectedOption: any) => {
+        const eventKey = selectedOption ? selectedOption.value : null;
+    
         if (eventKey === this.state.previousValue) {
             this.setState({
                 isValueChanged: false
             })
         } else {
             this.setState({
-                isValueChanged: true
+                isValueChanged: true,
+                previousValue: eventKey
             })
         }
-
+    
         this.props.modelChanged(field, eventKey)
     }
 }
