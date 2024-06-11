@@ -102,6 +102,7 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 onChange={(selectedOption) => {
                     this.select(this.props.field, selectedOption)
                 }}
+                value={foreignTitle}
             />
             </div>
     }
