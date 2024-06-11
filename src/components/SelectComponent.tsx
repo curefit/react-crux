@@ -98,7 +98,6 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 isDisabled={this.props.readonly}
                 options={options}
                 onChange={(selectedOption) => this.select(this.props.field, selectedOption.value)}
-                value={foreignTitle}
             />
             </div>
     }
