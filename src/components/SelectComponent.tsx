@@ -14,11 +14,25 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 : this.props.currentModel
         }
     }
+    render() {
+        const hideLabel = this.props.field.style && this.props.field.style.hideLabel
+        if (!this.props.field.title && !hideLabel) {
+            console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
+        }
+        let optionsData = []
+        if (this.props.field.foreign.transform) {
+            if (typeof this.props.field.foreign.transform === "function") {
+                optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
+            } else {
+                console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
+            }
 
-
-    loadSelectedOption(optionsData){
-        let selectedOption: any
-        let foreignTitle = !hideLabel ? "Choose " + this.props.field.title : "Choose"
+        } else {
+            optionsData = isEmpty(this.props.field.foreign.orderby)
+                ? this.props.additionalModels[this.props.field.foreign.modelName]
+                : sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => trim(doc[this.props.field.foreign.orderby].toLowerCase()))
+        }
+        let foreignTitle : any = !hideLabel ? "Choose " + this.props.field.title : "Choose"
         if (this.props.field.foreign) {
             if (!this.props.field.foreign.key && !this.props.field.foreign.keys) {
                 console.error(`Did you forget to add a "key(s)" field in foreign. Possible culprit: ${this.props.field}`)
@@ -43,40 +57,16 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                     console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                 })
                 if (isEmpty(foreignDoc)) {
-                    foreignTitle = this.props.currentModel + " Bad Value"
+                    foreignTitle = {label: this.props.currentModel + " Bad Value", value: this.props.currentModel}
                 } else if (this.props.field.foreign.titleTransform && typeof this.props.field.foreign.titleTransform === "function") {
-                    foreignTitle = this.props.field.foreign.titleTransform(foreignDoc)
+                    foreignTitle = {label: this.props.field.foreign.titleTransform(foreignDoc), value: this.props.currentModel}
                 } else {
-                    foreignTitle = foreignDoc[this.props.field.foreign.title]
+                    foreignTitle = {label: foreignDoc[this.props.field.foreign.title], value: this.props.currentModel}
                 }
             }
         } else {
             console.error("Did you forget to add a \"foreign\" field with a type: \"select\". Possible culprit: ", this.props.field)
         }
-    }
-
-
-    render() {
-        const hideLabel = this.props.field.style && this.props.field.style.hideLabel
-        if (!this.props.field.title && !hideLabel) {
-            console.error("Did you forget to add a \"title\" in the select field. Possible culprit: ", this.props.field)
-        }
-        let optionsData = []
-        if (this.props.field.foreign.transform) {
-            if (typeof this.props.field.foreign.transform === "function") {
-                optionsData = this.props.field.foreign.transform(this.props.field.foreign.modelName, this.props.currentModel, this.props.additionalModels, this.props.parentModel)
-            } else {
-                console.error("Did you forget to add \"function\" in the transform field. Function should return an array. Possible culprit: ", this.props.field)
-            }
-
-        } else {
-            optionsData = isEmpty(this.props.field.foreign.orderby)
-                ? this.props.additionalModels[this.props.field.foreign.modelName]
-                : sortBy(this.props.additionalModels[this.props.field.foreign.modelName], (doc: any) => trim(doc[this.props.field.foreign.orderby].toLowerCase()))
-        }
-
-        
-        
         const options = optionsData.map(doc => {
             let value;
             if (this.props.field.valueType === "object") {
@@ -95,7 +85,6 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
             return { value, label };
         });
 
-        const foreignTitle = this.loadSelectedOption(optionsData)
         return <div>
             {
 
