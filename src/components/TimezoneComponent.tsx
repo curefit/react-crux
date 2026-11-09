@@ -1,7 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
-const TimezonePicker = require("react-timezone")
+import TimezonePicker from "react-timezone-select"
 
 interface TimezoneComponentProps extends InlineComponentProps {
     isDateTimeComponent?: boolean
@@ -23,22 +23,18 @@ export class TimezoneComponent extends React.Component<TimezoneComponentProps, a
         return (
             <div style={{ display: this.props.field.displayTimezonePicker || !this.props.isDateTimeComponent ? "flex" : "none", flexDirection: "column", marginLeft: "4px" }}>
                 <label style={{ fontSize: "10px", marginRight: "10px" }}>ZONE</label>
-                <TimezonePicker.default
+                <TimezonePicker
                     value={this.state.timezone}
                     onChange={this.handleTimezoneChange}
-                    inputProps={{
-                        placeholder: "Select Timezone...",
-                        name: "timezone",
-                        className: "height-resize"
-                    }}
+                    placeholder="Select Timezone..."
+                    name="timezone"
                     className="font-resize"
                 />
             </div>
         )
     }
 
-    handleTimezoneChange = (timezone: string) => {
-
-        this.props.modelChanged(this.props.field, timezone)
+    handleTimezoneChange = (timezone: { value: string }) => {
+        this.props.modelChanged(this.props.field, timezone.value)
     }
 }

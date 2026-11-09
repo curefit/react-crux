@@ -12,12 +12,12 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
         super(props)
         this.state = { interval: 30,
             isValueChanged : false,
-            dateTime: props.currentModel ? moment(props.currentModel) : undefined}
+            dateTime: props.currentModel ? moment(props.currentModel).toDate() : undefined}
     }
 
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.currentModel) {
-            this.setState({ ...this.state, dateTime: moment(nextProps.currentModel) })
+            this.setState({ ...this.state, dateTime: moment(nextProps.currentModel).toDate() })
         } else {
             this.setState({ dateTime: undefined })
         }
@@ -31,7 +31,7 @@ export class DatePickerComponent extends React.Component<InlineComponentProps, a
                     <DatePicker
                         showTimeSelect={this.props.field.showTimeSelect}
                         timeIntervals={this.state.interval}
-                        dateFormat={this.props.field.showTimeSelect ? "LLL" : "LL"}
+                        dateFormat={this.props.field.showTimeSelect ? "MMMM d, yyyy h:mm aa" : "MMMM d, yyyy"}
                         timeFormat="HH:mm"
                         selected={this.state.dateTime}
                         onChange={this.handleChange}

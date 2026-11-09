@@ -1,7 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { isEmpty, sortBy, trim, find, map, isNil, isObject } from "lodash"
-import { DropdownButton, MenuItem } from "react-bootstrap"
+import { Dropdown, DropdownButton } from "react-bootstrap"
 import { InlineComponentProps } from "../CruxComponent"
 import { TitleComponent } from "./TitleComponent"
 @autobind
@@ -72,12 +72,12 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                 <div>
                     <TitleComponent modalType={this.props.modalType} field={this.props.field} isValueChanged={this.state.isValueChanged} /><br /></div>
             }
-            <DropdownButton bsSize="small" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
+            <DropdownButton size="sm" style={{ width: "auto" }} id={this.props.field.field + "_dropdown"}
                 title={foreignTitle}
                 disabled={this.props.readonly}>
-                <MenuItem onSelect={() => this.select(this.props.field, undefined)}>
+                <Dropdown.Item onClick={() => this.select(this.props.field, undefined)}>
                     -Select-
-                </MenuItem>
+                </Dropdown.Item>
                 {
                     map(optionsData, ((doc: any, index: any) => {
                         let eventKey = doc
@@ -93,12 +93,11 @@ export class SelectComponent extends React.Component<InlineComponentProps, any> 
                         } else {
                             console.error(`Did you forget to add a "key(s)" field in foreign . Possible culprit: ${this.props.field}`)
                         }
-                        return <MenuItem onSelect={(eventKey: any) => {
-
+                        return <Dropdown.Item onClick={() => {
                             this.select(this.props.field, eventKey)
                         }} key={index} eventKey={eventKey}>
                             {this.props.field.foreign.titleTransform ? this.props.field.foreign.titleTransform(doc) : doc[this.props.field.foreign.title]}
-                        </MenuItem>
+                        </Dropdown.Item>
                     }))
                 }
             </DropdownButton></div>

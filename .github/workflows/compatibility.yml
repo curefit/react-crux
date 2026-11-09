@@ -1,0 +1,24 @@
+name: Compatibility
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  react:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        react: [18.3.1, 19.2.1]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: yarn
+      - run: corepack prepare yarn@1.22.22 --activate
+      - run: yarn install --frozen-lockfile
+      - run: npm install --no-save --package-lock=false --legacy-peer-deps react@${{ matrix.react }} react-dom@${{ matrix.react }}
+      - run: yarn build
+      - run: yarn test

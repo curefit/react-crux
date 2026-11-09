@@ -1,7 +1,7 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
-import ReactJson, { InteractionProps } from "react-json-view"
+import ReactJson, { InteractionProps } from "@microlink/react-json-view"
 import { TitleComponent } from "./TitleComponent"
 
 @autobind
