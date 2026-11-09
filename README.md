@@ -4,7 +4,11 @@
 
 `@curefit/react-crux` supports React and React DOM 18 and 19. The package declares both as peer dependencies, so applications should install a matching React/React DOM major version.
 
-Library development and release builds are validated with Node.js 26. Use the repository's `.nvmrc` and Yarn Classic 1.22.22 (`corepack prepare yarn@1.22.22 --activate`) to install dependencies, run `yarn build`, and run `yarn test`.
+Library development and release builds require Node.js 26 (see `.nvmrc`) and Yarn Classic 1.22.22. On Node.js 26, install Yarn with `npm install --global yarn@1.22.22`, then run `yarn install --frozen-lockfile`, `yarn build`, and `yarn test`.
+
+### Compatibility and migration notes
+
+This release changes the supported React peer range from React 16 to React 18 and 19. Applications must use matching `react` and `react-dom` versions from major 18 or 19; React 16 and 17 are no longer supported. The Node.js 26 requirement applies to developing and building this library. Applications consuming the published package do not need to change their Node.js version solely because of this release.
 
 CRUX is a simple to use client side library to create UI for CRUD operations on server side entities. Its best suited to create admin dashboards which typically have complex relationships between entities.
 

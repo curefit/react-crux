@@ -34,7 +34,11 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleChange = (value: any) => {
-        if (!value) return
+        if (!value) {
+            this.setState({ isValueChanged: Boolean(this.state.previousValue) })
+            this.props.modelChanged(this.props.field, undefined)
+            return
+        }
         const formattedValue = moment(value, "HH:mm").format(format)
         if (formattedValue === this.state.previousValue) {
             this.setState({

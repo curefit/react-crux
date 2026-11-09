@@ -1,6 +1,7 @@
 {
   "name": "@curefit/react-crux",
-  "version": "1.0.1-alpha-1",
+  "version": "1.0.1-alpha-3",
+  "packageManager": "yarn@1.22.22",
   "description": "Simple react based library to create components for basic and complex CRUD operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,6 +23,8 @@
     "react-bootstrap": "2.10.10",
     "react-bootstrap-typeahead": "6.4.2",
     "react-color": "2.19.3",
+    "react-clock": "6.0.0",
+    "reactcss": "1.2.3",
     "react-datepicker": "9.1.0",
     "react-datetime": "3.3.1",
     "react-dropzone": "20.2.0",

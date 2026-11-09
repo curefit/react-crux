@@ -8,7 +8,9 @@ function parseModelUrl(model: string) {
     const query = queryPart.split("#", 1)[0]
     const params: Record<string, string | string[]> = {}
     query.split("&").filter(Boolean).forEach((part) => {
-        const [rawKey, rawValue = ""] = part.split("=", 2)
+        const separatorIndex = part.indexOf("=")
+        const rawKey = separatorIndex < 0 ? part : part.slice(0, separatorIndex)
+        const rawValue = separatorIndex < 0 ? "" : part.slice(separatorIndex + 1)
         const key = decodeURIComponent(rawKey.replace(/\+/g, " "))
         const value = decodeURIComponent(rawValue.replace(/\+/g, " "))
         const previous = params[key]
@@ -18,12 +20,13 @@ function parseModelUrl(model: string) {
 }
 
 function stringifyQueryParams(params: Record<string, any> = {}) {
-    return Object.keys(params).flatMap((key) => {
+    return Object.keys(params).reduce((queryParts: string[], key) => {
         const value = params[key]
-        if (value === undefined) return []
+        if (value === undefined) return queryParts
         const values = Array.isArray(value) ? value : [value]
-        return values.map((entry) => encodeURIComponent(key) + (entry === null ? "" : "=" + encodeURIComponent(String(entry))))
-    }).join("&")
+        values.forEach((entry) => queryParts.push(encodeURIComponent(key) + (entry === null ? "" : "=" + encodeURIComponent(String(entry)))))
+        return queryParts
+    }, []).join("&")
 }
 
 export function getMyDetails(success?: any, error?: any) {

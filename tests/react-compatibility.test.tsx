@@ -90,9 +90,9 @@ describe("React consumer compatibility", () => {
             status: 200,
             json: async () => ({ results: [] })
         } as Response)
-        fetchModel("records?term=hello%20world&tag=a&tag=b#section", undefined, undefined, { extra: "a b" })(vi.fn())
+        fetchModel("records?term=hello%20world&token=a=b&tag=a&tag=b#section", undefined, undefined, { extra: "a b" })(vi.fn())
 
         await waitFor(() => expect(request).toHaveBeenCalledOnce())
-        expect(request.mock.calls[0][0]).toBe("/model/records?term=hello%20world&tag=a&tag=b&extra=a%20b")
+        expect(request.mock.calls[0][0]).toBe("/model/records?term=hello%20world&token=a%3Db&tag=a&tag=b&extra=a%20b")
     })
 })

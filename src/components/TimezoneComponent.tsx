@@ -35,6 +35,14 @@ export class TimezoneComponent extends React.Component<TimezoneComponentProps, a
     }
 
     handleTimezoneChange = (timezone: { value: string }) => {
+        this.setState({ timezone: timezone.value, isValueChanged: timezone.value !== this.state.previousValue })
         this.props.modelChanged(this.props.field, timezone.value)
+    }
+
+    componentDidUpdate(previousProps: TimezoneComponentProps) {
+        if (previousProps.currentModel !== this.props.currentModel) {
+            const timezone = this.props.currentModel || "Asia/Kolkata"
+            this.setState({ timezone, isValueChanged: false, previousValue: this.props.currentModel })
+        }
     }
 }
