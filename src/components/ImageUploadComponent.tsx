@@ -1,10 +1,20 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import * as upload from "superagent"
+import { useDropzone } from "react-dropzone"
 import { InlineComponentProps } from "../CruxComponent"
-let Dropzone = require("react-dropzone")
-if ("default" in Dropzone) {
-    Dropzone = Dropzone.default
+const DropzoneArea = (props: any) => {
+    const { getRootProps, getInputProps } = useDropzone({
+        disabled: props.disabled,
+        maxSize: props.maxSize,
+        multiple: props.multiple,
+        onDrop: props.onDrop,
+        onDropRejected: (rejections) => props.onDropRejected(rejections.map(({ file }) => file))
+    })
+    return <div {...getRootProps({ style: props.style })}>
+        <input {...getInputProps()} />
+        {props.children}
+    </div>
 }
 
 @autobind
@@ -86,7 +96,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
         const { percentageDone } = this.state
         return (
             <div>
-                <Dropzone style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
+                <DropzoneArea style={{ width: "140px", textAlign: "center", color: "#E2356F" }}
                     disabled={this.props.readonly}
                     onDrop={(data: any) => {
                         this.onDrop(data, this.props.field.width, this.props.field.height, this.props.field.contentType)
@@ -112,7 +122,7 @@ export class ImageUploadComponent extends React.Component<InlineComponentProps, 
                         <div style={{ cursor: "pointer" }} onClick={this.handleImageClick}>
                             {this.previewUpload()}
                         </div>}
-                </Dropzone>
+                </DropzoneArea>
                 {
                     this.props.currentModel &&
                     <a onClick={this.removeFile} style={{ color: "#0000EE", marginLeft: "42px" }}>Remove</a>

@@ -52,7 +52,6 @@ export class NestedEditModalComponent extends React.Component<InlineComponentPro
                     onHide={() => {
                         this.setState({ showModal: false })
                     }}
-                    container={this}
                     aria-labelledby="contained-modal-title"
                     backdrop={true}
                     dialogClassName={errorClassName}>

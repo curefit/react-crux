@@ -1,6 +1,6 @@
 import { omit, isEmpty } from "lodash"
 import * as React from "react"
-import { Alert, ControlLabel, FormControl, FormGroup, Modal } from "react-bootstrap"
+import { Alert, Form, Modal } from "react-bootstrap"
 
 interface BulkCreateModalProps {
     createOrModify: any
@@ -65,7 +65,6 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
         return <Modal
             show={this.props.showModal}
             onHide={this.closeModal}
-            container={this}
             aria-labelledby="contained-modal-title"
             dialogClassName={this.props.constants.largeEdit ? "large-modal" : ""}>
             <Modal.Header closeButton>
@@ -73,7 +72,7 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
             </Modal.Header>
             <Modal.Body>
                 {this.state.error &&
-                    <Alert bsStyle="danger">
+                    <Alert variant="danger">
                         {
                             <div>
                                 {errorType && <b>{errorType}</b>}
@@ -83,12 +82,12 @@ export class BulkCreateModal extends React.Component<BulkCreateModalProps, BulkC
                     </Alert>
                 }
 
-                    <FormGroup>
-                        <ControlLabel>Sync URL</ControlLabel>
-                        <FormControl type="text"
+                    <Form.Group>
+                        <Form.Label>Sync URL</Form.Label>
+                        <Form.Control type="text"
                                      value={this.state.syncUrl}
                                      placeholder="Sync CSV URL" onChange={this.syncUrl} />
-                    </FormGroup>
+                    </Form.Group>
             </Modal.Body>
             <Modal.Footer>
                 <div className="btn btn-primary" onClick={this.bulkCreate}>Sync</div>

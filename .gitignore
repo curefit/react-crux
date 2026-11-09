@@ -6,3 +6,6 @@ logs
 dist
 .vscode
 yarn-error.log
+openspec/
+graphify-out/
+.yarn/install-state.gz

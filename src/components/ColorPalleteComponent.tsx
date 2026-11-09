@@ -2,6 +2,8 @@ import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
 import { SketchPicker } from "react-color"
+
+const CompatibleSketchPicker = SketchPicker as unknown as React.ComponentType<any>
 import reactCSS from "reactcss"
 import { TitleComponent } from "./TitleComponent"
 @autobind
@@ -97,7 +99,7 @@ export class ColorPalleteComponent extends React.Component<InlineComponentProps,
             {this.state.displayColorPicker ?
                 <div style={styles.popover}>
                     <div onClick={this.handleClose} style={styles.cover} />
-                    <SketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100) }}
+                    <CompatibleSketchPicker color={{ hex: this.convertHex(this.props.currentModel || this.props.field.defaultValue || "#cecece", 100) }}
                         onChange={this.handleColorChange} />
                 </div> : null}
         </div>

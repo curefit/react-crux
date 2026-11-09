@@ -1,9 +1,33 @@
 import { Dispatch } from "redux"
 import { FetchUtil } from "./FetchUtil"
 
-const queryString = require("query-string")
-
 const apiServer = process.env.API_SERVER || ""
+
+function parseModelUrl(model: string) {
+    const [url, queryPart = ""] = model.split("?", 2)
+    const query = queryPart.split("#", 1)[0]
+    const params: Record<string, string | string[]> = {}
+    query.split("&").filter(Boolean).forEach((part) => {
+        const separatorIndex = part.indexOf("=")
+        const rawKey = separatorIndex < 0 ? part : part.slice(0, separatorIndex)
+        const rawValue = separatorIndex < 0 ? "" : part.slice(separatorIndex + 1)
+        const key = decodeURIComponent(rawKey.replace(/\+/g, " "))
+        const value = decodeURIComponent(rawValue.replace(/\+/g, " "))
+        const previous = params[key]
+        params[key] = previous === undefined ? value : Array.isArray(previous) ? [...previous, value] : [previous, value]
+    })
+    return { url, query: params }
+}
+
+function stringifyQueryParams(params: Record<string, any> = {}) {
+    return Object.keys(params).reduce((queryParts: string[], key) => {
+        const value = params[key]
+        if (value === undefined) return queryParts
+        const values = Array.isArray(value) ? value : [value]
+        values.forEach((entry) => queryParts.push(encodeURIComponent(key) + (entry === null ? "" : "=" + encodeURIComponent(String(entry)))))
+        return queryParts
+    }, []).join("&")
+}
 
 export function getMyDetails(success?: any, error?: any) {
     return (dispatch: Dispatch<any>) => {
@@ -26,8 +50,8 @@ export function getMyDetails(success?: any, error?: any) {
 export function filterModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "FETCH_" + model + "_STARTED", model: model, item: item, isFilters: true })
-        const modalQueryParams = queryString.parseUrl(model)
-        const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
+        const modalQueryParams = parseModelUrl(model)
+        const queryParamsString = stringifyQueryParams(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}/filter?${queryParamsString}`, FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "FETCH_" + model + "_COMPLETED", data: { results: data.results ? data.results : data, metadata: data.metadata }, model: model })
             if (success) success(data.results ? data.results : data)
@@ -46,8 +70,8 @@ export function filterModel(model: string, item: any, success?: any, error?: any
 export function fetchModel(model: string, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "FETCH_" + model + "_STARTED", model: model })
-        const modalQueryParams = queryString.parseUrl(model)
-        const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
+        const modalQueryParams = parseModelUrl(model)
+        const queryParamsString = stringifyQueryParams(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}?${queryParamsString}`, FetchUtil.get()).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "FETCH_" + model + "_COMPLETED", data: data.results ? data.results : data, model: model })
             if (success) success(data)
@@ -97,8 +121,8 @@ export function createOrModify(model: string, item: any, edit: boolean, success?
     return (dispatch: Dispatch<any>) => {
         const word = edit ? "MODIFY" : "CREATE"
         dispatch({ type: word + "_" + model + "_STARTED", model: model })
-        const modalQueryParams = queryString.parseUrl(model)
-        const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
+        const modalQueryParams = parseModelUrl(model)
+        const queryParamsString = stringifyQueryParams(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}?${queryParamsString}`, edit ? FetchUtil.put(item) : FetchUtil.post(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: word + "_" + model + "_COMPLETED", data: data, model: model })
             if (success) success(data)
@@ -117,8 +141,8 @@ export function createOrModify(model: string, item: any, edit: boolean, success?
 export function deleteModel(model: string, item: any, success?: any, error?: any, queryParams?: any) {
     return (dispatch: Dispatch<any>) => {
         dispatch({ type: "DELETE_" + model + "_STARTED", model: model })
-        const modalQueryParams = queryString.parseUrl(model)
-        const queryParamsString = queryString.stringify(Object.assign({}, modalQueryParams.query, queryParams))
+        const modalQueryParams = parseModelUrl(model)
+        const queryParamsString = stringifyQueryParams(Object.assign({}, modalQueryParams.query, queryParams))
         fetch(`${apiServer}/model/${modalQueryParams.url}?${queryParamsString}`, FetchUtil.delete(item)).then(FetchUtil.parseResponse).then((data: any) => {
             dispatch({ type: "DELETE_" + model + "_COMPLETED", data: data, model: model })
             if (success) success(data)

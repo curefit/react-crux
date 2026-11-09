@@ -1,16 +1,12 @@
 import autobind from "autobind-decorator"
 import * as React from "react"
 import { InlineComponentProps } from "../CruxComponent"
-import TimePicker from 'rc-time-picker';
+import TimePicker from 'react-time-picker';
 import { TitleComponent } from "./TitleComponent"
 
 const moment = require("moment-timezone")
 
 const format = 'h:mm a';
-
-const now = moment()
-    .hour(0)
-    .minute(0);
 
 @autobind
 export class TimePickerComponent extends React.Component<InlineComponentProps, any> {
@@ -27,13 +23,10 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
                 <div style={{ display: "flex", flexDirection: "column", width: "250px" }}>
                 <TitleComponent modalType={this.props.modalType}  field={this.props.field} isValueChanged={this.state.isValueChanged}/>
                     <TimePicker
-                        defaultValue={now}
-                        value={currentModel ? moment(currentModel, format): now}
+                        value={currentModel ? moment(currentModel, format).format("HH:mm") : null}
                         onChange={this.handleChange}
                         format={format}
                         disabled={readonly}
-                        showSecond={false}
-                        use12Hours
                     />
                 </div>
             </div>
@@ -41,7 +34,13 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
     }
 
     handleChange = (value: any) => {
-        if (value.format(format) === this.state.previousValue) {
+        if (!value) {
+            this.setState({ isValueChanged: Boolean(this.state.previousValue) })
+            this.props.modelChanged(this.props.field, undefined)
+            return
+        }
+        const formattedValue = moment(value, "HH:mm").format(format)
+        if (formattedValue === this.state.previousValue) {
             this.setState({
                 isValueChanged: false
             })
@@ -50,6 +49,6 @@ export class TimePickerComponent extends React.Component<InlineComponentProps, a
                 isValueChanged: true
             })
         }
-        this.props.modelChanged(this.props.field, value.format(format))
+        this.props.modelChanged(this.props.field, formattedValue)
     }
 }

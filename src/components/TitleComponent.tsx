@@ -1,5 +1,4 @@
 import * as React from "react"
-import ReactTooltip from 'react-tooltip';
 export const TitleComponent = (props: any) => {
     const { field, isValueChanged, modalType, title } = props
     return (
@@ -11,7 +10,7 @@ export const TitleComponent = (props: any) => {
                     marginTop: -4,
                     marginLeft: 2
                 }}> * </span> : null}
-            {!!field.description ? <span data-tip={field.description} style={{
+            {!!field.description ? <span title={field.description} style={{
                 borderRadius: 10,
                 marginLeft: 10,
                 background: 'white',
@@ -25,7 +24,6 @@ export const TitleComponent = (props: any) => {
                     height: 15,
                     marginLeft: 15
                 }} /> : null}
-            <ReactTooltip />
         </label>
     )
 }

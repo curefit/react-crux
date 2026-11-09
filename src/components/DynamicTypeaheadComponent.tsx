@@ -83,7 +83,7 @@ export class DynamicTypeaheadComponent extends React.Component<DynamicTypeAheadP
         return dynamicPayload
     }
 
-    handleInputChange = (query: string, e: Event) => {
+    handleInputChange = (query: string, e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ query })
     }
 

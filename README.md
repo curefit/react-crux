@@ -1,5 +1,15 @@
 # react-crux
 
+## React and Node.js compatibility
+
+`@curefit/react-crux` supports React and React DOM 18 and 19. The package declares both as peer dependencies, so applications should install a matching React/React DOM major version.
+
+Library development and release builds require Node.js 26 (see `.nvmrc`) and Yarn Classic 1.22.22. On Node.js 26, install Yarn with `npm install --global yarn@1.22.22`, then run `yarn install --frozen-lockfile`, `yarn build`, and `yarn test`.
+
+### Compatibility and migration notes
+
+This release changes the supported React peer range from React 16 to React 18 and 19. Applications must use matching `react` and `react-dom` versions from major 18 or 19; React 16 and 17 are no longer supported. The Node.js 26 requirement applies to developing and building this library. Applications consuming the published package do not need to change their Node.js version solely because of this release.
+
 CRUX is a simple to use client side library to create UI for CRUD operations on server side entities. Its best suited to create admin dashboards which typically have complex relationships between entities.
 
 It is not a replacement for React or Redux or Bootstrap but rather a higher level abstraction that lets you create simple UI for CRUD operations by just writing a JSON config. CRUX reads this config and creates a React Component that you can add to your app.
@@ -13,16 +23,13 @@ If you use CRUX, you would not have to write HTML/JSX/TSX code. Essentially it c
 1- Install `react-crux` and it's dependencies
 
 ```bash
-yarn add react-crux react-bootstrap bootstrap-sass
+yarn add @curefit/react-crux bootstrap
 ```
 
 2- Add react crux css and bootstrap to your app.scss
 
 ```scss
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
-$bootstrap-sass-asset-helper: false;
-
-@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "~bootstrap/scss/bootstrap";
 @import "~@curefit/react-crux/scss/crux.scss";
 
 ```
@@ -90,22 +97,23 @@ const store = createStore(
 ```json
   "dependencies": {
     "autobind-decorator": "^2.1.0", // Because binding manually is so 2017
-    "lodash": "^4.17.10", // Used heavily for all list/object manipulations
-    "moment": "^2.22.2", // Used in date picker
-    "moment-timezone": "^0.5.23", // Used in date picker with timezone
-    "react": "^16.4.2", // Duh
-    "react-bootstrap": "^0.32.3", // Its pretty cool
-    "react-bootstrap-typeahead": "^3.2.2", // For typeahead component
-    "react-datepicker": "^1.6.0", // For datepicker
-    "react-datetime": "^2.16.3", // For datepicker with timezone
-    "react-timezone": "^2.3.0", // Used in datepicker with timezone
-    "react-dropzone": "^5.0.1", // For file upload component
-    "react-redux": "^5.0.7", // Duh
-    "react-select": "^2.3.0", // For Multi Select component
-    "superagent": "^3.8.3", // For upload request
-    "query-string": "^6.2.0" // For Query Params formation
-    "react-color": "^2.17.0" // For Color Pallete Component Addition
-    "reactcss": "^1.2.3" // Dynamic Css For Color Pallete
+    "lodash": "^4.18.1", // Used heavily for all list/object manipulations
+    "moment": "^2.31.0", // Used in date picker
+    "moment-timezone": "^0.6.2", // Used in date picker with timezone
+    "react": "^18 || ^19", // Duh
+    "react-dom": "^18 || ^19", // React DOM peer
+    "react-bootstrap": "^2.10.10", // Bootstrap 5 components
+    "react-bootstrap-typeahead": "^6.4.2", // For typeahead component
+    "react-datepicker": "^9.1.0", // For datepicker
+    "react-datetime": "^3.3.1", // For datepicker with timezone
+    "react-timezone-select": "^4.1.0", // Used in datepicker with timezone
+    "react-time-picker": "^8.1.0", // For time input
+    "react-dropzone": "^20.2.0", // For file upload component
+    "react-redux": "^9.3.1", // Duh
+    "react-select": "^5.10.2", // For Multi Select component
+    "@microlink/react-json-view": "^1.31.48", // For JSON editing
+    "superagent": "^10.4.2", // For upload request
+    "react-color": "^2.19.3" // For Color Palette Component
   }
 ```
 

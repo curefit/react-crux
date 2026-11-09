@@ -4,7 +4,6 @@ import { omit, isEmpty, isObject, isArray, isNil } from "lodash"
 import { Alert, Modal } from "react-bootstrap"
 import { ModalType } from "../CruxComponent"
 import { NestedEditComponent } from "./NestedEditComponent"
-import * as ReactDOM from "react-dom"
 import { NestedEditModalComponent } from "./NestedEditModalComponent"
 
 interface ModalComponentProps {
@@ -171,7 +170,6 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
             <Modal
                 show={this.state.showModal}
                 onHide={this.closeModal}
-                container={this}
                 aria-labelledby="contained-modal-title"
                 backdrop={this.props.constants.disableModalOutsideClick ? "static" : true}
                 dialogClassName={this.props.constants.largeEdit ? `${errorClassName} large-modal` : `${errorClassName}`}>
@@ -190,9 +188,9 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         this.setState({showModal: false})
                     }}>-</div> : null}
                 </Modal.Header>
-                <Modal.Body ref={reactComponent => this.modalBodyRef = ReactDOM.findDOMNode(reactComponent)} className="modal-height">
+                <Modal.Body ref={element => { this.modalBodyRef = element }} className="modal-height">
                     {this.state.error &&
-                        <Alert bsStyle="danger">
+                        <Alert variant="danger">
                             {
                                 <div>
                                     {errorType && <b>{errorType}</b>}
@@ -220,7 +218,7 @@ export class ModalComponent extends React.Component<ModalComponentProps, any> {
                         <div className="btn btn-danger" style={{ float: "left" }} onClick={this.openDeleteModal}>
                             Delete</div>}
                     {this.state.deleteModal &&
-                        <Modal show={this.state.deleteModal} onHide={this.closeDeleteModal} container={this}>
+                        <Modal show={this.state.deleteModal} onHide={this.closeDeleteModal}>
                             <Modal.Header closeButton>
                                 {"Delete " + this.props.constants.creationTitle}
                             </Modal.Header>

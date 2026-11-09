@@ -7,7 +7,7 @@ import {
 import { reduce, map, filter, isEmpty, isEqual, sortBy, forEach, trim } from "lodash"
 import { getAdditionalModels } from "./util"
 import autobind from "autobind-decorator"
-import { Alert, FormControl, FormGroup, Table } from "react-bootstrap"
+import { Alert, Form, Table } from "react-bootstrap"
 import { ModalComponent } from "./components/ModalComponent"
 import { ListNestedComponent } from "./components/ListNestedComponent"
 import { PaginationComponent } from "./components/PaginationComponent"
@@ -438,7 +438,7 @@ export class CruxComponentCreator {
                     })
                 if (this.props[constants.modelName] && this.props[constants.modelName].error) {
                     return <div className="cf-main-content-container" style={{ width: "100%", padding: 10, overflowY: "scroll" }}>
-                        <Alert bsStyle="danger">{"Error occured while fetching " + constants.title}</Alert>
+                        <Alert variant="danger">{"Error occured while fetching " + constants.title}</Alert>
                     </div>
                 }
                 return (
@@ -465,13 +465,13 @@ export class CruxComponentCreator {
                                 item={this.state.filterModel}
                             />}
                         {constants.enableSearch && <div>
-                            <FormGroup style={{ paddingTop: "10px" }}>
-                                <FormControl type="text" value={this.state.searchQuery} placeholder="Search" onChange={this.handleSearch} />
-                            </FormGroup>
+                            <Form.Group style={{ paddingTop: "10px" }}>
+                                <Form.Control type="text" value={this.state.searchQuery} placeholder="Search" onChange={this.handleSearch} />
+                            </Form.Group>
                         </div>}
                         <div style={{ marginTop: "10px" }} />
 
-                        <Table className="table table-striped cftable" striped bordered condensed hover responsive>
+                        <Table className="table table-striped cftable" striped bordered size="sm" hover responsive>
                             <thead>
                                 <tr key="header">
                                     {constants.fields.filter((field: any) => field.display).map((field: any, index: any) =>
